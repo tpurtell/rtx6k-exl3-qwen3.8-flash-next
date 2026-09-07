@@ -45,8 +45,13 @@ with torch.cuda.stream(stream):
             launch()
             torch.testing.assert_close(output, reference(), atol=0.015, rtol=0.015)
             graph = torch.cuda.CUDAGraph()
-            with torch.cuda.graph(graph, stream=stream):
+            capture_stream = torch.cuda.Stream()
+            capture_stream.wait_stream(stream)
+            # Match vLLM: kernels warmed above, but scratch has never been
+            # allocated on this separate graph-capture stream.
+            with torch.cuda.graph(graph, stream=capture_stream):
                 launch()
+            stream.wait_stream(capture_stream)
             q.mul_(-1)
             graph.replay()
             torch.testing.assert_close(output, reference(), atol=0.015, rtol=0.015)

@@ -243,3 +243,19 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   `recipe/benchmarks/exl3-dev8-orchid-diagnostic.jsonl`; two successes do not
   qualify the failing repetition workload. The next probe enables CUDA
   graphs with the same image, checkpoint and MTP3 settings.
+
+## QSA workspace on the graph capture stream
+
+- `qwen38-exl3-fp8-graph-dev8` fails its first graph startup because vLLM
+  warms QSA on one CUDA stream and captures on another. The bridge keyed
+  scratch by stream and rejected allocation during capture.
+- The bridge now uses PyTorch's graph-aware allocator for a new stream and
+  retains the tensors for graph replay. Per-stream isolation remains.
+  Eight BF16/FP8 × 1/64/65/2048-row GPU checks pass against the dense oracle
+  with a separate capture stream and mutated-query replay. Receipt:
+  `recipe/benchmarks/qsa-cross-stream-gpu.txt`. `dev9` contains this correction;
+  full-model graph qualification still needs a successful rerun.
+- Tool evaluation is prepared in an isolated checkout at the reference
+  recipe's commit `cf54b4bfe705f12f71e8866f10730572497c8105`, version
+  2.6.1.dev45, containing 88 public cases including Hard Mode. The older,
+  locally modified checkout in `~/Developer/tool-eval-bench` is untouched.

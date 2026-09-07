@@ -16,8 +16,9 @@ def run(layer, query, key_cache, value_cache, indices, block_table,
         request_ids, positions, output):
     key = (query.device, torch.cuda.current_stream().cuda_stream, query.shape[1], query.shape[2])
     if key not in _scratch:
-        if torch.cuda.is_current_stream_capturing():
-            raise RuntimeError("B12x QSA workspace must be warmed before graph capture")
+        # vLLM can warm on one stream and capture on another. torch.empty
+        # uses PyTorch's graph-aware allocator during capture; retaining the
+        # tensors here keeps their addresses alive for every graph replay.
         _scratch[key] = (
             torch.empty((MAX_SPLIT_ROWS, NUM_SPLITS, query.shape[1], query.shape[2]),
                         dtype=torch.float32, device=query.device),
