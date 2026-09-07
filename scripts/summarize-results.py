@@ -62,6 +62,9 @@ for name, root in roots.items():
     memory = argv[argv.index("--gpu-memory-utilization")+1]
     env = runtime["selected_environment"]
     mmap = "VLLM_PLE_MMAP=1" in env
+    if name == "EXL3 PLE8 mmap":
+        assert mmap and "VLLM_PLE_CPU_OFFLOAD=0" in env
+        assert any("PLE mmap:" in line and "attached" in line for line in runtime["selected_startup_lines"])
     serial = next((v.split("=",1)[1] for v in env if v.startswith("VLLM_PLE_MMAP_SERIAL=")), "—") if mmap else "—"
     profile_rows.append([name, spec["num_speculative_tokens"], memory,
                          "mmap" if mmap else "resident", serial,
@@ -212,5 +215,24 @@ lines += ["API checks cover required/named/auto/none choices, thinking on/off an
           "The full 88-case suite includes 19 Hard Mode scenarios, with thinking enabled, "
           "temperature zero, one trial, eight parallel cases and at most eight turns. "
           "The linked reports retain failures and partial scores.", ""]
+if args.mmap:
+    memory = read(args.mmap, "memory.json")
+    worker = next(p for p in memory["processes"] if p["checkpoint_mappings"])
+    totals = worker["checkpoint_totals_KiB"]
+    assert len(worker["checkpoint_mappings"]) == 128
+    assert totals["Anonymous"] == 0
+    assert totals["Shared_Dirty"] + totals["Private_Dirty"] == 0
+    lines += ["## mmap memory snapshot", "",
+              "Captured after the performance/retrieval suite, before the full tool evaluation. "
+              "These are process mapping observations, not a working-set ceiling or a low-RAM test. "
+              "Linux can retain and reclaim clean checkpoint pages as workloads change.", ""]
+    table(["Checkpoint mappings", "Mapped GiB", "Resident mapped GiB", "Anonymous mapped GiB", "Dirty mapped GiB"], [[
+        len(worker["checkpoint_mappings"]), f"{totals['Size']/2**20:.2f}",
+        f"{totals['Rss']/2**20:.2f}", f"{totals['Anonymous']/2**20:.2f}",
+        f"{(totals['Private_Dirty']+totals['Shared_Dirty'])/2**20:.2f}"]])
+    lines += ["The backing filesystem is ext4 on a Samsung 9100 PRO 4TB NVMe. "
+              "PREWARM, READAHEAD and PINNED are off; the run uses the existing file cache "
+              "and the warmups specified above. " + link("Full memory and storage receipt", args.mmap, "memory.json") + ".", ""]
+
 args.output.parent.mkdir(parents=True, exist_ok=True)
 args.output.write_text("\n".join(lines) + "\n")
