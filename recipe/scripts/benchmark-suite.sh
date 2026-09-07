@@ -24,4 +24,5 @@ python3 "$SCRIPT_DIR/benchmark-workloads.py" "${COMMON[@]}" --suite orchid --run
 python3 "$SCRIPT_DIR/benchmark-decode.py" --base-url "$BASE_URL/v1" --model "$MODEL" --profile "$QUANT" --mtp-tokens "$MTP_TOKENS" --mtp-policy "${MTP_POLICY:-static}" --concurrency 1 2 4 8 16 --request-mode clients --output-tokens 256 --warmup-runs 2 --runs 3 --output "$RESULT_DIR/clients.json"
 python3 "$SCRIPT_DIR/benchmark-prefill.py" --base-url "$BASE_URL/v1" --model "$MODEL" --profile "$QUANT" --prompt-tokens 2048 8192 32768 65536 128000 261632 --runs 3 --output "$RESULT_DIR/prefill.json"
 python3 "$SCRIPT_DIR/benchmark-context.py" "${COMMON[@]}" --depths 2048 8192 32768 65536 131072 261632 --output-tokens 256 --runs 3 --warmups 1 --output "$RESULT_DIR/context.jsonl"
+python3 "$SCRIPT_DIR/benchmark-context.py" "${COMMON[@]}" --depths 261888 --output-tokens 256 --runs 1 --warmups 0 --output "$RESULT_DIR/context-boundary.jsonl"
 python3 "$SCRIPT_DIR/test-context-retrieval.py" "${COMMON[@]}" --filler-tokens 8192 240000 --positions 0.05 0.5 0.95 --output "$RESULT_DIR/retrieval.jsonl"

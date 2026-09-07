@@ -1,0 +1,72 @@
+{
+  "container": "qwen38-exl3-fp8-adaptive31-dev13",
+  "image_id": "sha256:580cdc26ba99375b676f51db19e4727cf285fcbccf2ae0680d012de6ebccc054",
+  "args": [
+    "serve",
+    "/root/.cache/huggingface/hub/models--wrldsuksgo2mars--Qwen3.8-Flash-Next-EXL3-K4.25-v1/snapshots/73a050c27b8c488c65acd6d1c74e45ff02be5fab",
+    "--served-model-name",
+    "qwen38-exl3",
+    "--port",
+    "8001",
+    "--tensor-parallel-size",
+    "1",
+    "--distributed-executor-backend",
+    "mp",
+    "--max-model-len",
+    "262144",
+    "--max-num-seqs",
+    "16",
+    "--max-num-batched-tokens",
+    "2048",
+    "--gpu-memory-utilization",
+    "0.94",
+    "--kv-cache-dtype",
+    "fp8",
+    "--enable-auto-tool-choice",
+    "--tool-call-parser",
+    "qwen3_coder",
+    "--reasoning-parser",
+    "qwen3",
+    "--speculative-config",
+    "{\"method\":\"mtp\",\"num_speculative_tokens\":3,\"num_speculative_tokens_per_batch_size\":[[1,4,3],[5,16,1]]}"
+  ],
+  "started_at": "2026-09-07T09:14:19.095184188Z",
+  "device_requests": [
+    {
+      "Driver": "",
+      "Count": 0,
+      "DeviceIDs": [
+        "1"
+      ],
+      "Capabilities": [
+        [
+          "gpu"
+        ]
+      ],
+      "Options": {}
+    }
+  ],
+  "selected_environment": [
+    "OMP_NUM_THREADS=8",
+    "QWEN38_B12X_VOCAB=0",
+    "QWEN38_B12X_NVFP4=0",
+    "VLLM_PLE_CPU_OFFLOAD=1",
+    "VLLM_EXL3_TRELLIS_MIN_M=1",
+    "VLLM_EXL3_PREFILL_TRELLIS=1",
+    "VLLM_EXL3_PREFILL_CAPACITY=2048"
+  ],
+  "selected_startup_lines": [
+    "(PleOffloadWorker pid=263) INFO 09-07 09:15:19 [worker.py:448] PLE offload matched 131 checkpoint tensor(s), loaded 4 offload entries, and verified 1/1 materialized parameter(s) for layers: ['language_model.model.layers.1.ple.ple_embedding']",
+    "(Worker pid=159) INFO 09-07 09:15:33 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+    "(Worker pid=159) INFO 09-07 09:16:05 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+    "(Worker pid=159) INFO 09-07 09:16:08 [model_runner.py:407] Model loading took 71.99 GiB memory and 72.894900 seconds",
+    "(Worker pid=159) INFO 09-07 09:16:08 [worker.py:232] Worker ready - 1 PleOffloadLayer(s): ['language_model.model.layers.1.ple.ple_embedding']",
+    "(EngineCore pid=132) INFO 09-07 09:16:34 [kv_cache_utils.py:2258] GPU KV cache size: 796,612 tokens, Maximum concurrency for 262,144 tokens per request: 3.04x",
+    "(Worker pid=159) INFO 09-07 09:16:41 [model_runner.py:953] Graph capturing finished in 6 secs, took 0.58 GiB"
+  ],
+  "gpu_inventory_csv": [
+    "index, name, uuid, driver_version, memory.total [MiB], power.limit [W]",
+    "0, NVIDIA RTX PRO 6000 Blackwell Workstation Edition, GPU-fe5b6dd0-a77c-c8fb-6360-e1b9d9918ac0, 595.71.05, 97887 MiB, 400.00 W",
+    "1, NVIDIA RTX PRO 6000 Blackwell Workstation Edition, GPU-95f8f212-9131-df99-fd53-7535965197d7, 595.71.05, 97887 MiB, 400.00 W"
+  ]
+}

@@ -484,3 +484,8 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   The C1 workload tradeoff remains useful even though this is not the
   best measured mixed-workload default. Receipts:
   `recipe/benchmarks/exl3-dev13-mtp4-*`.
+- EXL3's dynamic schedule `[[1,4,3],[5,16,1]]` measures 150.71 weighted
+  C1 tokens/s and 202.67 median code tokens/s. C8/C16 probes measure
+  516.51/792.07. It does not establish a C1 advantage over static MTP3,
+  which is selected for final qualification. Receipts:
+  `recipe/benchmarks/exl3-dev13-adaptive31-*`.
