@@ -330,3 +330,17 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   MTP counters: 2010 accepted / 3879 draft tokens over 1293 drafts,
   51.82% acceptance and mean acceptance length2.555. Raw evidence:
   `recipe/benchmarks/nvfp4-dev10-graph-seven.jsonl`.
+- NVIDIA graph vision passes at 1/4/16 images. Its single-probe synthetic
+  context sweep completes at 8192, 131072 and 261632 prompt tokens plus128
+  output tokens. The last point measures 27.865 s TTFT and238.73 decode
+  tokens/s. These are synthetic diagnostics, not final context-quality
+  results. Receipts: `nvfp4-dev10-graph-vision.json` and
+  `nvfp4-dev10-graph-context-diagnostic.jsonl` under `recipe/benchmarks`.
+- Independent-client C8/C16 probes complete with unique prompts and128
+  forced output tokens each. Measured global-window rates are549.68/544.11
+  tokens/s. C8 has8 overlapping first-to-last SSE intervals; C16 peaks at13,
+  with three TTFTs delayed about2.1–2.3 seconds. Thus this MTP3/.94 memory
+  configuration has not demonstrated16 simultaneous active sequences.
+  C8's logged KV usage is59.3%, consistent with cache pressure at16.
+  The client runner preserves each request's timing arrays. MTP2 and memory
+  budget tuning will test whether16 active sequences fit.

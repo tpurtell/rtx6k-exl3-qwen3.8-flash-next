@@ -4,16 +4,20 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import http.client
 import json
 import statistics
+import threading
 import time
 from pathlib import Path
 from urllib.parse import urlparse
+import uuid
 
 
 def request_once(
-    base_url: str, model: str, concurrency: int, output_tokens: int, seed: int
+    base_url: str, model: str, concurrency: int, output_tokens: int, seed: int,
+    nonce: str = "",
 ) -> dict:
     parsed = urlparse(base_url)
     connection_type = (
@@ -29,6 +33,7 @@ def request_once(
             {
                 "role": "user",
                 "content": (
+                    (f"Ignore this request identifier: {nonce}.\n" if nonce else "") +
                     "Write a long, coherent continuation about systems engineering, "
                     "without headings or a conclusion."
                 ),
@@ -96,6 +101,8 @@ def request_once(
     decode_tokens = sum(len(times) - 1 for times in token_times)
     return {
         "concurrency": concurrency,
+        "request_nonce": nonce,
+        "started_perf_seconds": started,
         "token_times_seconds": [[t - started for t in times] for times in token_times],
         "timing_convention": "sum(N-1) over global first-to-last SSE token window",
         "output_tokens_per_sequence": output_tokens,
@@ -105,6 +112,26 @@ def request_once(
         "decode_tokens_per_second": decode_tokens / duration,
         "ttft_ms": (first_token - started) * 1000,
     }
+
+
+def independent_clients(base_url, model, concurrency, output_tokens, seed):
+    barrier = threading.Barrier(concurrency)
+    nonce = uuid.uuid4().hex
+
+    def worker(index):
+        barrier.wait()
+        return request_once(base_url, model, 1, output_tokens, seed + index,
+                            nonce=f"{nonce}:{index}")
+
+    with ThreadPoolExecutor(max_workers=concurrency) as pool:
+        results = list(pool.map(worker, range(concurrency)))
+    first = min(r["started_perf_seconds"] + r["token_times_seconds"][0][0] for r in results)
+    last = max(r["started_perf_seconds"] + r["token_times_seconds"][0][-1] for r in results)
+    tokens = sum(r["decode_tokens"] for r in results)
+    return {"concurrency": concurrency, "request_mode": "clients",
+            "decode_tokens": tokens, "decode_seconds": last - first,
+            "decode_tokens_per_second": tokens / (last - first),
+            "request_results": results}
 
 
 def main() -> None:
@@ -119,6 +146,7 @@ def main() -> None:
         default="static",
     )
     parser.add_argument("--concurrency", nargs="+", type=int, default=[1, 16])
+    parser.add_argument("--request-mode", choices=["continuations", "clients"], default="continuations")
     parser.add_argument("--output-tokens", type=int, default=128)
     parser.add_argument(
         "--warmup-tokens",
@@ -136,17 +164,20 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=20260828)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    if min(args.concurrency) < 1 or args.output_tokens < 2:
+        parser.error("concurrency must be positive and output tokens >= 2")
+    runner = independent_clients if args.request_mode == "clients" else request_once
 
     points = []
     warmup_tokens = args.warmup_tokens or args.output_tokens
     for concurrency in args.concurrency:
         for _ in range(args.warmup_runs):
-            request_once(
+            runner(
                 args.base_url, args.model, concurrency, warmup_tokens, args.seed
             )
         runs = []
         for run in range(args.runs):
-            result = request_once(
+            result = runner(
                 args.base_url,
                 args.model,
                 concurrency,
@@ -175,11 +206,13 @@ def main() -> None:
         )
 
     report = {
-        "schema": "qwen38-decode-concurrency.v2",
+        "schema": "qwen38-decode-concurrency.v3",
+        "request_mode": args.request_mode,
         "method": (
-            "one depth-0 prompt with n parallel continuations; aggregate decode "
-            "timing spans first to last streamed token and excludes TTFT; the "
-            "same sampling seed is repeated so MTP acceptance is comparable"
+            ("separate HTTP requests with unique prompt identifiers; " if args.request_mode == "clients"
+             else "one short prompt with n parallel continuations; ") +
+            "aggregate decode uses sum(N-1) over the global first-to-last SSE token window; "
+            "sampling seeds are fixed per sequence"
         ),
         "model": args.model,
         "quant_profile": args.profile,
