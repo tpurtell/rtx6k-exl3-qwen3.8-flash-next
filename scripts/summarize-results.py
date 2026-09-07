@@ -10,21 +10,26 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--exl3", type=Path, required=True)
 parser.add_argument("--nvfp4", type=Path, required=True)
 parser.add_argument("--mmap", type=Path, help="New mmap-enabled EXL3 PLE8 qualification; original profiles retain their existing receipts")
+parser.add_argument("--spark", type=Path, help="Full native arm64 EXL3 mmap BF16-PLE qualification")
 parser.add_argument("--output", type=Path, required=True)
 parser.add_argument("--omit-ranges", action="store_true", help="Render compact median-only tables for the README")
 args = parser.parse_args()
 roots = {"EXL3": args.exl3, "NVFP4": args.nvfp4}
 if args.mmap:
     roots["EXL3 PLE8 mmap"] = args.mmap
+if args.spark:
+    roots["EXL3 mmap Spark (BF16 PLE)"] = args.spark
 lines = ["# Final serving measurements", "",
          "Generated from the linked raw receipts by `scripts/summarize-results.py`.", "",
-         "Each quant runs on one RTX PRO 6000 Blackwell 96 GB at a 400 W power limit. "
+         "RTX profiles run on one RTX PRO 6000 Blackwell 96 GB at a 400 W power limit. "
+         "The Spark profile, when present, runs on one DGX Spark GB10 with unified memory. "
          "C1 is the default-selection priority. All use FP8 KV and host token embeddings. "
          "The mmap profile reads PLE rows from checkpoint-backed mappings; the original "
          "profiles retain resident host tables. All decode rates below exclude prefill.", ""]
 if args.mmap:
     lines += ["EXL3 and NVFP4 columns retain the v0.1.0 measurements; only the mmap-enabled "
-              "EXL3 PLE8 column is newly benchmarked. The EXL3 baseline also has a different "
+              "EXL3 PLE8 column records its v0.2.0 qualification. Spark receives its own new "
+              "qualification. The RTX EXL3 baseline also has a different "
               "PLE storage precision, so this is not a controlled mmap-on/off ablation. "
               "The mmap run uses existing Linux page cache and benchmark warmups; it is "
               "not a cold-disk or constrained-RAM test.", ""]
@@ -64,9 +69,13 @@ for name, root in roots.items():
     memory = argv[argv.index("--gpu-memory-utilization")+1]
     env = runtime["selected_environment"]
     mmap = "VLLM_PLE_MMAP=1" in env
-    if name == "EXL3 PLE8 mmap":
+    if root == args.mmap or root == args.spark:
         assert mmap and "VLLM_PLE_CPU_OFFLOAD=0" in env
         assert any("PLE mmap:" in line and "attached" in line for line in runtime["selected_startup_lines"])
+    if root == args.spark:
+        assert runtime["architecture"] in ("aarch64", "arm64")
+        assert float(memory) <= 0.7
+        assert "qwen38-exl3" in argv
     serial = next((v.split("=",1)[1] for v in env if v.startswith("VLLM_PLE_MMAP_SERIAL=")), "—") if mmap else "—"
     profile_rows.append([name, spec["num_speculative_tokens"], memory,
                          "mmap" if mmap else "resident", serial,
@@ -242,6 +251,23 @@ if args.mmap:
     lines += ["The backing filesystem is ext4 on a Samsung 9100 PRO 4TB NVMe. "
               "PREWARM, READAHEAD and PINNED are off; the run uses the existing file cache "
               "and the warmups specified above. " + link("Full memory and storage receipt", args.mmap, "memory.json") + ".", ""]
+
+if args.spark:
+    memory = read(args.spark, "memory.json")
+    worker = next(p for p in memory["processes"] if p["checkpoint_mappings"])
+    totals = worker["checkpoint_totals_KiB"]
+    assert totals["Anonymous"] == 0
+    assert totals["Shared_Dirty"] + totals["Private_Dirty"] == 0
+    lines += ["## Spark BF16 PLE memory snapshot", "",
+              "Spark uses unified CPU/GPU memory with GPU memory utilization capped at 0.7. "
+              "Mapped checkpoint pages are reclaimable file cache; their resident size is a "
+              "snapshot, not a fixed working-set limit. The BF16 PLE table is approximately "
+              "95.37 GiB on disk.", ""]
+    table(["Checkpoint mappings", "Mapped GiB", "Resident mapped GiB", "Anonymous mapped GiB", "Dirty mapped GiB"], [[
+        len(worker["checkpoint_mappings"]), f"{totals['Size']/2**20:.2f}",
+        f"{totals['Rss']/2**20:.2f}", f"{totals['Anonymous']/2**20:.2f}",
+        f"{(totals['Private_Dirty']+totals['Shared_Dirty'])/2**20:.2f}"]])
+    lines += [link("Full Spark memory and storage receipt", args.spark, "memory.json") + ".", ""]
 
 args.output.parent.mkdir(parents=True, exist_ok=True)
 rendered = "\n".join(lines) + "\n"

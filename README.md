@@ -1,6 +1,6 @@
-# Qwen3.8 Flash Next on one RTX PRO 6000 96 GB
+# Qwen3.8 Flash Next on RTX PRO 6000 and DGX Spark
 
-A TP=1 serving recipe with host-resident token embeddings and mmap-backed PLE
+A TP=1 SM12x serving recipe with host-resident token embeddings and mmap-backed PLE
 n-gram tables, FP8 KV cache, vision, CUDA graphs, and tuned MTP. The configured
 context is 262144 tokens and the scheduler has 16 request slots. C1 performance
 is the priority for the defaults; C16 throughput tradeoffs are recorded below.
@@ -44,6 +44,18 @@ below show medians, settings, contract failures and tool points. Linked raw
 receipts retain individual measurements; the [detailed report](benchmarks/RESULTS.md)
 also includes measurement ranges. Tool evaluation uses C8 (eight concurrent cases);
 its points are not presented as a normalized comparison score.
+
+## Platforms
+
+`bash build.sh` and `bash start.sh` detect the host architecture automatically:
+arm64 selects DGX Spark SM121 settings; x86_64 selects RTX SM120 settings.
+Both default to the original EXL3 K4.25 checkpoint with BF16 PLE and mmap.
+Spark caps GPU memory utilization at **0.7** to leave unified memory available
+for checkpoint pages and the host. A lower value is configurable.
+
+Spark qualification and tuning are in progress on the `spark` branch. The
+existing RTX measurements below remain unchanged; no Spark numbers are claimed
+until its full default-profile qualification completes.
 
 ## Run
 

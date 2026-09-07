@@ -1,0 +1,49 @@
+6.17.0-1026-nvidia
+Architecture:                            aarch64
+CPU op-mode(s):                          64-bit
+Byte Order:                              Little Endian
+CPU(s):                                  20
+On-line CPU(s) list:                     0-19
+Vendor ID:                               ARM
+Model name:                              Cortex-X925
+Model:                                   1
+Thread(s) per core:                      1
+Core(s) per socket:                      10
+Socket(s):                               1
+Stepping:                                r0p1
+Frequency boost:                         disabled
+CPU(s) scaling MHz:                      100%
+CPU max MHz:                             3900.0000
+CPU min MHz:                             1378.0000
+BogoMIPS:                                2000.00
+Flags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm jscvt fcma lrcpc dcpop sha3 sm3 sm4 asimddp sha512 sve asimdfhm dit uscat ilrcpc flagm sb paca pacg dcpodp sve2 sveaes svepmull svebitperm svesha3 svesm4 flagm2 frint svei8mm svebf16 i8mm bf16 dgh bti ecv afp wfxt
+
+==============NVSMI LOG==============
+
+Timestamp                                              : Mon Sep  7 20:19:28 2026
+Driver Version                                         : 580.159.03
+CUDA Version                                           : 13.0
+
+Attached GPUs                                          : 1
+GPU 0000000F:01:00.0
+    GPU Power Readings
+        Average Power Draw                             : 4.47 W
+        Instantaneous Power Draw                       : 4.58 W
+        Current Power Limit                            : N/A
+        Requested Power Limit                          : N/A
+        Default Power Limit                            : N/A
+        Min Power Limit                                : N/A
+        Max Power Limit                                : N/A
+    Power Samples
+        Duration                                       : Not Found
+        Number of Samples                              : Not Found
+        Max                                            : Not Found
+        Min                                            : Not Found
+        Avg                                            : Not Found
+    GPU Memory Power Readings 
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+    Module Power Readings
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+        Current Power Limit                            : N/A
