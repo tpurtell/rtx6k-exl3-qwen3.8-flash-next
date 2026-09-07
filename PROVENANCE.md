@@ -25,3 +25,12 @@ memory figures in the qualification ledger are startup observations, not
 steady-state capacity guarantees. Recipe and borrowed vLLM/B12x code are
 covered by their applicable source licenses; checkpoint weights retain their
 own licenses and are downloaded separately.
+
+The optional mmap PLE backport derives from vLLM PR #54129 at
+`50a061f792f36364f5f95a93eee21f1e9d77f65e`. The vendored patch and upstream
+regression tests retain Apache-2.0 attribution. The port preserves this
+recipe's base model namespaces, resident PLE path and kernels, and corrects
+scale validation defects demonstrated by independent failing regressions.
+See `docs/mmap-review.md` for the exact scope, compatibility adaptations and
+real-checkpoint/CUDA replay evidence. The full follow-on benchmark applies
+only to `exl3-ple8` with mmap enabled; v0.1.0 results remain historical.

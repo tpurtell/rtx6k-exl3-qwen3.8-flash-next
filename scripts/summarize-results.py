@@ -9,14 +9,24 @@ import statistics
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--exl3", type=Path, required=True)
 parser.add_argument("--nvfp4", type=Path, required=True)
+parser.add_argument("--mmap", type=Path, help="New mmap-enabled EXL3 PLE8 qualification; original profiles retain their existing receipts")
 parser.add_argument("--output", type=Path, required=True)
 args = parser.parse_args()
 roots = {"EXL3": args.exl3, "NVFP4": args.nvfp4}
+if args.mmap:
+    roots["EXL3 PLE8 mmap"] = args.mmap
 lines = ["# Final serving measurements", "",
          "Generated from the linked raw receipts by `scripts/summarize-results.py`.", "",
          "Each quant runs on one RTX PRO 6000 Blackwell 96 GB at a 400 W power limit. "
-         "C1 is the default-selection priority. Both use FP8 KV and host token embeddings "
-         "and n-gram tables. All decode rates below exclude prefill.", ""]
+         "C1 is the default-selection priority. All use FP8 KV and host token embeddings. "
+         "The mmap profile reads PLE rows from checkpoint-backed mappings; the original "
+         "profiles retain resident host tables. All decode rates below exclude prefill.", ""]
+if args.mmap:
+    lines += ["EXL3 and NVFP4 columns retain the v0.1.0 measurements; only the mmap-enabled "
+              "EXL3 PLE8 column is newly benchmarked. The EXL3 baseline also has a different "
+              "PLE storage precision, so this is not a controlled mmap-on/off ablation. "
+              "The mmap run uses existing Linux page cache and benchmark warmups; it is "
+              "not a cold-disk or constrained-RAM test.", ""]
 
 def read(root, name):
     path = root / name
@@ -50,9 +60,13 @@ for name, root in roots.items():
     argv = runtime["args"]
     spec = json.loads(argv[argv.index("--speculative-config")+1])
     memory = argv[argv.index("--gpu-memory-utilization")+1]
+    env = runtime["selected_environment"]
+    mmap = "VLLM_PLE_MMAP=1" in env
+    serial = next((v.split("=",1)[1] for v in env if v.startswith("VLLM_PLE_MMAP_SERIAL=")), "—") if mmap else "—"
     profile_rows.append([name, spec["num_speculative_tokens"], memory,
+                         "mmap" if mmap else "resident", serial,
                          link("runtime", root, "runtime.json")])
-table(["Quant", "MTP draft tokens", "GPU memory fraction", "Configuration"], profile_rows)
+table(["Profile", "MTP draft tokens", "GPU memory fraction", "PLE storage", "Serial threshold", "Configuration"], profile_rows)
 
 lines += ["## Seven content workloads: C1", "",
           "One warmup and three measured responses per workload, temperature zero and "
@@ -70,7 +84,7 @@ for case in cases:
         passed = sum(r["contract"]["quality_contract_passed"] for r in samples)
         row += [spread([r["decode_tps"] for r in samples]), f"{passed}/3"]
     workload_rows.append(row)
-table(["Workload", "EXL3 tokens/s", "Contract", "NVFP4 tokens/s", "Contract"], workload_rows)
+table(["Workload"] + [h for n in roots for h in (n+" tokens/s", "Contract")], workload_rows)
 table(["Quant", "Weighted blend", "Draft acceptance", "Mean acceptance length", "Raw"], [
     [name, f"{weighted(seven[name]):.2f}",
      f"{next(r for r in read(root, 'seven.jsonl') if r['record']=='mtp_after')['timed_suite_delta']['acceptance_rate']*100:.2f}%",
@@ -111,7 +125,7 @@ for concurrency in (1, 2, 4, 8, 16):
         overlap = [r["peak_overlapping_stream_intervals"] for r in runs]
         row += [spread([r["decode_tokens_per_second"] for r in runs]), f"{min(overlap)}–{max(overlap)}"]
     client_rows.append(row)
-table(["Clients", "EXL3 aggregate tokens/s", "Overlap", "NVFP4 aggregate tokens/s", "Overlap"], client_rows)
+table(["Clients"] + [h for n in roots for h in (n+" aggregate tokens/s", "Overlap")], client_rows)
 lines += ["Raw: " + ", ".join(link(name, root, "clients.json") for name, root in roots.items()) + ".", ""]
 
 lines += ["## Prefill matrix: C1", "",
@@ -127,7 +141,7 @@ for depth in (2048, 8192, 32768, 65536, 128000, 261632):
         row += [spread([r["effective_prompt_tokens_per_second"] for r in point["runs"]], 1),
                 spread([r["ttft_seconds"] for r in point["runs"]], 3)]
     prefill_rows.append(row)
-table(["Prompt tokens", "EXL3 tokens/s", "EXL3 TTFT, s", "NVFP4 tokens/s", "NVFP4 TTFT, s"], prefill_rows)
+table(["Prompt tokens"] + [h for n in roots for h in (n+" tokens/s", n+" TTFT, s")], prefill_rows)
 lines += ["Raw: " + ", ".join(link(name, root, "prefill.json") for name, root in roots.items()) + ".", ""]
 
 lines += ["## Context and decode scaling: C1", "",
@@ -143,7 +157,7 @@ for depth in (2048, 8192, 32768, 65536, 131072, 261632):
         assert len(samples) == 3
         row += [spread([r["decode_tps"] for r in samples]), spread([r["ttft_seconds"] for r in samples], 3)]
     context_rows.append(row)
-table(["Prompt tokens", "EXL3 decode tokens/s", "EXL3 TTFT, s", "NVFP4 decode tokens/s", "NVFP4 TTFT, s"], context_rows)
+table(["Prompt tokens"] + [h for n in roots for h in (n+" decode tokens/s", n+" TTFT, s")], context_rows)
 lines += ["Raw: " + ", ".join(link(name, root, "context.jsonl") for name, root in roots.items()) + ".", ""]
 lines += ["## Reference coding task: C1 across KV depths", "",
           "The async task-runner prompt is identical to the reference recipe. Qwen's "
@@ -162,7 +176,7 @@ for depth in (0, 8192, 32768, 65536, 128000, 261632):
         assert len(samples) == 3
         row.append(spread([r["reference_n_minus_one_tps"] for r in samples]))
     coding_rows.append(row)
-table(["Prompt depth", "EXL3 decode tokens/s", "NVFP4 decode tokens/s"], coding_rows)
+table(["Prompt depth"] + [n+" decode tokens/s" for n in roots], coding_rows)
 lines += ["Raw: " + ", ".join(link(name, root, "code-agent.jsonl") for name, root in roots.items()) + ".", ""]
 for name, root in roots.items():
     boundary = timed(read(root, "context-boundary.jsonl"))

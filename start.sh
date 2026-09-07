@@ -31,7 +31,7 @@ docker run -d --name "${CONTAINER_NAME:-qwen38-${QUANT:-exl3}}" \
   -e VLLM_PLE_MMAP_PREWARM="${PLE_MMAP_PREWARM:-0}" \
   -e VLLM_PLE_MMAP_READAHEAD="${PLE_MMAP_READAHEAD:-0}" \
   -e VLLM_PLE_MMAP_PINNED="${PLE_MMAP_PINNED:-0}" \
-  -e VLLM_PLE_MMAP_SERIAL="${PLE_MMAP_SERIAL:-0}" \
+  -e VLLM_PLE_MMAP_SERIAL="${PLE_MMAP_SERIAL:-128}" \
   -e VLLM_PLE_CPU_OFFLOAD="$((1 - PLE_MMAP))" -e VLLM_PLE_OFFLOAD_READY_TIMEOUT=1800 \
   -v "$RUNTIME_CACHE:/root/.cache" \
   -v "$HF_CACHE:/root/.cache/huggingface:ro" \

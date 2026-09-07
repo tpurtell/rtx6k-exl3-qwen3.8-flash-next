@@ -71,3 +71,11 @@ records per-process anonymous/file/shared memory and checkpoint mapping
 sizes, resident bytes and dirty bytes. The runtime receipt records all mmap
 settings. The full matrix is limited to mmap-enabled `exl3-ple8`, as requested;
 other model performance numbers remain the historical v0.1.0 measurements.
+
+The three-run C1 comparison measured **138.30 tokens/s** with SERIAL=0 and
+**147.94 tokens/s** with SERIAL=128. The recipe and published image therefore
+default to SERIAL=128 when mmap is enabled; callers can override it. This
+setting only bypasses the gather thread pool for at most 128 distinct rows.
+Large prefills continue to use the worker pool. Both use MTP3 and the same
+checkpoint, with PREWARM/READAHEAD/PINNED off. Full raw responses and metrics
+are in `benchmarks/exl3-ple8-mmap-serial{0,128}-seven.jsonl`.

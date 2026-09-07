@@ -46,6 +46,7 @@ LABEL io.tpurtell.ple-mmap.pr="54129" \
 ENV VLLM_EXL3_TRELLIS_MIN_M=1 \
     VLLM_EXL3_PREFILL_TRELLIS=1 \
     VLLM_EXL3_PREFILL_CAPACITY=2048 \
+    VLLM_PLE_MMAP_SERIAL=128 \
     VLLM_PLE_CPU_OFFLOAD=1 \
     VLLM_PLE_OFFLOAD_READY_TIMEOUT=1800
 LABEL org.opencontainers.image.source="https://github.com/tpurtell/rtx6k-exl3-qwen3.8-flash-next" \

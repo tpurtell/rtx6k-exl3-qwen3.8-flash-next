@@ -1,0 +1,81 @@
+{
+  "container": "qwen38-exl3-ple8-mmap-dev2",
+  "image_id": "sha256:d86ea9c0b28bb4ea4327129728eda732af8799a3909cc5dbe85aed698b260070",
+  "args": [
+    "serve",
+    "/root/.cache/huggingface/hub/models--wrldsuksgo2mars--Qwen3.8-Flash-Next-EXL3-K4.25-PLE-FP8-v1/snapshots/888306bd3996d6317758c07df50622829259ad17",
+    "--served-model-name",
+    "qwen38-exl3-ple8",
+    "--port",
+    "8001",
+    "--tensor-parallel-size",
+    "1",
+    "--distributed-executor-backend",
+    "mp",
+    "--max-model-len",
+    "262144",
+    "--max-num-seqs",
+    "16",
+    "--max-num-batched-tokens",
+    "2048",
+    "--gpu-memory-utilization",
+    "0.94",
+    "--kv-cache-dtype",
+    "fp8",
+    "--enable-auto-tool-choice",
+    "--tool-call-parser",
+    "qwen3_coder",
+    "--reasoning-parser",
+    "qwen3",
+    "--speculative-config",
+    "{\"method\":\"mtp\",\"num_speculative_tokens\":3}"
+  ],
+  "started_at": "2026-09-07T11:02:34.582104274Z",
+  "device_requests": [
+    {
+      "Driver": "",
+      "Count": 0,
+      "DeviceIDs": [
+        "1"
+      ],
+      "Capabilities": [
+        [
+          "gpu"
+        ]
+      ],
+      "Options": {}
+    }
+  ],
+  "selected_environment": [
+    "QWEN38_B12X_NVFP4=0",
+    "VLLM_PLE_MMAP_READAHEAD=0",
+    "VLLM_PLE_MMAP_PINNED=0",
+    "VLLM_PLE_MMAP_SERIAL=0",
+    "VLLM_PLE_CPU_OFFLOAD=0",
+    "QWEN38_B12X_VOCAB=0",
+    "VLLM_PLE_MMAP=1",
+    "VLLM_PLE_MMAP_WORKERS=32",
+    "VLLM_PLE_MMAP_CHUNK=2048",
+    "VLLM_PLE_MMAP_PREWARM=0",
+    "OMP_NUM_THREADS=8",
+    "VLLM_EXL3_TRELLIS_MIN_M=1",
+    "VLLM_EXL3_PREFILL_TRELLIS=1",
+    "VLLM_EXL3_PREFILL_CAPACITY=2048"
+  ],
+  "selected_startup_lines": [
+    "(Worker pid=253) INFO 09-07 11:03:50 [ple_mmap.py:2057] PLE mmap: layer 1 attached, 128 shards, 320001536 rows x 160 B (47.68 GiB on disk), 32 workers",
+    "(Worker pid=253) INFO 09-07 11:03:51 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+    "(Worker pid=253) INFO 09-07 11:04:08 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+    "(Worker pid=253) INFO 09-07 11:04:10 [model_runner.py:407] Model loading took 71.99 GiB memory and 51.877332 seconds",
+    "(Worker pid=253) INFO 09-07 11:04:10 [model_state.py:148] PLE mmap: staging aggregate allocation 0.0 GiB across 1 layer(s) (max_num_tokens=2048, free=21.92 GiB)",
+    "(EngineCore pid=226) INFO 09-07 11:04:35 [kv_cache_utils.py:2258] GPU KV cache size: 839,878 tokens, Maximum concurrency for 262,144 tokens per request: 3.20x",
+    "(Worker pid=253) INFO 09-07 11:04:42 [model_runner.py:953] Graph capturing finished in 7 secs, took 0.96 GiB",
+    "(Worker pid=253) INFO 09-07 11:04:42 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=1280 n=1 p50_ms=4.75 p50_ids_d2h_wait_ms=0.05 p50_gather_ms=4.65 p50_h2d_call_ms=0.05 prep_p99_ms=4.75 p99_ids_d2h_wait_ms=0.05 p99_gather_ms=4.65 p99_h2d_call_ms=0.05 pinned=0/1",
+    "(Worker pid=253) INFO 09-07 11:07:25 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=75456 n=947 p50_ms=2.00 p50_ids_d2h_wait_ms=0.02 p50_gather_ms=1.96 p50_h2d_call_ms=0.02 prep_p99_ms=14.62 p99_ids_d2h_wait_ms=1.55 p99_gather_ms=13.04 p99_h2d_call_ms=0.03 pinned=0/947"
+  ],
+  "gpu_inventory_csv": [
+    "index, name, uuid, driver_version, memory.total [MiB], power.limit [W]",
+    "0, NVIDIA RTX PRO 6000 Blackwell Workstation Edition, GPU-fe5b6dd0-a77c-c8fb-6360-e1b9d9918ac0, 595.71.05, 97887 MiB, 400.00 W",
+    "1, NVIDIA RTX PRO 6000 Blackwell Workstation Edition, GPU-95f8f212-9131-df99-fd53-7535965197d7, 595.71.05, 97887 MiB, 400.00 W"
+  ]
+}

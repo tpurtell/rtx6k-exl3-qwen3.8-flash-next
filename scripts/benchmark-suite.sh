@@ -2,7 +2,7 @@
 # Run on an otherwise idle endpoint. Tool-eval-bench is a separate pinned suite.
 set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-QUANT="${QUANT:?Set QUANT=exl3 or nvfp4}"
+QUANT="${QUANT:?Set QUANT=exl3, exl3-ple8 or nvfp4}"
 MTP_TOKENS="${MTP_TOKENS:?Set the tested maximum draft length}"
 BASE_URL="${BASE_URL:-http://127.0.0.1:8001}"
 BASE_URL="${BASE_URL%/}"
