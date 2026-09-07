@@ -344,3 +344,8 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   C8's logged KV usage is59.3%, consistent with cache pressure at16.
   The client runner preserves each request's timing arrays. MTP2 and memory
   budget tuning will test whether16 active sequences fit.
+- NVIDIA graph MTP3 orchid counts are102/102/750 in measured runs; all
+  fail exact100, and the last hits the1500-token budget. Warmup also hits
+  the budget. Raw responses and timed-suite MTP counters are preserved in
+  `recipe/benchmarks/nvfp4-dev10-graph-orchid.jsonl`. These repetition rates
+  must not be represented as successful-task throughput.

@@ -128,7 +128,17 @@ def independent_clients(base_url, model, concurrency, output_tokens, seed):
     first = min(r["started_perf_seconds"] + r["token_times_seconds"][0][0] for r in results)
     last = max(r["started_perf_seconds"] + r["token_times_seconds"][0][-1] for r in results)
     tokens = sum(r["decode_tokens"] for r in results)
+    events = []
+    for result in results:
+        times = result["token_times_seconds"][0]
+        start = result["started_perf_seconds"]
+        events.extend(((start + times[0], 1), (start + times[-1], -1)))
+    active = peak = 0
+    for _, delta in sorted(events):
+        active += delta
+        peak = max(peak, active)
     return {"concurrency": concurrency, "request_mode": "clients",
+            "peak_overlapping_stream_intervals": peak,
             "decode_tokens": tokens, "decode_seconds": last - first,
             "decode_tokens_per_second": tokens / (last - first),
             "request_results": results}
