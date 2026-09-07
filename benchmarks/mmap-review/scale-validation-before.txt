@@ -1,0 +1,51 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_____________ test_reject_nonidentical_streamed_scale[1e-08-2e-08] _____________
+/workspace/tests/test_ple_mmap_review.py:18: in test_reject_nonidentical_streamed_scale
+    with pytest.raises(RuntimeError, match='weight_scale mismatch'):
+E   Failed: DID NOT RAISE RuntimeError
+----------------------------- Captured stdout call -----------------------------
+INFO 09-07 10:59:30 [ple_mmap.py:2054] PLE mmap: layer 0 attached, 2 shards, 8 rows x 4 B (0.00 GiB on disk), 32 workers
+------------------------------ Captured log call -------------------------------
+INFO     vllm.models.qwen3_8_flash_next.nvidia.ple_mmap:ple_mmap.py:2054 PLE mmap: layer 0 attached, 2 shards, 8 rows x 4 B (0.00 GiB on disk), 32 workers
+_________ test_reject_nonidentical_streamed_scale[0.5-streamed_scale1] _________
+/workspace/tests/test_ple_mmap_review.py:18: in test_reject_nonidentical_streamed_scale
+    with pytest.raises(RuntimeError, match='weight_scale mismatch'):
+E   Failed: DID NOT RAISE RuntimeError
+----------------------------- Captured stdout call -----------------------------
+INFO 09-07 10:59:30 [ple_mmap.py:2054] PLE mmap: layer 0 attached, 2 shards, 8 rows x 4 B (0.00 GiB on disk), 32 workers
+------------------------------ Captured log call -------------------------------
+INFO     vllm.models.qwen3_8_flash_next.nvidia.ple_mmap:ple_mmap.py:2054 PLE mmap: layer 0 attached, 2 shards, 8 rows x 4 B (0.00 GiB on disk), 32 workers
+_________________ test_reject_nonfinite_checkpoint_scale[inf] __________________
+/workspace/tests/test_ple_mmap_review.py:28: in test_reject_nonfinite_checkpoint_scale
+    with pytest.raises(ValueError, match='finite'):
+E   Failed: DID NOT RAISE ValueError
+_________________ test_reject_nonfinite_checkpoint_scale[-inf] _________________
+/workspace/tests/test_ple_mmap_review.py:28: in test_reject_nonfinite_checkpoint_scale
+    with pytest.raises(ValueError, match='finite'):
+E   Failed: DID NOT RAISE ValueError
+_________________ test_reject_nonfinite_checkpoint_scale[nan] __________________
+/workspace/tests/test_ple_mmap_review.py:28: in test_reject_nonfinite_checkpoint_scale
+    with pytest.raises(ValueError, match='finite'):
+E   Failed: DID NOT RAISE ValueError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:365: 14 warnings
+  /usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:469
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:469: PytestCacheWarning: could not create cache path /workspace/tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/workspace/tests/pytest-cache-files-6jfduu2z'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:423
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:423: PytestCacheWarning: could not create cache path /workspace/tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/workspace/tests/pytest-cache-files-87b4oacj'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../workspace/tests/test_ple_mmap_review.py::test_reject_nonidentical_streamed_scale[1e-08-2e-08]
+FAILED ../workspace/tests/test_ple_mmap_review.py::test_reject_nonidentical_streamed_scale[0.5-streamed_scale1]
+FAILED ../workspace/tests/test_ple_mmap_review.py::test_reject_nonfinite_checkpoint_scale[inf]
+FAILED ../workspace/tests/test_ple_mmap_review.py::test_reject_nonfinite_checkpoint_scale[-inf]
+FAILED ../workspace/tests/test_ple_mmap_review.py::test_reject_nonfinite_checkpoint_scale[nan]
+5 failed, 16 warnings in 8.38s

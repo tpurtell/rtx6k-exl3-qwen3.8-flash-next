@@ -148,7 +148,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-url", default="http://127.0.0.1:8001/v1")
     parser.add_argument("--model", required=True)
-    parser.add_argument("--profile", required=True, choices=["nvfp4", "exl3"])
+    parser.add_argument("--profile", required=True, choices=["nvfp4", "exl3", "exl3-ple8"])
     parser.add_argument("--mtp-tokens", type=int, required=True)
     parser.add_argument(
         "--mtp-policy",

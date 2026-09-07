@@ -39,6 +39,10 @@ RUN python3 /tmp/port-exl3-qwen38.py /usr/local/lib/python3.12/dist-packages/vll
  && python3 /tmp/port-vocab-projection.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 /tmp/port-nvfp4-moe.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 -c 'from vllm.model_executor.layers.quantization import get_quantization_config; assert get_quantization_config("exl3").__name__ == "Exl3Config"'
+COPY patches/port-ple-mmap.py patches/ple-mmap-pr54129.patch patches/ple-mmap-base-hashes.json /tmp/ple-mmap/
+RUN python3 /tmp/ple-mmap/port-ple-mmap.py /usr/local/lib/python3.12/dist-packages/vllm
+LABEL io.tpurtell.ple-mmap.pr="54129" \
+      io.tpurtell.ple-mmap.commit="50a061f792f36364f5f95a93eee21f1e9d77f65e"
 ENV VLLM_EXL3_TRELLIS_MIN_M=1 \
     VLLM_EXL3_PREFILL_TRELLIS=1 \
     VLLM_EXL3_PREFILL_CAPACITY=2048 \

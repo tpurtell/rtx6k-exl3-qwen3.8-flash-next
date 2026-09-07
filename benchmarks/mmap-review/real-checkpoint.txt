@@ -1,0 +1,4 @@
+WARNING 09-07 11:06:49 [ple_mmap.py:1956] PLE mmap: layer 1 weight_scale falling back to a direct header read — this layer's ngram_embedding family was never streamed through the checkpoint loader
+INFO 09-07 11:06:49 [ple_mmap.py:2057] PLE mmap: layer 1 attached, 128 shards, 320001536 rows x 160 B (47.68 GiB on disk), 32 workers
+PASS: 512 real checkpoint rows, both boundaries of all 128 shards, byte-exact against safetensors slices
+PASS: 8 CUDA graph replays with changed real rows, exact scaled BF16 output

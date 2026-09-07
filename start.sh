@@ -11,6 +11,8 @@ if [[ ! -f "$HF_CACHE/hub/$MODEL_CACHE_NAME/snapshots/$MODEL_REVISION/config.jso
   exit 1
 fi
 MTP_TOKENS="${MTP_TOKENS:-$( [[ ${QUANT:-exl3} == nvfp4 ]] && echo 2 || echo 3 )}"
+PLE_MMAP="${PLE_MMAP:-${VLLM_PLE_MMAP:-0}}"
+[[ "$PLE_MMAP" == 0 || "$PLE_MMAP" == 1 ]] || { echo "PLE_MMAP must be 0 or 1" >&2; exit 2; }
 EXTRA_ARGS=()
 [[ "${ENFORCE_EAGER:-0}" == 1 ]] && EXTRA_ARGS+=(--enforce-eager)
 if [[ "${MTP_TOKENS:-3}" != 0 ]]; then
@@ -23,7 +25,14 @@ docker run -d --name "${CONTAINER_NAME:-qwen38-${QUANT:-exl3}}" \
   -e TRITON_CACHE_DIR=/root/.cache/triton \
   -e QWEN38_B12X_VOCAB="${B12X_VOCAB:-0}" \
   -e QWEN38_B12X_NVFP4="${B12X_NVFP4:-0}" \
-  -e VLLM_PLE_CPU_OFFLOAD=1 -e VLLM_PLE_OFFLOAD_READY_TIMEOUT=1800 \
+  -e VLLM_PLE_MMAP="$PLE_MMAP" \
+  -e VLLM_PLE_MMAP_WORKERS="${PLE_MMAP_WORKERS:-32}" \
+  -e VLLM_PLE_MMAP_CHUNK="${PLE_MMAP_CHUNK:-2048}" \
+  -e VLLM_PLE_MMAP_PREWARM="${PLE_MMAP_PREWARM:-0}" \
+  -e VLLM_PLE_MMAP_READAHEAD="${PLE_MMAP_READAHEAD:-0}" \
+  -e VLLM_PLE_MMAP_PINNED="${PLE_MMAP_PINNED:-0}" \
+  -e VLLM_PLE_MMAP_SERIAL="${PLE_MMAP_SERIAL:-0}" \
+  -e VLLM_PLE_CPU_OFFLOAD="$((1 - PLE_MMAP))" -e VLLM_PLE_OFFLOAD_READY_TIMEOUT=1800 \
   -v "$RUNTIME_CACHE:/root/.cache" \
   -v "$HF_CACHE:/root/.cache/huggingface:ro" \
   "${IMAGE:-qwen38-rtx:local}" "$MODEL_PATH" \
