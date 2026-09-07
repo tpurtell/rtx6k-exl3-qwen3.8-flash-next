@@ -54,5 +54,5 @@ Full qualification is distributed by independent suite across four Sparks.
 Each measured request or concurrent batch uses one TP=1 GB10. The assembly
 script requires identical immutable image IDs, serving arguments and selected
 environment settings across hosts, and records each result's originating host
-and SHA-256. Full qualification remains in progress until that manifest and
-its complete raw results are committed.
+and SHA-256. The completed qualification is in `benchmarks/spark-final`, including that
+manifest, all four runtime captures and post-qualification memory snapshots.

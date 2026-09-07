@@ -636,3 +636,11 @@ The published image is `ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next:v0.2.0`,
 with digest `sha256:bb252820ade1b6aa1316c45485186db90fe67f1d7ea48826169bf92f634d2e73`.
 The GHCR package is public. The qualified mmap PLE8 server remains on GPU1,
 port 8001; the shipping default is configured independently of that live test.
+
+## Spark branch qualification
+
+Native arm64 qualification and tuning are complete on the `spark` branch,
+with the original EXL3 BF16 PLE mmap profile. See
+[Spark qualification and tuning](spark-work.md) and the
+[complete four-profile report](../benchmarks/RESULTS.md). The historical RTX
+receipts above remain unchanged.

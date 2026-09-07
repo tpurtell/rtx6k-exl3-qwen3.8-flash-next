@@ -28,16 +28,16 @@ The original EXL3/NVIDIA performance columns below are unchanged historical
 results, not new runs. They differ in quantization and PLE precision from the
 mmap profile; this is not a controlled mmap-on/off comparison.
 
-Selected-profile results on one 400 W card:
+Selected-profile results: RTX columns use one 400 W card; Spark uses one GB10.
 
-| Measurement | EXL3 resident, MTP3 (v0.1.0) | NVFP4 resident, MTP2 (v0.1.0) | EXL3 PLE8 mmap, MTP3 |
-|---|---:|---:|---:|
-| C1 seven-workload weighted decode, tokens/s | **152.82** | **151.11** | **147.78** |
-| C1 greedy `merge_intervals` median, tokens/s | 202.99 | 185.55 | 197.74 |
-| C1 sampled async coding task median, tokens/s | 185.55 | 166.92 | 183.45 |
-| C16 sampled-prose aggregate median, tokens/s | 696.96 | 930.71 | 659.75 |
-| Full-context boundary: 261888 input + 256 output | Pass | Pass | Pass |
-| API tool constraints / retrieval probes | 16/16; 6/6 | 16/16; 6/6 | 16/16; 6/6 |
+| Measurement | EXL3 resident, MTP3 (v0.1.0) | NVFP4 resident, MTP2 (v0.1.0) | EXL3 PLE8 mmap, MTP3 | EXL3 mmap Spark (BF16 PLE), MTP2 |
+|---|---:|---:|---:|---:|
+| C1 seven-workload weighted decode, tokens/s | **152.82** | **151.11** | **147.78** | **31.11** |
+| C1 greedy `merge_intervals` median, tokens/s | 202.99 | 185.55 | 197.74 | 38.12 |
+| C1 sampled async coding task median, tokens/s | 185.55 | 166.92 | 183.45 | 36.21 |
+| C16 sampled-prose aggregate median, tokens/s | 696.96 | 930.71 | 659.75 | 101.00 |
+| Full-context boundary: 261888 input + 256 output | Pass | Pass | Pass | Pass |
+| API tool constraints / retrieval probes | 16/16; 6/6 | 16/16; 6/6 | 16/16; 6/6 | 16/16; 6/6 |
 
 These are different workloads, not interchangeable rates. The full matrices
 below show medians, settings, contract failures and tool points. Linked raw
@@ -66,9 +66,10 @@ for checkpoint pages and the host. A lower value is configurable.
 Use `B12X_VOCAB=0` for the native vocabulary projection or
 `PLE_MMAP_READAHEAD=0` to disable targeted readahead.
 
-Spark qualification and tuning are in progress on the `spark` branch. The
-existing RTX measurements below remain unchanged; no Spark numbers are claimed
-until its full default-profile qualification completes.
+Spark's original BF16 PLE default has completed the full qualification below.
+The RTX columns retain their existing measurements. The
+[Spark prerelease](https://github.com/tpurtell/sm12x-exl3-qwen3.8-flash-next/releases/tag/v0.3.0-spark.1)
+is on the `spark` branch; `main` remains unchanged.
 
 ## Run
 
@@ -90,10 +91,11 @@ used by `start.sh`. Immutable image digests are recorded in
 | Platform | Image package | Status |
 |---|---|---|
 | RTX, linux/amd64 | `ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next` | v0.2.0 |
-| Spark, linux/arm64 | `ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next` | Qualification candidate |
+| Spark, linux/arm64 | `ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next` | v0.3.0-spark.1 |
 
 The new Spark package currently requires registry authentication while its
-visibility is private. Full Spark qualification is in progress on this branch.
+visibility is private. The package owner can enable public pulls in GitHub
+package settings.
 
 The RTX measurements use one RTX PRO 6000 Blackwell 96 GB at **400 W**, driver
 595.71.05, and a Threadripper 9970X host with 183 GiB CPU RAM. Spark uses a GB10
@@ -228,7 +230,8 @@ Spark's BF16 mmap comparisons favor **MTP2** for the mixed C1 workload.
 The initial readahead-off sweep measured 26.29, 27.32, 25.72 and 24.14 tokens/s
 for MTP1 through MTP4. Targeted readahead raised the MTP2 blend to 29.21;
 adding B12x vocabulary on the same host raised it to 30.75. The combined
-MTP2 / readahead2048 / B12x vocabulary profile is undergoing full qualification.
+MTP2 / readahead2048 / B12x vocabulary profile measures **31.11 tokens/s**
+in the completed qualification.
 [All Spark tuning receipts](benchmarks/spark-review/TUNING.md) retain the
 C16 probes and same-host comparisons. The 128-range and 2048-range short
 C16 probes measured 89.09 and 97.14 tokens/s; these single probes are distinct
@@ -292,37 +295,43 @@ is unreliable, and throughput figures include outputs that fail contracts.
 
 Generated from the linked raw receipts by `scripts/summarize-results.py`.
 
-Each quant runs on one RTX PRO 6000 Blackwell 96 GB at a 400 W power limit. C1 is the default-selection priority. All use FP8 KV and host token embeddings. The mmap profile reads PLE rows from checkpoint-backed mappings; the original profiles retain resident host tables. All decode rates below exclude prefill.
+RTX profiles run on one RTX PRO 6000 Blackwell 96 GB at a 400 W power limit. The Spark profile, when present, runs on one DGX Spark GB10 with unified memory. C1 is the default-selection priority. All use FP8 KV and host token embeddings. The mmap profiles read PLE rows from checkpoint-backed mappings; the original RTX profiles retain resident host tables. All decode rates below exclude prefill.
 
-EXL3 and NVFP4 columns retain the v0.1.0 measurements; only the mmap-enabled EXL3 PLE8 column is newly benchmarked. The EXL3 baseline also has a different PLE storage precision, so this is not a controlled mmap-on/off ablation. The mmap run uses existing Linux page cache and benchmark warmups; it is not a cold-disk or constrained-RAM test.
+EXL3 and NVFP4 columns retain the v0.1.0 measurements; only the mmap-enabled EXL3 PLE8 column records its v0.2.0 qualification. The RTX EXL3 baseline has a different PLE storage precision, so this is not a controlled mmap-on/off ablation. The mmap run uses existing Linux page cache and benchmark warmups; it is not a cold-disk or constrained-RAM test.
+
+The Spark column is newly qualified on native arm64 with the original BF16 PLE checkpoint.
 
 ## Profiles
 
-| Profile | MTP draft tokens | GPU memory fraction | PLE storage | Serial threshold | Configuration |
-| --- | --- | --- | --- | --- | --- |
-| EXL3 | 3 | 0.94 | resident | — | [runtime](benchmarks/exl3-final/runtime.json) |
-| NVFP4 | 2 | 0.94 | resident | — | [runtime](benchmarks/nvfp4-final/runtime.json) |
-| EXL3 PLE8 mmap | 3 | 0.94 | mmap | 128 | [runtime](benchmarks/exl3-ple8-mmap-final/runtime.json) |
+| Profile | MTP draft tokens | GPU memory fraction | PLE storage | Serial threshold | Readahead range limit | Configuration |
+| --- | --- | --- | --- | --- | --- | --- |
+| EXL3 | 3 | 0.94 | resident | — | — | [runtime](benchmarks/exl3-final/runtime.json) |
+| NVFP4 | 2 | 0.94 | resident | — | — | [runtime](benchmarks/nvfp4-final/runtime.json) |
+| EXL3 PLE8 mmap | 3 | 0.94 | mmap | 128 | 0 | [runtime](benchmarks/exl3-ple8-mmap-final/runtime.json) |
+| EXL3 mmap Spark (BF16 PLE) | 2 | 0.7 | mmap | 128 | 2048 | [runtime](benchmarks/spark-final/runtime.json) |
+
+Independent Spark suites ran on four hosts with identical image IDs, serving arguments and selected environment settings. Each measurement uses one TP=1 GB10. Dynamically profiled KV allocations and page-cache histories can differ between hosts. [Host assignments, runtime receipts and memory snapshots](benchmarks/spark-final/qualification-manifest.json).
 
 ## Seven content workloads: C1
 
 One warmup and three measured responses per workload, temperature zero and thinking disabled. Values are median tokens/s. The weighted blend is total post-initial-burst tokens divided by their total decode time. Rates include failed output contracts and are not successful-task throughput.
 
-| Workload | EXL3 tokens/s | Contract | NVFP4 tokens/s | Contract | EXL3 PLE8 mmap tokens/s | Contract |
-| --- | --- | --- | --- | --- | --- | --- |
-| code | 202.99 | 3/3 | 185.55 | 3/3 | 197.74 | 3/3 |
-| math | 211.53 | 3/3 | 190.53 | 3/3 | 203.70 | 3/3 |
-| fable | 120.24 | 1/3 | 130.79 | 0/3 | 117.36 | 1/3 |
-| hello | 175.76 | 3/3 | 149.58 | 3/3 | 175.71 | 3/3 |
-| topic | 147.88 | 3/3 | 142.45 | 3/3 | 138.57 | 3/3 |
-| structured-json | 168.50 | 3/3 | 161.41 | 3/3 | 187.19 | 3/3 |
-| multilingual | 125.25 | 3/3 | 127.20 | 2/3 | 112.99 | 2/3 |
+| Workload | EXL3 tokens/s | Contract | NVFP4 tokens/s | Contract | EXL3 PLE8 mmap tokens/s | Contract | EXL3 mmap Spark (BF16 PLE) tokens/s | Contract |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| code | 202.99 | 3/3 | 185.55 | 3/3 | 197.74 | 3/3 | 38.12 | 3/3 |
+| math | 211.53 | 3/3 | 190.53 | 3/3 | 203.70 | 3/3 | 38.75 | 3/3 |
+| fable | 120.24 | 1/3 | 130.79 | 0/3 | 117.36 | 1/3 | 26.29 | 1/3 |
+| hello | 175.76 | 3/3 | 149.58 | 3/3 | 175.71 | 3/3 | 31.35 | 3/3 |
+| topic | 147.88 | 3/3 | 142.45 | 3/3 | 138.57 | 3/3 | 30.37 | 3/3 |
+| structured-json | 168.50 | 3/3 | 161.41 | 3/3 | 187.19 | 3/3 | 35.12 | 3/3 |
+| multilingual | 125.25 | 3/3 | 127.20 | 2/3 | 112.99 | 2/3 | 24.79 | 3/3 |
 
 | Quant | Weighted blend | Draft acceptance | Mean acceptance length | Raw |
 | --- | --- | --- | --- | --- |
 | EXL3 | 152.82 | 56.05% | 2.681 | [responses and timings](benchmarks/exl3-final/seven.jsonl) |
 | NVFP4 | 151.11 | 64.44% | 2.289 | [responses and timings](benchmarks/nvfp4-final/seven.jsonl) |
 | EXL3 PLE8 mmap | 147.78 | 52.55% | 2.576 | [responses and timings](benchmarks/exl3-ple8-mmap-final/seven.jsonl) |
+| EXL3 mmap Spark (BF16 PLE) | 31.11 | 62.96% | 2.259 | [responses and timings](benchmarks/spark-final/seven.jsonl) |
 
 The code contract checks syntax and required assertions; it does not execute the generated code. The Chinese terminology check is a literal-phrase proxy and can reject a correct paraphrase. All rejected responses remain in the raw files.
 
@@ -335,71 +344,74 @@ The prompt requests exactly 100 space-separated `orchid` words, with a 1500-toke
 | EXL3 | 750, 750, 101, 100, 102 | 1/5 | 236.03 | [responses](benchmarks/exl3-final/orchid.jsonl) |
 | NVFP4 | 102, 101, 101, 100, 101 | 1/5 | 197.95 | [responses](benchmarks/nvfp4-final/orchid.jsonl) |
 | EXL3 PLE8 mmap | 100, 101, 100, 750, 750 | 2/5 | 231.43 | [responses](benchmarks/exl3-ple8-mmap-final/orchid.jsonl) |
+| EXL3 mmap Spark (BF16 PLE) | 750, 100, 100, 100, 102 | 3/5 | 41.84 | [responses](benchmarks/spark-final/orchid.jsonl) |
 
 ## Sampled prose: independent clients
 
 Each client requests 256 forced output tokens at temperature 0.7 with fixed sampling seeds and thinking disabled. Two full warmups and three measurements per concurrency. Aggregate rate divides the sum of each client's N−1 tokens by the whole batch's first-to-last token window. Overlap counts come from client stream intervals, not a GPU occupancy gauge.
 
-| Clients | EXL3 aggregate tokens/s | Overlap | NVFP4 aggregate tokens/s | Overlap | EXL3 PLE8 mmap aggregate tokens/s | Overlap |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | 111.70 | 1 | 113.24 | 1 | 99.18 | 1 |
-| 2 | 191.37 | 2 | 213.17 | 2 | 162.30 | 2 |
-| 4 | 347.87 | 4 | 365.63 | 4 | 306.38 | 4 |
-| 8 | 532.66 | 8 | 620.24 | 8 | 493.19 | 8 |
-| 16 | 696.96 | 16 | 930.71 | 16 | 659.75 | 16 |
+| Clients | EXL3 aggregate tokens/s | Min overlap | NVFP4 aggregate tokens/s | Min overlap | EXL3 PLE8 mmap aggregate tokens/s | Min overlap | EXL3 mmap Spark (BF16 PLE) aggregate tokens/s | Min overlap |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 111.70 | 1 | 113.24 | 1 | 99.18 | 1 | 27.13 | 1 |
+| 2 | 191.37 | 2 | 213.17 | 2 | 162.30 | 2 | 43.67 | 2 |
+| 4 | 347.87 | 4 | 365.63 | 4 | 306.38 | 4 | 65.48 | 4 |
+| 8 | 532.66 | 8 | 620.24 | 8 | 493.19 | 8 | 97.46 | 8 |
+| 16 | 696.96 | 16 | 930.71 | 16 | 659.75 | 16 | 101.00 | 12 |
 
-Raw: [EXL3](benchmarks/exl3-final/clients.json), [NVFP4](benchmarks/nvfp4-final/clients.json), [EXL3 PLE8 mmap](benchmarks/exl3-ple8-mmap-final/clients.json).
+Raw: [EXL3](benchmarks/exl3-final/clients.json), [NVFP4](benchmarks/nvfp4-final/clients.json), [EXL3 PLE8 mmap](benchmarks/exl3-ple8-mmap-final/clients.json), [EXL3 mmap Spark (BF16 PLE)](benchmarks/spark-final/clients.json).
 
 ## Prefill matrix: C1
 
 Exact prompt lengths, unique first cache blocks and three measurements after a warmup at each depth. Effective prompt tokens/s includes server tokenization and the handoff of the first output token; it is not isolated GPU prefill time.
 
-| Prompt tokens | EXL3 tokens/s | EXL3 TTFT, s | NVFP4 tokens/s | NVFP4 TTFT, s | EXL3 PLE8 mmap tokens/s | EXL3 PLE8 mmap TTFT, s |
-| --- | --- | --- | --- | --- | --- | --- |
-| 2048 | 7046.6 | 0.291 | 10432.6 | 0.196 | 6888.2 | 0.297 |
-| 8192 | 7513.1 | 1.090 | 11072.0 | 0.740 | 7432.7 | 1.102 |
-| 32768 | 7452.9 | 4.397 | 10900.3 | 3.006 | 7411.3 | 4.421 |
-| 65536 | 7261.8 | 9.025 | 10535.6 | 6.220 | 7226.0 | 9.069 |
-| 128000 | 6965.5 | 18.376 | 9952.9 | 12.861 | 6933.4 | 18.461 |
-| 261632 | 6472.0 | 40.425 | 8967.4 | 29.176 | 6452.9 | 40.545 |
+| Prompt tokens | EXL3 tokens/s | EXL3 TTFT, s | NVFP4 tokens/s | NVFP4 TTFT, s | EXL3 PLE8 mmap tokens/s | EXL3 PLE8 mmap TTFT, s | EXL3 mmap Spark (BF16 PLE) tokens/s | EXL3 mmap Spark (BF16 PLE) TTFT, s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2048 | 7046.6 | 0.291 | 10432.6 | 0.196 | 6888.2 | 0.297 | 1719.3 | 1.191 |
+| 8192 | 7513.1 | 1.090 | 11072.0 | 0.740 | 7432.7 | 1.102 | 1834.2 | 4.466 |
+| 32768 | 7452.9 | 4.397 | 10900.3 | 3.006 | 7411.3 | 4.421 | 1827.0 | 17.936 |
+| 65536 | 7261.8 | 9.025 | 10535.6 | 6.220 | 7226.0 | 9.069 | 1779.0 | 36.839 |
+| 128000 | 6965.5 | 18.376 | 9952.9 | 12.861 | 6933.4 | 18.461 | 1718.6 | 74.479 |
+| 261632 | 6472.0 | 40.425 | 8967.4 | 29.176 | 6452.9 | 40.545 | 1620.6 | 161.445 |
 
-Raw: [EXL3](benchmarks/exl3-final/prefill.json), [NVFP4](benchmarks/nvfp4-final/prefill.json), [EXL3 PLE8 mmap](benchmarks/exl3-ple8-mmap-final/prefill.json).
+Raw: [EXL3](benchmarks/exl3-final/prefill.json), [NVFP4](benchmarks/nvfp4-final/prefill.json), [EXL3 PLE8 mmap](benchmarks/exl3-ple8-mmap-final/prefill.json), [EXL3 mmap Spark (BF16 PLE)](benchmarks/spark-final/prefill.json).
 
 ## Context and decode scaling: C1
 
 Synthetic filler followed by 256 forced output tokens. One warmup and three measurements at each depth; median. This measures serving capacity and speed, not long-context reasoning quality.
 
-| Prompt tokens | EXL3 decode tokens/s | EXL3 TTFT, s | NVFP4 decode tokens/s | NVFP4 TTFT, s | EXL3 PLE8 mmap decode tokens/s | EXL3 PLE8 mmap TTFT, s |
-| --- | --- | --- | --- | --- | --- | --- |
-| 2048 | 216.74 | 0.304 | 155.04 | 0.206 | 190.00 | 0.305 |
-| 8192 | 219.86 | 1.114 | 147.89 | 0.755 | 219.37 | 1.127 |
-| 32768 | 219.54 | 4.460 | 192.36 | 3.055 | 216.10 | 4.493 |
-| 65536 | 220.39 | 9.142 | 193.20 | 6.309 | 215.01 | 9.292 |
-| 131072 | 219.82 | 18.998 | 193.55 | 13.349 | 217.44 | 19.031 |
-| 261632 | 224.17 | 40.586 | 196.69 | 29.303 | 220.81 | 40.749 |
+| Prompt tokens | EXL3 decode tokens/s | EXL3 TTFT, s | NVFP4 decode tokens/s | NVFP4 TTFT, s | EXL3 PLE8 mmap decode tokens/s | EXL3 PLE8 mmap TTFT, s | EXL3 mmap Spark (BF16 PLE) decode tokens/s | EXL3 mmap Spark (BF16 PLE) TTFT, s |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2048 | 216.74 | 0.304 | 155.04 | 0.206 | 190.00 | 0.305 | 34.56 | 1.257 |
+| 8192 | 219.86 | 1.114 | 147.89 | 0.755 | 219.37 | 1.127 | 39.39 | 4.537 |
+| 32768 | 219.54 | 4.460 | 192.36 | 3.055 | 216.10 | 4.493 | 39.65 | 18.057 |
+| 65536 | 220.39 | 9.142 | 193.20 | 6.309 | 215.01 | 9.292 | 39.13 | 40.217 |
+| 131072 | 219.82 | 18.998 | 193.55 | 13.349 | 217.44 | 19.031 | 39.59 | 82.992 |
+| 261632 | 224.17 | 40.586 | 196.69 | 29.303 | 220.81 | 40.749 | 39.66 | 179.194 |
 
-Raw: [EXL3](benchmarks/exl3-final/context.jsonl), [NVFP4](benchmarks/nvfp4-final/context.jsonl), [EXL3 PLE8 mmap](benchmarks/exl3-ple8-mmap-final/context.jsonl).
+Raw: [EXL3](benchmarks/exl3-final/context.jsonl), [NVFP4](benchmarks/nvfp4-final/context.jsonl), [EXL3 PLE8 mmap](benchmarks/exl3-ple8-mmap-final/context.jsonl), [EXL3 mmap Spark (BF16 PLE)](benchmarks/spark-final/context.jsonl).
 
 ## Reference coding task: C1 across KV depths
 
 The async task-runner prompt is identical to the reference recipe. Qwen's native non-thinking template replaces GLM's template. Temperature is 0.2, with a fixed seed and 256 forced output tokens. One warmup precedes three measurements per depth. Prompts repeat to retain existing KV; these TTFTs are not uncached prefill measurements. Rates use the reference's N−1 token convention; raw receipts also retain the rate excluding the whole initial SSE burst. The fixed token cap is not a generated-code correctness test.
 
-| Prompt depth | EXL3 decode tokens/s | NVFP4 decode tokens/s | EXL3 PLE8 mmap decode tokens/s |
-| --- | --- | --- | --- |
-| Task only | 185.55 | 166.92 | 183.45 |
-| 8192 | 185.51 | 173.65 | 185.42 |
-| 32768 | 183.37 | 166.82 | 180.28 |
-| 65536 | 182.49 | 165.82 | 176.87 |
-| 128000 | 186.82 | 169.31 | 184.41 |
-| 261632 | 190.37 | 177.83 | 183.27 |
+| Prompt depth | EXL3 decode tokens/s | NVFP4 decode tokens/s | EXL3 PLE8 mmap decode tokens/s | EXL3 mmap Spark (BF16 PLE) decode tokens/s |
+| --- | --- | --- | --- | --- |
+| Task only | 185.55 | 166.92 | 183.45 | 36.21 |
+| 8192 | 185.51 | 173.65 | 185.42 | 36.86 |
+| 32768 | 183.37 | 166.82 | 180.28 | 36.33 |
+| 65536 | 182.49 | 165.82 | 176.87 | 36.11 |
+| 128000 | 186.82 | 169.31 | 184.41 | 37.95 |
+| 261632 | 190.37 | 177.83 | 183.27 | 37.18 |
 
-Raw: [EXL3](benchmarks/exl3-final/code-agent.jsonl), [NVFP4](benchmarks/nvfp4-final/code-agent.jsonl), [EXL3 PLE8 mmap](benchmarks/exl3-ple8-mmap-final/code-agent.jsonl).
+Raw: [EXL3](benchmarks/exl3-final/code-agent.jsonl), [NVFP4](benchmarks/nvfp4-final/code-agent.jsonl), [EXL3 PLE8 mmap](benchmarks/exl3-ple8-mmap-final/code-agent.jsonl), [EXL3 mmap Spark (BF16 PLE)](benchmarks/spark-final/code-agent.jsonl).
 
 EXL3 also returned all 256 requested tokens after a 261888-token prompt at the exact 262144-token boundary: [receipt](benchmarks/exl3-final/context-boundary.jsonl).
 
 NVFP4 also returned all 256 requested tokens after a 261888-token prompt at the exact 262144-token boundary: [receipt](benchmarks/nvfp4-final/context-boundary.jsonl).
 
 EXL3 PLE8 mmap also returned all 256 requested tokens after a 261888-token prompt at the exact 262144-token boundary: [receipt](benchmarks/exl3-ple8-mmap-final/context-boundary.jsonl).
+
+EXL3 mmap Spark (BF16 PLE) also returned all 256 requested tokens after a 261888-token prompt at the exact 262144-token boundary: [receipt](benchmarks/spark-final/context-boundary.jsonl).
 
 ## Functional and tool checks
 
@@ -408,12 +420,18 @@ EXL3 PLE8 mmap also returned all 256 requested tokens after a 261888-token promp
 | EXL3 | 16/16 | 1: pass, 4: pass, 16: pass | 6/6 |
 | NVFP4 | 16/16 | 1: pass, 4: pass, 16: pass | 6/6 |
 | EXL3 PLE8 mmap | 16/16 | 1: pass, 4: pass, 16: pass | 6/6 |
+| EXL3 mmap Spark (BF16 PLE) | 16/16 | 1: pass, 4: pass, 16: pass | 6/6 |
 
 | Quant | Full suite points | Hard Mode points | Raw |
 | --- | --- | --- | --- |
 | EXL3 | 152/176 | 32/38 | [full tool traces](benchmarks/exl3-final/tools.md) |
 | NVFP4 | 149/176 | 29/38 | [full tool traces](benchmarks/nvfp4-final/tools.md) |
 | EXL3 PLE8 mmap | 146/176 | 27/38 | [full tool traces](benchmarks/exl3-ple8-mmap-final/tools.md) |
+| EXL3 mmap Spark (BF16 PLE) | 154/176 | 29/38 | [full tool traces](benchmarks/spark-final/tools.md) |
+
+EXL3 mmap Spark (BF16 PLE) evaluator-flagged cases:
+
+- TC-42 (Extra Parameter Injection): Injected extra parameters despite additionalProperties: false.
 
 API checks cover required/named/auto/none choices, thinking on/off and streaming/non-streaming. Retrieval places a random key early, midway and late in 8192- and 240000-token filler archives. Image checks read ordered numbers from 1, 4 and 16 images; they are smoke tests, not broad vision evaluation.
 
@@ -428,3 +446,14 @@ Captured after the performance/retrieval suite, before the full tool evaluation.
 | 128 | 47.68 | 19.45 | 0.00 | 0.00 |
 
 The backing filesystem is ext4 on a Samsung 9100 PRO 4TB NVMe. PREWARM, READAHEAD and PINNED are off; the run uses the existing file cache and the warmups specified above. [Full memory and storage receipt](benchmarks/exl3-ple8-mmap-final/memory.json).
+
+## Spark BF16 PLE memory snapshot
+
+Spark uses unified CPU/GPU memory with GPU memory utilization capped at 0.7. Mapped checkpoint pages are reclaimable file cache; their resident size is a snapshot, not a fixed working-set limit. The BF16 PLE table is approximately 95.37 GiB on disk.
+
+| Checkpoint mappings | Mapped GiB | Resident mapped GiB | Anonymous mapped GiB | Dirty mapped GiB |
+| --- | --- | --- | --- | --- |
+| 128 | 95.37 | 2.61 | 0.00 | 0.00 |
+
+[Full Spark memory and storage receipt](benchmarks/spark-final/memory.json).
+

@@ -1,0 +1,103 @@
+{
+  "schema": "spark-distributed-qualification-v1",
+  "method": "Each measurement uses one TP=1 Spark; independent suites run on four identically configured hosts.",
+  "image_id": "sha256:8faa93589f6156c24d328dfcbf80f4e0a29ee0fcec07c74b39738687c0feebf9",
+  "files": {
+    "api-tools.jsonl": {
+      "host": "ostrich",
+      "part": "core",
+      "sha256": "9392f930a86527a65200a80edfe0084a47b255a619a01cf0bc3806fed1dd9fd1"
+    },
+    "vision.json": {
+      "host": "ostrich",
+      "part": "core",
+      "sha256": "1ff885c9758288c348e982489dc269d572db00e73d236cb0ea68939167c02214"
+    },
+    "seven.jsonl": {
+      "host": "ostrich",
+      "part": "core",
+      "sha256": "67c8367e04c8e77d2f5244d605c61ba6cf22a002e5cf0404b80ad28dc67fb20b"
+    },
+    "orchid.jsonl": {
+      "host": "ostrich",
+      "part": "core",
+      "sha256": "3d91e69ec5269eebafd90ec09636ad388bb1358cbefbe91dab62597f3d3a6352"
+    },
+    "clients.json": {
+      "host": "ostrich",
+      "part": "core",
+      "sha256": "432b5aac9b7747ebf0247fca7567147e0eac7c986c7d2b6e4dd9fd81007b4847"
+    },
+    "code-agent.jsonl": {
+      "host": "ostrich",
+      "part": "coding",
+      "sha256": "61236686ef6f5596801206028b2b3eff170c08316ab3e28374d44404b6cba5ed"
+    },
+    "prefill.json": {
+      "host": "dodo",
+      "part": "prefill",
+      "sha256": "8acc8c971cdc086c762458ae0a944419bfc4f6b534f43516c86fcef8acf013c8"
+    },
+    "retrieval.jsonl": {
+      "host": "dodo",
+      "part": "retrieval",
+      "sha256": "1b3ad2c2d26ade5d2b46d4de928c4157b46387799ff6127c711439bb9bad328f"
+    },
+    "context.jsonl": {
+      "host": "emu",
+      "part": "context",
+      "sha256": "fcd91bdf8f23703a1baa3b1fc49082daac42a5b45cb4e7d00fe0bf258d0f8b8e"
+    },
+    "context-boundary.jsonl": {
+      "host": "emu",
+      "part": "context",
+      "sha256": "79e5e09e87dec1c85b179a3a44cd94263fef14b662d80a1a51fc2d9ad9829eb1"
+    },
+    "tools.json": {
+      "host": "kiwi",
+      "part": "tools",
+      "sha256": "7c1aa0cfa725a786aeea9d70c5a95ac0770801c40c91924bb24761eb818a536a"
+    },
+    "tools.md": {
+      "host": "kiwi",
+      "part": "tools",
+      "sha256": "42aefe1a04f3bac91b5e2003cc91d381b1c8f19a99714adcbd7c1fa4b962efb3"
+    }
+  },
+  "runtimes": {
+    "ostrich": {
+      "file": "runtime-ostrich.json",
+      "sha256": "6e6da63d056c3ba618042c66896ec4fcd8bc25aea5c06744736095038f79f2c9"
+    },
+    "dodo": {
+      "file": "runtime-dodo.json",
+      "sha256": "cb0fe60f3d621cc0298523ae62bc85a08601e66af1738c3e290385e842d266d8"
+    },
+    "emu": {
+      "file": "runtime-emu.json",
+      "sha256": "ea1525efe1432828ad0b548df446f450dcb79929d6359ae53a09df86c9976645"
+    },
+    "kiwi": {
+      "file": "runtime-kiwi.json",
+      "sha256": "8484d36acf8416f5a96dccc6ac0e7d260cf1de0b6c204b0cfb5d2af49c3fec4b"
+    }
+  },
+  "memory_snapshots": {
+    "ostrich": {
+      "file": "memory-ostrich.json",
+      "sha256": "ea4fb1edd30003c18e8b2306b991e5d366c9bd187036c2a590139a0a318b3fb1"
+    },
+    "dodo": {
+      "file": "memory-dodo.json",
+      "sha256": "6ba769892e04e0c60cf8ef94d8ba26b9462a4fba78efd5ef9fd284d2bb121ceb"
+    },
+    "emu": {
+      "file": "memory-emu.json",
+      "sha256": "b1378d33917c6835cea52f321f35c530bc728e837b597dd2d6a22ff29afa3f27"
+    },
+    "kiwi": {
+      "file": "memory-kiwi.json",
+      "sha256": "7d17cb1390eeb24c5f5edca0803db5c3bb41f4d11e64d38ba42f4950b660aead"
+    }
+  }
+}

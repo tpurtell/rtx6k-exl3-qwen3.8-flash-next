@@ -85,16 +85,30 @@ for name, count in [('clients.json',5), ('prefill.json',6)]:
     require(all(len(point['runs']) == 3 for point in data['points']), f'Missing measured runs in {name}')
 memory = a.input / 'memory.json'
 require(memory.is_file(), 'Missing final memory snapshot')
+memories = {host: a.input / ('memory.json' if host == 'ostrich' else f'memory-{host}.json')
+            for host in runtimes}
+for host, path in memories.items():
+    snapshot = read(path)
+    worker = next(p for p in snapshot['processes'] if p['checkpoint_mappings'])
+    totals = worker['checkpoint_totals_KiB']
+    require(len(worker['checkpoint_mappings']) == 128, f'Wrong PLE mapping count: {host}')
+    require(totals['Anonymous'] == 0 and totals['Private_Dirty'] + totals['Shared_Dirty'] == 0,
+            f'Anonymous or dirty PLE mappings: {host}')
 require(not a.output.exists(), f'Refusing to overwrite {a.output}')
 a.output.mkdir(parents=True)
 manifest = {'schema':'spark-distributed-qualification-v1',
             'method':'Each measurement uses one TP=1 Spark; independent suites run on four identically configured hosts.',
-            'image_id':reference['image_id'], 'files':{}}
+            'image_id':reference['image_id'], 'files':{}, 'runtimes':{}, 'memory_snapshots':{}}
 for name, (source, host, part) in sources.items():
     shutil.copyfile(source, a.output/name)
     manifest['files'][name] = {'host':host, 'part':part, 'sha256':hashlib.sha256(source.read_bytes()).hexdigest()}
 for host in runtimes:
-    shutil.copyfile(a.input/f'runtime-{host}.json', a.output/f'runtime-{host}.json')
+    source = a.input/f'runtime-{host}.json'
+    shutil.copyfile(source, a.output/source.name)
+    manifest['runtimes'][host] = {'file':source.name, 'sha256':hashlib.sha256(source.read_bytes()).hexdigest()}
+    memory_name = f'memory-{host}.json'
+    shutil.copyfile(memories[host], a.output/memory_name)
+    manifest['memory_snapshots'][host] = {'file':memory_name, 'sha256':hashlib.sha256(memories[host].read_bytes()).hexdigest()}
 shutil.copyfile(a.input/'runtime-ostrich.json', a.output/'runtime.json')
 shutil.copyfile(memory, a.output/'memory.json')
 (a.output/'qualification-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')

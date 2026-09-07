@@ -24,7 +24,7 @@ lines = ["# Final serving measurements", "",
          "RTX profiles run on one RTX PRO 6000 Blackwell 96 GB at a 400 W power limit. "
          "The Spark profile, when present, runs on one DGX Spark GB10 with unified memory. "
          "C1 is the default-selection priority. All use FP8 KV and host token embeddings. "
-         "The mmap profile reads PLE rows from checkpoint-backed mappings; the original "
+         "The mmap profiles read PLE rows from checkpoint-backed mappings; the original RTX "
          "profiles retain resident host tables. All decode rates below exclude prefill.", ""]
 if args.mmap:
     lines += ["EXL3 and NVFP4 columns retain the v0.1.0 measurements; only the mmap-enabled "
@@ -85,6 +85,12 @@ for name, root in roots.items():
                          next((v.split("=",1)[1] for v in env if v.startswith("VLLM_PLE_MMAP_READAHEAD=")), "0") if mmap else "—",
                          link("runtime", root, "runtime.json")])
 table(["Profile", "MTP draft tokens", "GPU memory fraction", "PLE storage", "Serial threshold", "Readahead range limit", "Configuration"], profile_rows)
+if args.spark:
+    lines += ["Independent Spark suites ran on four hosts with identical image IDs, serving arguments "
+              "and selected environment settings. Each measurement uses one TP=1 GB10. Dynamically "
+              "profiled KV allocations and page-cache histories can differ between hosts. " +
+              link("Host assignments, runtime receipts and memory snapshots", args.spark, "qualification-manifest.json") + ".", ""]
+
 
 lines += ["## Seven content workloads: C1", "",
           "One warmup and three measured responses per workload, temperature zero and "

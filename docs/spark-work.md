@@ -1,11 +1,11 @@
-# Spark branch qualification work
+# Spark qualification and tuning record
 
 This branch extends the recipe to RTX SM120 and DGX Spark SM121. Main remains
 unchanged until the user tries the completed Spark release.
 
 The Spark target is the pinned EXL3 K4.25 model with original BF16 PLE, mmap,
 FP8 KV and a GPU memory utilization cap of 0.7. Native arm64 build/run detection
-selects Spark settings automatically. The output image will be
+selects Spark settings automatically. The published image is
 `ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next`.
 
 All four hosts (ostrich, dodo, emu, kiwi) are available for concurrent work.
@@ -18,14 +18,55 @@ Qualification checklist:
 - [x] Mixed-projection loading, BF16 checkpoint gathers and mutable CUDA graphs.
 - [x] Component numerical checks and kernel comparisons on Spark.
 - [x] End-to-end C1 MTP and mmap tuning, plus C16 tradeoffs.
-- [ ] Full final default-profile performance, API, vision, retrieval and C8 tool
+- [x] Full final default-profile performance, API, vision, retrieval and C8 tool
   qualification using the existing contracts and complete raw receipts.
-- [ ] Fourth table entry: EXL3 mmap Spark (BF16 PLE), compact README tables and
+- [x] Fourth table entry: EXL3 mmap Spark (BF16 PLE), compact README tables and
   platform defaults comparison. Historical RTX evidence remains unchanged.
-- [ ] Published arm64 image, source branch and verifiable release evidence.
+- [x] Published arm64 image, source branch and verifiable release evidence.
 
 The 0.7 utilization cap is enforced for Spark configuration; no qualification
 result is claimed until the actual run has completed.
+
+## Final result
+
+The full original-EXL3 BF16-PLE mmap qualification is complete. The recipe
+selects native arm64 build, pull, download and run defaults automatically:
+MTP2, B12x vocabulary, GPU memory utilization capped at 0.7, and targeted
+readahead2048. RTX retains MTP3/native vocabulary; readahead2048 is global.
+All 5951 unequal per-projection expert allocations remain preserved.
+
+- C1 seven-workload blend: **31.11 tokens/s**, with 19/21 content contracts.
+- Greedy merge-intervals median: **38.12 tokens/s**; sampled async coding:
+  **36.21 tokens/s** at task-only depth.
+- C8 / C16 aggregate medians: **97.46 / 101.00 tokens/s**. C16 reaches twelve
+  overlapping streams in each measurement; the remaining requests queue.
+- API constraints **16/16**; vision **1/4/16 images**; retrieval **6/6**.
+- Exact context boundary: **261888 input + 256 output = 262144 tokens**.
+- C8 tool evaluation: **154/176 points**, Hard Mode **29/38**, no backend errors.
+  TC-42 adds extra parameters despite `additionalProperties: false`; the
+  warning and full failed trace remain visible. Orchid repetition passes 3/5.
+- All 218 mmap tests pass in the final image with NVIDIA device access.
+  All four post-qualification PLE snapshots contain 128 clean mappings and
+  no anonymous or dirty PLE pages. Their RSS is a workload-dependent snapshot.
+
+[Complete results](../benchmarks/RESULTS.md),
+[raw qualification and host manifest](../benchmarks/spark-final/qualification-manifest.json),
+and [tuning comparisons](../benchmarks/spark-review/TUNING.md) retain the evidence.
+Independent suites ran on ostrich (core/coding), dodo (prefill/retrieval),
+emu (context/boundary) and kiwi (tools). Each measurement uses one TP=1 Spark;
+image IDs, serving arguments and selected environment settings match across
+all four hosts. Dynamically profiled KV pools differ, as recorded below.
+
+The tested linux/arm64 image is published as `v0.3.0-spark.1` and `latest` in
+`ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next`, both at
+`sha256:0e17cebbff2a95de615f4c1f68ba4e16ad07710164e82c0bf90f044216e8cbd3`.
+The package is currently private; visibility remains the owner's manual
+post-publication step. Main and all historical RTX raw measurements are unchanged.
+
+## Development record
+
+The following entries preserve the tuning sequence and intermediate statuses;
+the completed result above supersedes their pending-work notes.
 
 ## First native build and component results
 
