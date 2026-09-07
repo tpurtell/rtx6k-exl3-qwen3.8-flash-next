@@ -283,3 +283,31 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   is underway against this configuration. Its results, graph vision/context
   reruns, target-only controls, MTP tuning and NVIDIA graph qualification
   remain pending.
+
+## Tool evaluation, retrieval and constraint enforcement
+
+- EXL3 dev9's 88-case run scores 145/176 points (82/100 rounded): 64 pass,
+  17 partial, 7 fail. Hard Mode alone scores 29/38: 13 pass, 3 partial,
+  3 fail. Full traces and summary are preserved as
+  `recipe/benchmarks/exl3-dev9-graph-tools.md` and `.json`; the benchmark
+  also persisted its SQLite run in the isolated tool-eval checkout.
+- All six graph retrieval checks pass: exact keys at 5%, 50%, 95% character
+  positions in 8192-token and 240000-token filler archives. Actual long
+  prompts are 240070–240072 tokens, including chat framing/instructions.
+  Receipt: `recipe/benchmarks/exl3-dev9-graph-retrieval.jsonl`. This is a
+  single-key synthetic test, not comprehensive long-context task quality.
+- TC-45 exposed an API constraint bug, independently reproduced for required
+  and named tool choice with thinking both on and off. The combined Qwen
+  parser engine skips grammar adjustment when reasoning/tool adapters are
+  collapsed. The new patch keeps DelegatingParser for structural-tag tool
+  adapters. A real-tokenizer CPU regression verifies required/named grammar,
+  unconstrained auto/none behavior, and reasoning plus automatic call parsing.
+  Receipt: `recipe/benchmarks/tool-constraints-cpu.txt`. `dev10` builds with
+  this correction; live enforcement still needs qualification and the old
+  tool score remains a pre-fix result.
+- A short profiled EXL3 code completion identifies mixed MoE and BF16 matrix
+  kernels as the main GPU time consumers. Raw trace and kernel-only totals:
+  `recipe/benchmarks/exl3-dev9-code-profile.trace.json.gz` and
+  `exl3-dev9-profile-summary.json`. Profiled timings are not throughput results.
+- Prefill harness invocations now use a unique nonce so repeating a run on
+  the same server cannot accidentally reuse the prior run's prompt cache.

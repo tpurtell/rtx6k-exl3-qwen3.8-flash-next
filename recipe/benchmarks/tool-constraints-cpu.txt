@@ -1,0 +1,11 @@
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_interleaved', 'mrope_section'}
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_interleaved', 'mrope_section'}
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_interleaved', 'mrope_section'}
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_interleaved', 'mrope_section'}
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_interleaved', 'mrope_section'}
+INFO 09-07 07:42:57 [parser_manager.py:58] "auto" tool choice has been enabled.
+PASS tool choice required: structural tag present=True
+PASS tool choice {'type': 'function', 'function': {'name': 'calculator'}}: structural tag present=True
+PASS tool choice auto: structural tag present=False
+PASS tool choice none: structural tag present=False
+PASS reasoning and automatic tool parsing remain intact

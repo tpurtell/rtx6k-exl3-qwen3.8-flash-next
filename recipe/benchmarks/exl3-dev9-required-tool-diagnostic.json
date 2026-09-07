@@ -1,0 +1,360 @@
+[
+  {
+    "thinking": false,
+    "mode": "required",
+    "passed": false,
+    "request": {
+      "model": "qwen38-exl3",
+      "messages": [
+        {
+          "role": "system",
+          "content": "If you know the answer, answer directly without a tool."
+        },
+        {
+          "role": "user",
+          "content": "What is 7 times 8?"
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "calculator",
+            "description": "Calculate an arithmetic expression.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "expression": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "expression"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "tool_choice": "required",
+      "temperature": 0,
+      "max_tokens": 1024,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "response": {
+      "id": "chatcmpl-aa56902deb77fff1",
+      "object": "chat.completion",
+      "created": 1788766661,
+      "model": "qwen38-exl3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "7 times 8 is 56.",
+            "refusal": null,
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "reasoning": null
+          },
+          "logprobs": null,
+          "finish_reason": "tool_calls",
+          "stop_reason": null,
+          "token_ids": null,
+          "routed_experts": null
+        }
+      ],
+      "service_tier": null,
+      "system_fingerprint": "vllm-0.1.dev20073+g8e685d198-e06db249",
+      "usage": {
+        "prompt_tokens": 293,
+        "total_tokens": 303,
+        "completion_tokens": 10,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "prompt_logprobs": null,
+      "prompt_token_ids": null,
+      "prompt_text": null,
+      "kv_transfer_params": null,
+      "ec_transfer_params": null,
+      "metrics": null
+    }
+  },
+  {
+    "thinking": false,
+    "mode": "named",
+    "passed": false,
+    "request": {
+      "model": "qwen38-exl3",
+      "messages": [
+        {
+          "role": "system",
+          "content": "If you know the answer, answer directly without a tool."
+        },
+        {
+          "role": "user",
+          "content": "What is 7 times 8?"
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "calculator",
+            "description": "Calculate an arithmetic expression.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "expression": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "expression"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "tool_choice": {
+        "type": "function",
+        "function": {
+          "name": "calculator"
+        }
+      },
+      "temperature": 0,
+      "max_tokens": 1024,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "response": {
+      "id": "chatcmpl-bf649483e0b61664",
+      "object": "chat.completion",
+      "created": 1788766661,
+      "model": "qwen38-exl3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "7 times 8 is 56.",
+            "refusal": null,
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "reasoning": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids": null,
+          "routed_experts": null
+        }
+      ],
+      "service_tier": null,
+      "system_fingerprint": "vllm-0.1.dev20073+g8e685d198-e06db249",
+      "usage": {
+        "prompt_tokens": 293,
+        "total_tokens": 303,
+        "completion_tokens": 10,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "prompt_logprobs": null,
+      "prompt_token_ids": null,
+      "prompt_text": null,
+      "kv_transfer_params": null,
+      "ec_transfer_params": null,
+      "metrics": null
+    }
+  },
+  {
+    "thinking": true,
+    "mode": "required",
+    "passed": false,
+    "request": {
+      "model": "qwen38-exl3",
+      "messages": [
+        {
+          "role": "system",
+          "content": "If you know the answer, answer directly without a tool."
+        },
+        {
+          "role": "user",
+          "content": "What is 7 times 8?"
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "calculator",
+            "description": "Calculate an arithmetic expression.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "expression": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "expression"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "tool_choice": "required",
+      "temperature": 0,
+      "max_tokens": 1024,
+      "chat_template_kwargs": {
+        "enable_thinking": true
+      }
+    },
+    "response": {
+      "id": "chatcmpl-9175333f41878b0c",
+      "object": "chat.completion",
+      "created": 1788766661,
+      "model": "qwen38-exl3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "\n\n56",
+            "refusal": null,
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "reasoning": "We need to answer user's simple question: \"What is 7 times 8? Need final concise.\n"
+          },
+          "logprobs": null,
+          "finish_reason": "tool_calls",
+          "stop_reason": null,
+          "token_ids": null,
+          "routed_experts": null
+        }
+      ],
+      "service_tier": null,
+      "system_fingerprint": "vllm-0.1.dev20073+g8e685d198-e06db249",
+      "usage": {
+        "prompt_tokens": 329,
+        "total_tokens": 357,
+        "completion_tokens": 28,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 23
+        }
+      },
+      "prompt_logprobs": null,
+      "prompt_token_ids": null,
+      "prompt_text": null,
+      "kv_transfer_params": null,
+      "ec_transfer_params": null,
+      "metrics": null
+    }
+  },
+  {
+    "thinking": true,
+    "mode": "named",
+    "passed": false,
+    "request": {
+      "model": "qwen38-exl3",
+      "messages": [
+        {
+          "role": "system",
+          "content": "If you know the answer, answer directly without a tool."
+        },
+        {
+          "role": "user",
+          "content": "What is 7 times 8?"
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "calculator",
+            "description": "Calculate an arithmetic expression.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "expression": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "expression"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ],
+      "tool_choice": {
+        "type": "function",
+        "function": {
+          "name": "calculator"
+        }
+      },
+      "temperature": 0,
+      "max_tokens": 1024,
+      "chat_template_kwargs": {
+        "enable_thinking": true
+      }
+    },
+    "response": {
+      "id": "chatcmpl-a8b3de8fc9fee5ff",
+      "object": "chat.completion",
+      "created": 1788766662,
+      "model": "qwen38-exl3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "\n\n56",
+            "refusal": null,
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "reasoning": "We need to answer user's simple question: \"What is 7 times 8? Need final concise.\n"
+          },
+          "logprobs": null,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids": null,
+          "routed_experts": null
+        }
+      ],
+      "service_tier": null,
+      "system_fingerprint": "vllm-0.1.dev20073+g8e685d198-e06db249",
+      "usage": {
+        "prompt_tokens": 329,
+        "total_tokens": 357,
+        "completion_tokens": 28,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 23
+        }
+      },
+      "prompt_logprobs": null,
+      "prompt_token_ids": null,
+      "prompt_text": null,
+      "kv_transfer_params": null,
+      "ec_transfer_params": null,
+      "metrics": null
+    }
+  }
+]

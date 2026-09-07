@@ -9,6 +9,7 @@ import json
 import statistics
 import time
 import urllib.request
+import uuid
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -142,19 +143,20 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
-    warmup = exact_prompt(args.base_url, args.model, 512, f"{args.profile}-warmup")
+    run_nonce = uuid.uuid4().hex
+    warmup = exact_prompt(args.base_url, args.model, 512, f"{run_nonce}-{args.profile}-warmup")
     time_to_first_token(args.base_url, args.model, warmup)
 
     points = []
     for target in args.prompt_tokens:
         depth_warmup = exact_prompt(
-            args.base_url, args.model, target, f"{args.profile}-{target}-warmup"
+            args.base_url, args.model, target, f"{run_nonce}-{args.profile}-{target}-warmup"
         )
         time_to_first_token(args.base_url, args.model, depth_warmup)
         runs = []
         for run in range(args.runs):
             prompt = exact_prompt(
-                args.base_url, args.model, target, f"{args.profile}-{target}-{run}"
+                args.base_url, args.model, target, f"{run_nonce}-{args.profile}-{target}-{run}"
             )
             result = time_to_first_token(args.base_url, args.model, prompt)
             if result["prompt_tokens"] != target:
@@ -188,7 +190,8 @@ def main() -> None:
         )
 
     report = {
-        "schema": "qwen38-prefill-depth.v1",
+        "schema": "qwen38-prefill-depth.v2",
+        "nonce": run_nonce,
         "method": (
             "C1 exact-length unique prompts; client request to first streamed token; "
             "server tokenization and one-token handoff included; no prefix reuse"
