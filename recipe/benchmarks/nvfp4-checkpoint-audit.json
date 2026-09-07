@@ -1,0 +1,10 @@
+{
+  "revision": "2061e0b0c5d92bdf7c8fbd4241bbc2af239d7e2d",
+  "tensor_bytes": {
+    "ngram": 51265925402,
+    "other": 81373920992
+  },
+  "tensors": 299545,
+  "model_type": "qwen4_exp",
+  "max_position_embeddings": 262144
+}

@@ -1,0 +1,25 @@
+{
+  "revision": "73a050c27b8c488c65acd6d1c74e45ff02be5fab",
+  "tensor_bytes": {
+    "other": 76900493024,
+    "ngram": 102466171160
+  },
+  "tensors": 302616,
+  "model_type": "qwen4_exp",
+  "max_position_embeddings": 262144,
+  "projection_tiers": {
+    "model.language_model.layers/down_proj/K4": 15360,
+    "model.language_model.layers/down_proj/K5": 9216,
+    "model.language_model.layers/gate_proj/K4": 21120,
+    "model.language_model.layers/gate_proj/K5": 3456,
+    "model.language_model.layers/up_proj/K4": 18816,
+    "model.language_model.layers/up_proj/K5": 5760,
+    "mtp.layers/down_proj/K4": 320,
+    "mtp.layers/down_proj/K5": 192,
+    "mtp.layers/gate_proj/K4": 440,
+    "mtp.layers/gate_proj/K5": 72,
+    "mtp.layers/up_proj/K4": 392,
+    "mtp.layers/up_proj/K5": 120
+  },
+  "experts_with_different_projection_bits": 5951
+}
