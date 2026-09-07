@@ -387,3 +387,19 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   The actual logits-processor bridge passes mutated graph replay, dtype and
   native-fallback checks (`recipe/benchmarks/vocab-bridge-gpu.txt`).
   A same-MTP2 serving comparison remains required before enabling it by default.
+
+## Candidate defaults after serving comparisons
+
+- Enabling the planned B12x vocabulary projection with NVIDIA MTP2 measures
+  150.14 weighted tokens/s versus152.40 without it. Code improves186.14
+  versus182.82, but Chinese and the overall blend regress; accepted draft
+  fraction also changes63.55% versus65.50%. Three repetitions do not
+  establish an overall win, so the option stays disabled by default. Raw
+  evidence: `recipe/benchmarks/nvfp4-dev11-mtp2-vocab-seven.jsonl`.
+- The B12x HC combine+norm API rejects vLLM's strided injection view at M>1.
+  A second comparison includes the necessary contiguous packing. Native is
+  faster at M1/4/16/64; at M2048 B12x is only slightly faster (79.38 versus
+  81.27 microseconds). Mutated graph outputs agree with native within the
+  stated tolerance. Native remains the serving choice; no HC bridge is
+  installed. Runner: `recipe/scripts/benchmark-hc.py`; complete timings:
+  `recipe/benchmarks/hc-native-vs-b12x.txt`.
