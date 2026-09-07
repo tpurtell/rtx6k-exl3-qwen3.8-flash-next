@@ -65,3 +65,16 @@ does not drop caches or claim cold-disk/serving throughput. Full samples are
 in `benchmarks/spark-review/mmap-gather-kiwi.txt`; the reproducer is
 `scripts/benchmark-mmap-gather.py`. Threaded and targeted-readahead candidates
 now receive end-to-end comparisons before selection.
+
+The RTX mmap PLE8 qualification used readahead off on a host with 183 GiB
+system RAM plus separate GPU memory. Its approximately 48 GiB PLE table could
+fit in the OS cache, although complete cache residency was not established.
+Spark shares approximately 121 GiB between CPU and GPU and uses a 95 GiB BF16
+PLE table, so the whole table cannot remain cached alongside the loaded model.
+This is why the RTX serial-gather choice is being re-evaluated with targeted
+readahead on Spark. It is not evidence that readahead cannot help an RTX host
+with less RAM or the larger BF16 table.
+
+The complete initial MTP4 run records 24.14 tokens/s C1 blend and 58.93 C16
+probe throughput, with 19/21 content contracts. MTP2 leads the initial mixed
+C1 blend, but MTP selection will be checked again with improved gather settings.
