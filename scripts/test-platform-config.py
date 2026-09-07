@@ -21,7 +21,7 @@ with tempfile.TemporaryDirectory() as folder:
     (model / 'config.json').write_text('{}')
     env = os.environ | {'PATH': str(fake)+':'+os.environ['PATH'],
                        'HF_CACHE': str(tmp/'hf'), 'RUNTIME_CACHE': str(tmp/'runtime')}
-    for key in ('IMAGE','QUANT','GPU_MEMORY_UTILIZATION','PLE_MMAP','VLLM_PLE_MMAP','PLE_MMAP_READAHEAD'):
+    for key in ('IMAGE','QUANT','GPU_MEMORY_UTILIZATION','PLE_MMAP','VLLM_PLE_MMAP','PLE_MMAP_READAHEAD','RELEASE_IMAGE','MTP_TOKENS','B12X_VOCAB'):
         env.pop(key, None)
     for arch, image, fraction, cute in (
         ('x86_64','qwen38-rtx:local','0.94','sm_120a'),
@@ -29,11 +29,20 @@ with tempfile.TemporaryDirectory() as folder:
         env['TEST_ARCH'] = arch
         build = subprocess.check_output(['bash', str(root/'build.sh')], env=env, text=True).splitlines()
         assert image in build and 'CUTE_DSL_ARCH='+cute in build
+        pull = subprocess.check_output(['bash', str(root/'pull.sh')], env=env, text=True).splitlines()
+        expected_digest = ('0e17cebbff2a95de615f4c1f68ba4e16ad07710164e82c0bf90f044216e8cbd3'
+                           if arch == 'aarch64' else
+                           'bb252820ade1b6aa1316c45485186db90fe67f1d7ea48826169bf92f634d2e73')
+        assert pull[0] == 'pull' and pull[1].endswith('@sha256:'+expected_digest)
+        assert pull[2:] == ['tag', pull[1], image]
         args = subprocess.check_output(['bash', str(root/'start.sh')], env=env, text=True).splitlines()
         assert image in args
         assert args[args.index('--gpu-memory-utilization')+1] == fraction
         assert 'VLLM_PLE_MMAP=1' in args
         assert 'VLLM_PLE_MMAP_READAHEAD=2048' in args
+        spec = json.loads(args[args.index('--speculative-config')+1])
+        assert spec['num_speculative_tokens'] == (2 if arch == 'aarch64' else 3)
+        assert 'QWEN38_B12X_VOCAB='+('1' if arch == 'aarch64' else '0') in args
         print(json.dumps({'architecture':arch,'image':image,'memory_fraction':fraction,'passed':True}))
     for bad in ('0.71','0.94','1','0','-1','bogus','0.5oops'):
         result = subprocess.run(['bash', str(root/'start.sh')], env=env|{'GPU_MEMORY_UTILIZATION':bad}, capture_output=True)
