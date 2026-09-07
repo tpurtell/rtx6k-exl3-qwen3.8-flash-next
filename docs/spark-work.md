@@ -49,3 +49,19 @@ not establish end-to-end gains; vocabulary still needs a serving comparison.
 
 Four concurrent initial serving candidates use MTP1 (kiwi), MTP2 (ostrich),
 MTP3 (dodo), and MTP4 (emu), with identical BF16 PLE/mmap and 0.7 memory cap.
+
+## Initial serving and mmap tuning
+
+Completed initial three-run C1 blends: MTP1 26.29, MTP2 27.32 and MTP3 25.72
+tokens/s. Corresponding short C16 probes are 100.52, 94.53 and 82.94 aggregate
+tokens/s. These are preliminary serial-gather runs, not final qualification.
+
+Live logs show BF16 PLE gathers paying substantial page-fault time. An
+interleaved component comparison on kiwi retains the idle loaded model's GPU
+allocation and uses fresh uniform random rows with the existing page cache.
+For 80 rows, medians are 17.50 ms serial/no-readahead, 4.84 ms threaded with 32
+workers, and 1.88 ms serial plus a 128-run targeted readahead limit. The test
+does not drop caches or claim cold-disk/serving throughput. Full samples are
+in `benchmarks/spark-review/mmap-gather-kiwi.txt`; the reproducer is
+`scripts/benchmark-mmap-gather.py`. Threaded and targeted-readahead candidates
+now receive end-to-end comparisons before selection.
