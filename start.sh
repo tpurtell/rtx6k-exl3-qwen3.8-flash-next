@@ -11,7 +11,7 @@ if [[ ! -f "$HF_CACHE/hub/$MODEL_CACHE_NAME/snapshots/$MODEL_REVISION/config.jso
   exit 1
 fi
 MTP_TOKENS="${MTP_TOKENS:-$( [[ ${QUANT:-exl3} == nvfp4 ]] && echo 2 || echo 3 )}"
-PLE_MMAP="${PLE_MMAP:-${VLLM_PLE_MMAP:-0}}"
+PLE_MMAP="${PLE_MMAP:-${VLLM_PLE_MMAP:-1}}"
 [[ "$PLE_MMAP" == 0 || "$PLE_MMAP" == 1 ]] || { echo "PLE_MMAP must be 0 or 1" >&2; exit 2; }
 EXTRA_ARGS=()
 [[ "${ENFORCE_EAGER:-0}" == 1 ]] && EXTRA_ARGS+=(--enforce-eager)

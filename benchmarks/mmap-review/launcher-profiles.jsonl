@@ -4,3 +4,4 @@
 {"profile": "exl3-ple8", "mmap": true, "passed": true}
 {"profile": "nvfp4", "mmap": false, "passed": true}
 {"profile": "nvfp4", "mmap": true, "passed": true}
+{"profile": "exl3", "mmap": true, "shipping_defaults": true, "passed": true}

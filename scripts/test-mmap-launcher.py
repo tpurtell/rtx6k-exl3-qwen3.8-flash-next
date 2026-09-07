@@ -26,3 +26,11 @@ with tempfile.TemporaryDirectory() as tmp:
             assert 'qwen38-'+name in args
             assert '--tensor-parallel-size' in args and '--kv-cache-dtype' in args
             print(json.dumps({'profile':name,'mmap':bool(mode),'passed':True}))
+    env = os.environ | {'PATH': str(fake)+':'+os.environ['PATH'],
+        'HF_CACHE': str(tmp/'hf'), 'RUNTIME_CACHE': str(tmp/'runtime')}
+    for key in ('QUANT', 'PLE_MMAP', 'VLLM_PLE_MMAP', 'CONTAINER_NAME'):
+        env.pop(key, None)
+    args = subprocess.check_output(['bash', str(root/'start.sh')], env=env, text=True).splitlines()
+    assert 'qwen38-exl3' in args
+    assert 'VLLM_PLE_MMAP=1' in args and 'VLLM_PLE_CPU_OFFLOAD=0' in args
+    print(json.dumps({'profile': 'exl3', 'mmap': True, 'shipping_defaults': True, 'passed': True}))

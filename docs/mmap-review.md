@@ -5,7 +5,8 @@ at `50a061f792f36364f5f95a93eee21f1e9d77f65e`. The PR is open at the time of
 review. Its description is not treated as qualification evidence for this
 recipe; the tests and live model run below exercise our actual port.
 
-The original release's resident PLE worker stays the default. `PLE_MMAP=1`
+The shipping default is `exl3` with mmap enabled; `PLE_MMAP=0` restores the
+original resident PLE worker. `PLE_MMAP=1`
 works with every profile and takes precedence over the resident-worker flag,
 including when the image is started directly with `VLLM_PLE_MMAP=1`. mmap
 requires Model Runner V2 and keeps PP=1. The input-preparation path hashes
@@ -47,7 +48,7 @@ of all 128 shards plus sampled rows (512 total), followed by eight changed-row
 CUDA graph replays with exact scaled BF16 comparisons against safetensors.
 
 - [Real-checkpoint receipt](../benchmarks/mmap-review/real-checkpoint.txt)
-- [All six launcher combinations](../benchmarks/mmap-review/launcher-profiles.jsonl)
+- [All six launcher combinations and shipping defaults](../benchmarks/mmap-review/launcher-profiles.jsonl)
 
 ## Memory and performance interpretation
 
@@ -79,3 +80,15 @@ setting only bypasses the gather thread pool for at most 128 distinct rows.
 Large prefills continue to use the worker pool. Both use MTP3 and the same
 checkpoint, with PREWARM/READAHEAD/PINNED off. Full raw responses and metrics
 are in `benchmarks/exl3-ple8-mmap-serial{0,128}-seven.jsonl`.
+
+The user selected `exl3` (original BF16 PLE) with mmap as the shipping default
+after the mmap `exl3-ple8` benchmark had started. This changes launch/image
+defaults only; no extra model measurements are run. The full new matrix still
+belongs exclusively to mmap-enabled `exl3-ple8`. The README recommends PLE8
+for reduced downloads/storage or better file-cache coverage on lower-RAM hosts.
+
+The shipping image and full-benchmark image have identical filesystem layers;
+only the image environment default changes from mmap off to on. The benchmark
+launcher already explicitly enabled mmap. The [image comparison receipt](../benchmarks/mmap-review/release-image-equivalence.json)
+records both IDs and environments. Seven inert launcher checks cover all six
+profile/mode combinations plus the omitted-configuration shipping default.

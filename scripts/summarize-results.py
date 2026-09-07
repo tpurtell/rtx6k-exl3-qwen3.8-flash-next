@@ -11,6 +11,7 @@ parser.add_argument("--exl3", type=Path, required=True)
 parser.add_argument("--nvfp4", type=Path, required=True)
 parser.add_argument("--mmap", type=Path, help="New mmap-enabled EXL3 PLE8 qualification; original profiles retain their existing receipts")
 parser.add_argument("--output", type=Path, required=True)
+parser.add_argument("--omit-ranges", action="store_true", help="Render compact median-only tables for the README")
 args = parser.parse_args()
 roots = {"EXL3": args.exl3, "NVFP4": args.nvfp4}
 if args.mmap:
@@ -48,7 +49,8 @@ def table(headers, rows):
     lines.append("")
 
 def spread(values, digits=2):
-    return f"{statistics.median(values):.{digits}f} ({min(values):.{digits}f}–{max(values):.{digits}f})"
+    median = f"{statistics.median(values):.{digits}f}"
+    return median if args.omit_ranges else median + f" ({min(values):.{digits}f}–{max(values):.{digits}f})"
 
 def weighted(rows):
     return sum(r["decode_tokens"] for r in rows) / sum(r["decode_seconds"] for r in rows)
@@ -126,7 +128,7 @@ for concurrency in (1, 2, 4, 8, 16):
         runs = point["runs"]
         assert len(runs) == 3
         overlap = [r["peak_overlapping_stream_intervals"] for r in runs]
-        row += [spread([r["decode_tokens_per_second"] for r in runs]), f"{min(overlap)}–{max(overlap)}"]
+        row += [spread([r["decode_tokens_per_second"] for r in runs]), str(min(overlap)) if min(overlap) == max(overlap) else f"{min(overlap)}–{max(overlap)}"]
     client_rows.append(row)
 table(["Clients"] + [h for n in roots for h in (n+" aggregate tokens/s", "Overlap")], client_rows)
 lines += ["Raw: " + ", ".join(link(name, root, "clients.json") for name, root in roots.items()) + ".", ""]
@@ -203,15 +205,22 @@ for name, root in roots.items():
     assert tools["status"] == "completed" and tools["total_scenarios"] == 88
     scores = tools["scores"]
     hard = next(c for c in scores["category_scores"] if c["label"] == "Hard Mode")
-    tool_rows.append([name, f"{scores['total_points']}/{scores['max_points']}", scores["final_score"],
+    tool_rows.append([name, f"{scores['total_points']}/{scores['max_points']}",
         f"{hard['earned']}/{hard['max']}", link("full tool traces", root, "tools.md")])
 table(["Quant", "API tool choices", "Numbered images per request", "8K/240K retrieval"], functional)
-table(["Quant", "Full suite points", "Score /100", "Hard Mode points", "Raw"], tool_rows)
+table(["Quant", "Full suite points", "Hard Mode points", "Raw"], tool_rows)
+for name, root in roots.items():
+    flags = read(root, "tools.json").get("safety_warnings", [])
+    if flags:
+        lines += [name + " evaluator-flagged cases:", ""]
+        lines += ["- " + flag for flag in flags] + [""]
 lines += ["API checks cover required/named/auto/none choices, thinking on/off and "
           "streaming/non-streaming. Retrieval places a random key early, midway and late "
           "in 8192- and 240000-token filler archives. Image checks read ordered numbers "
           "from 1, 4 and 16 images; they are smoke tests, not broad vision evaluation.", "",
           "Tool-eval-bench is pinned at `cf54b4bfe705f12f71e8866f10730572497c8105`. "
+          "Results are earned/possible points from a C8 run (eight concurrent cases), "
+          "not a normalized score for comparison with other execution setups. "
           "The full 88-case suite includes 19 Hard Mode scenarios, with thinking enabled, "
           "temperature zero, one trial, eight parallel cases and at most eight turns. "
           "The linked reports retain failures and partial scores.", ""]
@@ -235,4 +244,7 @@ if args.mmap:
               "and the warmups specified above. " + link("Full memory and storage receipt", args.mmap, "memory.json") + ".", ""]
 
 args.output.parent.mkdir(parents=True, exist_ok=True)
-args.output.write_text("\n".join(lines) + "\n")
+rendered = "\n".join(lines) + "\n"
+if args.omit_ranges:
+    rendered = rendered.replace("median tokens/s (minimum–maximum)", "median tokens/s").replace("median (minimum–maximum)", "median")
+args.output.write_text(rendered)
