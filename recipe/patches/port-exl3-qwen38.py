@@ -20,6 +20,23 @@ replace(registry, '    from .experts_int8 import ExpertsInt8Config\n',
 replace(registry, '        "deepseek_v4_fp8": DeepseekV4FP8Config,\n',
         '        "deepseek_v4_fp8": DeepseekV4FP8Config,\n        "exl3": Exl3Config,\n')
 exl3 = root / "model_executor/layers/quantization/exl3.py"
+replace(exl3, '''            # A standard MTP forward has one row per live request, not one
+            # row per target-prefill token. Planning its EXL3 prefill arena
+            # for max_num_batched_tokens duplicated the target's ~GiB-scale
+            # arena even though that capacity was unreachable. Keep its
+            # independently captured runtime, but size it to concurrency.
+            layer.exl3_max_num_batched_tokens = int(
+                scheduler_config.max_num_seqs
+                if is_draft
+                else scheduler_config.max_num_batched_tokens
+            )
+''', '''            # V2 MTP executes a prefill across target rows in profiling
+            # and proposal setup. Its arena must cover the scheduler token
+            # capacity, not only the number of concurrent requests.
+            layer.exl3_max_num_batched_tokens = int(
+                scheduler_config.max_num_batched_tokens
+            )
+''')
 replace(exl3, '            "glm5_next_text",\n',
         '            "glm5_next_text",\n            "qwen4_exp",\n            "qwen4_exp_text",\n'
         '            "qwen3_8_flash_next",\n            "qwen3_8_flash_next_text",\n'

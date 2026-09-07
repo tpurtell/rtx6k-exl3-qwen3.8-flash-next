@@ -25,11 +25,17 @@ def run(layer, query, key_cache, value_cache, indices, block_table,
                         dtype=torch.float32, device=query.device),
         )
     partial_output, partial_lse = _scratch[key]
+    splits = NUM_SPLITS
+    if query.shape[0] > MAX_SPLIT_ROWS:
+        # The direct prefill kernel does not consume split scratch. Supplying
+        # a decode-sized view would violate the launch validation contract.
+        partial_output = partial_lse = None
+        splits = 1
     return launch_sparse_paged_gqa(
         query=query, key_cache=key_cache, value_cache=value_cache,
         k_descale=layer._k_scale, v_descale=layer._v_scale,
         block_table=block_table, request_ids=request_ids,
         selected_positions=indices, query_positions=positions,
         output=output, partial_output=partial_output, partial_lse=partial_lse,
-        softmax_scale=layer.scaling, block_n=BLOCK_N, splits=NUM_SPLITS,
+        softmax_scale=layer.scaling, block_n=BLOCK_N, splits=splits,
     )

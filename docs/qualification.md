@@ -107,3 +107,32 @@ mHC and DCP patches require architecture review, not mechanical reuse.
 - Next: rebuild with the pushed mixed geometry fix and qualify EXL3 forward;
   repair NVIDIA MTP block-FP8 loading; validate actual FP8 cache scales and
   serving outputs. Neither quant is yet serving successfully.
+
+## MTP loader and bridge corrections
+
+- `dev3` EXL3 loaded target plus mixed-projection MTP at layer 48, using
+  73.17 GiB reported model memory. V2's MTP prefill reached 2048 rows while
+  the old GLM draft arena allowed only concurrency-sized batches. The adapter
+  now plans draft capacity from max_num_batched_tokens. This corrects an
+  observed execution path; it is not an increase in configured concurrency.
+- NVIDIA `dev4` loaded target and MTP, using 76.41 GiB reported model memory.
+  The new ModelOpt patch remaps MTP quantized-layer metadata to layer 48 and
+  dispatches FP8_PB_WO experts to native vLLM block-FP8 with dynamic activation
+  quantization. Original E4M3 weights and BF16 2D scales are retained; no
+  checkpoint rewrite. Numerical task-quality verification remains required.
+- NVIDIA `dev4` then exposed a QSA bridge scratch validation error. The bridge
+  now selects the unsplit direct path with no partial tensors above 64 rows.
+  Eight bridge GPU checks passed: BF16/FP8 × rows 1,64,65,2048, dense attention
+  oracle plus graph replay after query mutation. Receipt:
+  `recipe/benchmarks/qsa-bridge-gpu.txt`; runner:
+  `recipe/scripts/test-qsa-bridge.py`. Physical NHD layout and non-unit FP8
+  descales are covered. These checks do not qualify complete model outputs.
+- `dev5` probes were deliberately stopped after the bridge test identified
+  the missing unsplit flag, before spending another startup on that known
+  error. `dev6` incorporates the tested bridge fix and is building from
+  `recipe/build.sh` (local log `.work/build-dev6.log`).
+- Added executable build/download/start/stop scripts and immutable model
+  profiles. They expose tuning controls and pin TP1/FP8/MTP/PLE offload.
+  They are development commands, not a qualified release. Token embedding
+  offload, complete host-residency checks, and all full-model release gates
+  remain outstanding.
