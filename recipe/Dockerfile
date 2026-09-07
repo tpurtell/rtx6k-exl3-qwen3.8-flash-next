@@ -24,12 +24,15 @@ COPY patches/qwen_host_embedding.py /usr/local/lib/python3.12/dist-packages/vllm
 COPY patches/port-host-embedding.py /tmp/port-host-embedding.py
 COPY patches/port-nvidia-ple-fp8.py /tmp/port-nvidia-ple-fp8.py
 COPY patches/port-qwen-tool-constraints.py /tmp/port-qwen-tool-constraints.py
+COPY patches/qwen_vocab_projection.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/qwen_vocab_projection.py
+COPY patches/port-vocab-projection.py /tmp/port-vocab-projection.py
 RUN python3 /tmp/port-exl3-qwen38.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 /tmp/port-qsa-fp8.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 /tmp/port-nvidia-mtp-fp8.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 /tmp/port-host-embedding.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 /tmp/port-nvidia-ple-fp8.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 /tmp/port-qwen-tool-constraints.py /usr/local/lib/python3.12/dist-packages/vllm \
+ && python3 /tmp/port-vocab-projection.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 -c 'from vllm.model_executor.layers.quantization import get_quantization_config; assert get_quantization_config("exl3").__name__ == "Exl3Config"'
 ENV VLLM_EXL3_TRELLIS_MIN_M=1 \
     VLLM_EXL3_PREFILL_TRELLIS=1 \

@@ -373,3 +373,17 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   kernel is not yet integrated into serving, and no end-to-end gain is
   claimed. Runner: `recipe/scripts/benchmark-vocab.py`; receipt:
   `recipe/benchmarks/bf16-vocab-k2560-n248320.txt`.
+- NVIDIA MTP2's full tool run scores153/176 points (87/100):69 pass,
+  15 partial,4 fail. Hard Mode scores32/38:15 pass,2 partial,2 fail.
+  TC-45 now passes with an enforced calculator call. Full traces and summary
+  are retained as `recipe/benchmarks/nvfp4-dev10-mtp2-tools.md` and `.json`.
+- All six NVIDIA MTP2 retrieval checks pass at early/middle/late positions
+  in8192- and240000-token filler archives. Actual long prompts contain
+  240071–240073 tokens. Receipt: `nvfp4-dev10-mtp2-retrieval.jsonl`.
+- `dev11` adds an opt-in vocabulary bridge (`B12X_VOCAB=1` in start.sh,
+  disabled by default). It preplans/precompiles after loading and only
+  replaces single-row BF16, unbiased projections at the exact checkpoint
+  geometry. Native multi-row, biased and explicit FP32-head paths remain.
+  The actual logits-processor bridge passes mutated graph replay, dtype and
+  native-fallback checks (`recipe/benchmarks/vocab-bridge-gpu.txt`).
+  A same-MTP2 serving comparison remains required before enabling it by default.

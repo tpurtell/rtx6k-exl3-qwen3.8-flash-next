@@ -1,0 +1,6 @@
+INFO 09-07 08:16:42 [qwen_vocab_projection.py:26] Prepared B12x BF16 vocabulary projection: Bf16VocabProjectionConfig(backend='triton', algorithm='row', block_k=4096, num_warps=1)
+PASS rows=1 head_dtype=None bias=False: mutated graph and dtype
+PASS rows=2 head_dtype=None bias=False: mutated graph and dtype
+PASS rows=1 head_dtype=torch.float32 bias=False: mutated graph and dtype
+PASS rows=1 head_dtype=None bias=True: mutated graph and dtype
+PASS disabled path uses native projection

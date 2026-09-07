@@ -20,6 +20,7 @@ docker run -d --name "${CONTAINER_NAME:-qwen38-${QUANT:-exl3}}" \
   -e OMP_NUM_THREADS="${CPU_THREADS:-8}" \
   -e CUDA_CACHE_PATH=/root/.cache/cuda \
   -e TRITON_CACHE_DIR=/root/.cache/triton \
+  -e QWEN38_B12X_VOCAB="${B12X_VOCAB:-0}" \
   -e VLLM_PLE_CPU_OFFLOAD=1 -e VLLM_PLE_OFFLOAD_READY_TIMEOUT=1800 \
   -v "$RUNTIME_CACHE:/root/.cache" \
   -v "$HF_CACHE:/root/.cache/huggingface:ro" \
