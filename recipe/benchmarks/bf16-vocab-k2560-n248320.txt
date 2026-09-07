@@ -1,0 +1,56 @@
+{
+  "geometry": {
+    "m": 1,
+    "n": 248320,
+    "k": 2560
+  },
+  "dtype": "bfloat16",
+  "b12x_config": {
+    "backend": "triton",
+    "algorithm": "row",
+    "block_k": 4096,
+    "num_warps": 1
+  },
+  "method": "20 projections per graph replay; 7 interleaved measurements; CUDA events; random weights exceed L2",
+  "numerical_checks": [
+    {
+      "relative_l2": 1.7645566913415678e-05,
+      "max_absolute": 0.00390625,
+      "top1_equal": true
+    },
+    {
+      "relative_l2": 2.6380350391264074e-05,
+      "max_absolute": 0.0078125,
+      "top1_equal": true
+    },
+    {
+      "relative_l2": 1.8973465557792224e-05,
+      "max_absolute": 0.0078125,
+      "top1_equal": true
+    }
+  ],
+  "microseconds": {
+    "torch": [
+      822.2640037536621,
+      822.6016044616699,
+      825.3600120544434,
+      822.4767684936523,
+      825.494384765625,
+      823.7839698791504,
+      825.5184173583984
+    ],
+    "b12x": [
+      772.0367908477783,
+      771.8736171722412,
+      771.8111991882324,
+      771.668815612793,
+      772.2832202911377,
+      772.7104187011719,
+      772.1759796142578
+    ]
+  },
+  "median_microseconds": {
+    "torch": 823.7839698791504,
+    "b12x": 772.0367908477783
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "container": "qwen38-nvfp4-fp8-mtp2-dev10",
+  "image_id": "sha256:0f05ef4dac41911d20dc3d51cb2fbec70b9e3eec45c637fbb9680186db2a57b4",
+  "args": [
+    "serve",
+    "/root/.cache/huggingface/hub/models--nvidia--Qwen3.8-Flash-Next-NVFP4/snapshots/2061e0b0c5d92bdf7c8fbd4241bbc2af239d7e2d",
+    "--served-model-name",
+    "qwen38-nvfp4",
+    "--port",
+    "8002",
+    "--tensor-parallel-size",
+    "1",
+    "--distributed-executor-backend",
+    "mp",
+    "--max-model-len",
+    "262144",
+    "--max-num-seqs",
+    "16",
+    "--max-num-batched-tokens",
+    "2048",
+    "--gpu-memory-utilization",
+    "0.94",
+    "--kv-cache-dtype",
+    "fp8",
+    "--enable-auto-tool-choice",
+    "--tool-call-parser",
+    "qwen3_coder",
+    "--reasoning-parser",
+    "qwen3",
+    "--speculative-config",
+    "{\"method\":\"mtp\",\"num_speculative_tokens\":2}",
+    "--profiler-config",
+    "{\"profiler\":\"torch\",\"torch_profiler_dir\":\"/root/.cache/profiles\",\"torch_profiler_with_stack\":false,\"torch_profiler_record_shapes\":true,\"ignore_frontend\":true}"
+  ],
+  "started_at": "2026-09-07T08:00:00.364667946Z",
+  "device_requests": [
+    {
+      "Driver": "",
+      "Count": 0,
+      "DeviceIDs": [
+        "1"
+      ],
+      "Capabilities": [
+        [
+          "gpu"
+        ]
+      ],
+      "Options": {}
+    }
+  ],
+  "selected_startup_lines": [
+    "(PleOffloadWorker pid=279) INFO 09-07 08:00:40 [worker.py:448] PLE offload matched 132 checkpoint tensor(s), loaded 5 offload entries, and verified 2/2 materialized parameter(s) for layers: ['language_model.model.layers.1.ple.ple_embedding']",
+    "(Worker pid=179) INFO 09-07 08:01:31 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+    "(Worker pid=179) INFO 09-07 08:01:45 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+    "(Worker pid=179) INFO 09-07 08:01:48 [model_runner.py:407] Model loading took 75.22 GiB memory and 79.488581 seconds",
+    "(Worker pid=179) INFO 09-07 08:01:48 [worker.py:232] Worker ready - 1 PleOffloadLayer(s): ['language_model.model.layers.1.ple.ple_embedding']",
+    "(EngineCore pid=132) INFO 09-07 08:02:11 [kv_cache_utils.py:2258] GPU KV cache size: 644,874 tokens, Maximum concurrency for 262,144 tokens per request: 2.46x",
+    "(Worker pid=179) INFO 09-07 08:02:31 [model_runner.py:953] Graph capturing finished in 7 secs, took 0.91 GiB"
+  ]
+}

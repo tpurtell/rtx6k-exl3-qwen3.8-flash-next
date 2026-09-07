@@ -349,3 +349,27 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   the budget. Raw responses and timed-suite MTP counters are preserved in
   `recipe/benchmarks/nvfp4-dev10-graph-orchid.jsonl`. These repetition rates
   must not be represented as successful-task throughput.
+
+## NVIDIA MTP2 comparison and vocabulary-kernel candidate
+
+- NVIDIA MTP2 at the same .94 memory fraction and dev10 image reports644874
+  KV tokens, with0.91 GiB graph capture. The seven-workload blend measures
+  152.40 weighted tokens/s versus149.46 for MTP3. Code slows182.82 versus
+  202.67 tokens/s, while fable and Chinese improve. Suite acceptance is
+  65.50%, mean acceptance length2.310. One fable is overlong; two Chinese
+  answers explain COW correctly but fail the literal-phrase proxy. Original
+  validator results remain preserved in `nvfp4-dev10-mtp2-seven.jsonl`.
+- Crucially, the independent C16 test reaches16 overlapping stream intervals
+  and881.49 aggregate tokens/s. C8 reaches552.95. This demonstrates the
+  requested16-client capacity at short context with MTP2, unlike the MTP3
+  probe's13 overlapping streams. The full88-case tool run is now underway
+  with MTP2. Runtime and client receipts are named `nvfp4-dev10-mtp2-*`
+  under `recipe/benchmarks`.
+- A GPU0 microbenchmark tests B12x's existing planned BF16 vocabulary
+  projection at Qwen's actual M1/K2560/N248320 geometry against native
+  F.linear. Median CUDA time is772.04 versus823.78 microseconds (about6.3%
+  lower), over7 interleaved graph measurements of20 calls each. Three
+  mutated-input numerical checks pass; the full weights exceed L2. This
+  kernel is not yet integrated into serving, and no end-to-end gain is
+  claimed. Runner: `recipe/scripts/benchmark-vocab.py`; receipt:
+  `recipe/benchmarks/bf16-vocab-k2560-n248320.txt`.
