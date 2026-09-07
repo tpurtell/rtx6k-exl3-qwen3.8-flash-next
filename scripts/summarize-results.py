@@ -11,9 +11,12 @@ parser.add_argument("--exl3", type=Path, required=True)
 parser.add_argument("--nvfp4", type=Path, required=True)
 parser.add_argument("--mmap", type=Path, help="New mmap-enabled EXL3 PLE8 qualification; original profiles retain their existing receipts")
 parser.add_argument("--spark", type=Path, help="Full native arm64 EXL3 mmap BF16-PLE qualification")
+parser.add_argument("--spark-structured", type=Path, help="Corrected Spark structured-output qualification; performance receipts remain unchanged")
 parser.add_argument("--output", type=Path, required=True)
 parser.add_argument("--omit-ranges", action="store_true", help="Render compact median-only tables for the README")
 args = parser.parse_args()
+if args.spark_structured and not args.spark:
+    parser.error("--spark-structured requires --spark")
 roots = {"EXL3": args.exl3, "NVFP4": args.nvfp4}
 if args.mmap:
     roots["EXL3 PLE8 mmap"] = args.mmap
@@ -42,6 +45,9 @@ def read(root, name):
     if path.suffix == ".jsonl":
         return [json.loads(line) for line in path.read_text().splitlines() if line]
     return json.loads(path.read_text())
+
+def quality_root(root):
+    return args.spark_structured if args.spark_structured and root == args.spark else root
 
 def timed(rows):
     return [r for r in rows if r.get("record") == "measurement" and r.get("timed")]
@@ -214,22 +220,22 @@ lines += ["## Functional and tool checks", ""]
 functional = []
 tool_rows = []
 for name, root in roots.items():
-    api = [r for r in read(root, "api-tools.jsonl") if r.get("record") == "measurement"]
+    api = [r for r in read(quality_root(root), "api-tools.jsonl") if r.get("record") == "measurement"]
     vision = read(root, "vision.json")["supported_image_counts"]
     retrieval = [r for r in read(root, "retrieval.jsonl") if r.get("record") == "measurement"]
     functional.append([name, f"{sum(r['passed'] for r in api)}/{len(api)}",
         ", ".join(f"{n}: {'pass' if vision[str(n)]['passed'] else 'fail'}" for n in (1,4,16)),
         f"{sum(r['passed'] for r in retrieval)}/{len(retrieval)}"])
-    tools = read(root, "tools.json")
+    tools = read(quality_root(root), "tools.json")
     assert tools["status"] == "completed" and tools["total_scenarios"] == 88
     scores = tools["scores"]
     hard = next(c for c in scores["category_scores"] if c["label"] == "Hard Mode")
     tool_rows.append([name, f"{scores['total_points']}/{scores['max_points']}",
-        f"{hard['earned']}/{hard['max']}", link("full tool traces", root, "tools.md")])
+        f"{hard['earned']}/{hard['max']}", link("full tool traces", quality_root(root), "tools.md")])
 table(["Quant", "API tool choices", "Numbered images per request", "8K/240K retrieval"], functional)
 table(["Quant", "Full suite points", "Hard Mode points", "Raw"], tool_rows)
 for name, root in roots.items():
-    flags = read(root, "tools.json").get("safety_warnings", [])
+    flags = read(quality_root(root), "tools.json").get("safety_warnings", [])
     if flags:
         lines += [name + " evaluator-flagged cases:", ""]
         lines += ["- " + flag for flag in flags] + [""]
@@ -243,11 +249,28 @@ lines += ["API checks cover required/named/auto/none choices, thinking on/off an
           "The full 88-case suite includes 19 Hard Mode scenarios, with thinking enabled, "
           "temperature zero, one trial, eight parallel cases and at most eight turns. "
           "The linked reports retain failures and partial scores.", ""]
-if args.spark:
+if args.spark and not args.spark_structured:
     diagnostics = args.spark.parent / "spark-review" / "SERVER-DIAGNOSTICS.md"
     lines += ["The Spark tool server logged two XGrammar FSM-rejection diagnostics, with no "
               "grammar-triggered request termination logged and zero evaluator-reported request errors. "
               f"[Diagnostic review]({os.path.relpath(diagnostics, args.output.parent)}).", ""]
+
+if args.spark_structured:
+    corrected = read(args.spark_structured, "runtime.json")
+    original = read(args.spark, "runtime.json")
+    qualification = read(args.spark_structured, "qualification.json")
+    assert qualification["status"] == "PASS"
+    assert corrected["image_id"] == qualification["corrected_image_id"]
+    assert corrected["args"] == original["args"]
+    assert set(corrected["selected_environment"]) == set(original["selected_environment"])
+    lines += ["Spark API and C8 tool results above use the corrected structured-output image. "
+              "All 14 structured-output regressions and 29 complete JSON/reasoning/EOS canaries pass, "
+              "with no XGrammar FSM errors in the corrected server logs. " +
+              link("Corrected qualification and runtime", args.spark_structured, "qualification.json") + ". "
+              "Performance, vision, retrieval and boundary receipts retain the original qualified "
+              "image; the corrected image preserves every original filesystem layer and adds only "
+              "the structured-output backports and their tests. " +
+              link("Earlier tool run", args.spark, "tools.md") + ".", ""]
 
 if args.mmap:
     memory = read(args.mmap, "memory.json")

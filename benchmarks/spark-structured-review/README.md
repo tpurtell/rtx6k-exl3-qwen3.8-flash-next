@@ -30,3 +30,7 @@ vision, retrieval and boundary measurements remain immutable; the corrected
 image must prove unchanged numerical layers and rerun the affected API and C8
 tool checks plus the focused JSON/reasoning/EOS canary. The previous diagnostic
 receipts and tool results remain available.
+
+Release instruction: after the corrected image is qualified and uploaded,
+merge `spark` into `main` and publish stable `v0.3.0`. This supersedes the
+earlier plan to leave main unchanged for a prerelease trial.

@@ -1,7 +1,7 @@
 # Spark qualification and tuning record
 
-This branch extends the recipe to RTX SM120 and DGX Spark SM121. Main remains
-unchanged until the user tries the completed Spark release.
+This branch extends the recipe to RTX SM120 and DGX Spark SM121. The corrected image will be qualified and uploaded, then `spark` will merge
+into `main` for stable v0.3.0 as requested.
 
 The Spark target is the pinned EXL3 K4.25 model with original BF16 PLE, mmap,
 FP8 KV and a GPU memory utilization cap of 0.7. Native arm64 build/run detection
