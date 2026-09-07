@@ -3,7 +3,7 @@ ARG EXL3_SOURCE_IMAGE=ghcr.io/tpurtell/glm-5.3-flash-exl3-4bpw-2x-rtx@sha256:48e
 ARG VLLM_BASE_IMAGE=vllm/vllm-openai@sha256:fc120ece0a388cc0aa1caad4a9f1cd92113484ab7ec2fd0efadd62585be05bf8
 FROM ${EXL3_SOURCE_IMAGE} AS exl3_source
 FROM ${VLLM_BASE_IMAGE}
-ARG B12X_COMMIT=53f9d89c16f70e6580d0015de2934a882c61ed29
+ARG B12X_COMMIT=c76a40ee684cb3ef7d2c223d56a9b9cff25a3a1e
 RUN B12X_COMMIT=${B12X_COMMIT} python3 - <<'PY'
 import os, tarfile, urllib.request
 from pathlib import Path
@@ -17,7 +17,10 @@ PY
 RUN python3 -m pip install --no-deps -e /opt/b12x
 COPY --from=exl3_source /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/quantization/exl3.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/quantization/exl3.py
 COPY patches/port-exl3-qwen38.py /tmp/port-exl3-qwen38.py
+COPY patches/b12x_qsa_attention.py /usr/local/lib/python3.12/dist-packages/vllm/models/qwen3_8_flash_next/nvidia/b12x_qsa_attention.py
+COPY patches/port-qsa-fp8.py /tmp/port-qsa-fp8.py
 RUN python3 /tmp/port-exl3-qwen38.py /usr/local/lib/python3.12/dist-packages/vllm \
+ && python3 /tmp/port-qsa-fp8.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 -c 'from vllm.model_executor.layers.quantization import get_quantization_config; assert get_quantization_config("exl3").__name__ == "Exl3Config"'
 ENV VLLM_EXL3_TRELLIS_MIN_M=1 \
     VLLM_EXL3_PREFILL_TRELLIS=1 \

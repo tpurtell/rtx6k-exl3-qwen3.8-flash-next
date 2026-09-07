@@ -75,3 +75,35 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   This isolates the EXL3 loader from the known FP8 construction failure and
   does not qualify the requested release configuration. Inspect current
   container state and logs before proceeding or restarting.
+
+## QSA and mixed kernel qualification
+
+- B12x `c76a40ee684cb3ef7d2c223d56a9b9cff25a3a1e` is pushed to the fork's
+  master branch. It fixes the implicit mixed projection tile selection for
+  Qwen H2560/I640: both FC stages use N128 when N256 cannot divide the
+  projection. Matching FC1/FC2 CTA thread counts are preserved. Two planner
+  tests passed, plus two SM120 K4/K5 numerical-versus-serial and CUDA graph
+  replay tests, covering packed and direct routes. This is kernel evidence,
+  not full-model correctness evidence. Logs: `.work/qwen-mixed-tests.log`.
+- Before this fix, `qwen38-exl3-loader-dev1` loaded all 22 shards and prepared
+  mixed target experts, then failed in its first forward with an invalid
+  N256 projection tile. Log: `.work/exl3-loader-dev1.log`. The container exited.
+- Four B12x QSA tests passed on GPU1: FP8 3008-token-page reference/graph
+  replay, direct binary reuse, and BF16/FP8 high physical-page-offset cases.
+  Command: `python3 -m pytest /opt/b12x/tests/attention/test_qsa_sparse_gqa.py
+  -q -k 'fp8_3008_page or high_physical_page_offsets or reuses_direct_binary'`.
+  Log: `.work/qsa-kernel-tests.log`.
+- `qwen38-rtx:dev2` built successfully with an initial B12x sparse-GQA bridge.
+  It retains the vLLM selector and cache writes, passes K/V descales, and
+  shares scratch between sequential layers on each stream. This currently
+  uses a pinned private B12x launch API; public planning and complete serving
+  replay qualification remain outstanding.
+- `qwen38-nvfp4-fp8-dev2` passed the FP8 QSA construction gate and loaded the
+  target, then exited loading MTP: no `w2_weight_scale_inv` parameter for
+  `mtp.layers.48.mlp.experts.0.down_proj.weight_scale_inv`.
+  NVIDIA MTP's FP8_PB_WO needs both per-layer quant-config index remapping
+  (checkpoint layer 0 to runtime layer 48) and block-FP8 expert support in
+  ModelOpt mixed configuration. Log: `.work/nvfp4-fp8-dev2.log`.
+- Next: rebuild with the pushed mixed geometry fix and qualify EXL3 forward;
+  repair NVIDIA MTP block-FP8 loading; validate actual FP8 cache scales and
+  serving outputs. Neither quant is yet serving successfully.
