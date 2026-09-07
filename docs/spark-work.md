@@ -78,3 +78,10 @@ with less RAM or the larger BF16 table.
 The complete initial MTP4 run records 24.14 tokens/s C1 blend and 58.93 C16
 probe throughput, with 19/21 content contracts. MTP2 leads the initial mixed
 C1 blend, but MTP selection will be checked again with improved gather settings.
+
+The selected Spark readahead value will become the global recipe/image default
+for both architectures, as requested. It remains configurable. Existing RTX
+measurements retain their original readahead-off configuration and will be
+labeled historical; this defaults change does not trigger RTX remeasurement.
+The value is pending the serving comparisons, rather than selected solely
+from the random-row component test.
