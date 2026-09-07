@@ -2,6 +2,7 @@
 """Save the container configuration and selected model-startup evidence."""
 import argparse
 import json
+import platform
 import subprocess
 from pathlib import Path
 
@@ -18,9 +19,11 @@ markers = ("PLE offload matched", "Token embedding offloaded", "Model loading to
            "PLE mmap:", "PLE mmap input prep")
 environment_names = {"VLLM_PLE_CPU_OFFLOAD", "VLLM_EXL3_TRELLIS_MIN_M",
                      "VLLM_EXL3_PREFILL_TRELLIS", "VLLM_EXL3_PREFILL_CAPACITY",
-                     "QWEN38_B12X_VOCAB", "QWEN38_B12X_NVFP4", "OMP_NUM_THREADS"}
+                     "QWEN38_B12X_VOCAB", "QWEN38_B12X_NVFP4", "OMP_NUM_THREADS", "CUTE_DSL_ARCH"}
 receipt = {
     "container": args.container,
+    "host": platform.node(),
+    "architecture": platform.machine(),
     "image_id": info["Image"],
     "args": info["Args"],
     "started_at": info["State"]["StartedAt"],

@@ -1,8 +1,10 @@
 # syntax=docker/dockerfile:1.7
 ARG EXL3_SOURCE_IMAGE=ghcr.io/tpurtell/glm-5.3-flash-exl3-4bpw-2x-rtx@sha256:48e254d94f58137c8707e6044cde4528c6af3fdd9702726b9b362e9b0e0b4629
 ARG VLLM_BASE_IMAGE=vllm/vllm-openai@sha256:fc120ece0a388cc0aa1caad4a9f1cd92113484ab7ec2fd0efadd62585be05bf8
-FROM ${EXL3_SOURCE_IMAGE} AS exl3_source
+FROM --platform=linux/amd64 ${EXL3_SOURCE_IMAGE} AS exl3_source
 FROM ${VLLM_BASE_IMAGE}
+ARG CUTE_DSL_ARCH=sm_120a
+ENV CUTE_DSL_ARCH=${CUTE_DSL_ARCH}
 ARG B12X_COMMIT=c76a40ee684cb3ef7d2c223d56a9b9cff25a3a1e
 RUN B12X_COMMIT=${B12X_COMMIT} python3 - <<'PY'
 import os, tarfile, urllib.request
@@ -50,5 +52,5 @@ ENV VLLM_EXL3_TRELLIS_MIN_M=1 \
     VLLM_PLE_MMAP_SERIAL=128 \
     VLLM_PLE_CPU_OFFLOAD=1 \
     VLLM_PLE_OFFLOAD_READY_TIMEOUT=1800
-LABEL org.opencontainers.image.source="https://github.com/tpurtell/rtx6k-exl3-qwen3.8-flash-next" \
+LABEL org.opencontainers.image.source="https://github.com/tpurtell/sm12x-exl3-qwen3.8-flash-next" \
       io.tpurtell.b12x.commit="${B12X_COMMIT}"

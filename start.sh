@@ -2,6 +2,19 @@
 set -euo pipefail
 RECIPE_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 source "$RECIPE_DIR/model-profiles.sh"
+source "$RECIPE_DIR/platform-config.sh"
+GPU_MEMORY_UTILIZATION="${GPU_MEMORY_UTILIZATION:-$DEFAULT_GPU_MEMORY_UTILIZATION}"
+if [[ "$PLATFORM_KIND" == spark ]]; then
+  for argument in "$@"; do
+    case "$argument" in
+      --gpu-memory-utilization|--gpu-memory-utilization=*)
+        echo "Use GPU_MEMORY_UTILIZATION (capped at 0.7 on Spark)" >&2; exit 2 ;;
+    esac
+  done
+  awk -v value="$GPU_MEMORY_UTILIZATION" 'BEGIN {exit !(value ~ /^[0-9]+([.][0-9]+)?$/ && value > 0 && value <= 0.7)}' || {
+    echo "Spark GPU_MEMORY_UTILIZATION must be greater than zero and at most 0.7" >&2; exit 2;
+  }
+fi
 HF_CACHE="${HF_CACHE:-$HOME/.cache/huggingface}"
 RUNTIME_CACHE="${RUNTIME_CACHE:-$HOME/.cache/qwen38-rtx/${QUANT:-exl3}}"
 mkdir -p "$RUNTIME_CACHE"
@@ -35,13 +48,13 @@ docker run -d --name "${CONTAINER_NAME:-qwen38-${QUANT:-exl3}}" \
   -e VLLM_PLE_CPU_OFFLOAD="$((1 - PLE_MMAP))" -e VLLM_PLE_OFFLOAD_READY_TIMEOUT=1800 \
   -v "$RUNTIME_CACHE:/root/.cache" \
   -v "$HF_CACHE:/root/.cache/huggingface:ro" \
-  "${IMAGE:-qwen38-rtx:local}" "$MODEL_PATH" \
+  "${IMAGE:-$DEFAULT_IMAGE}" "$MODEL_PATH" \
   --served-model-name "qwen38-${QUANT:-exl3}" --port "${PORT:-8001}" \
   --tensor-parallel-size 1 --distributed-executor-backend mp \
   --max-model-len "${MAX_MODEL_LEN:-262144}" \
   --max-num-seqs "${MAX_NUM_SEQS:-16}" \
   --max-num-batched-tokens "${MAX_BATCHED_TOKENS:-2048}" \
-  --gpu-memory-utilization "${GPU_MEMORY_UTILIZATION:-0.94}" \
+  --gpu-memory-utilization "$GPU_MEMORY_UTILIZATION" \
   --kv-cache-dtype fp8 \
   --enable-auto-tool-choice --tool-call-parser qwen3_coder --reasoning-parser qwen3 \
   "${EXTRA_ARGS[@]}" "$@"
