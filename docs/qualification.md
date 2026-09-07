@@ -477,3 +477,10 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   client streams overlap. This supports testing a shorter draft at larger
   batch sizes, while retaining longer drafts for low concurrency.
   Receipts: `recipe/benchmarks/exl3-dev13-mtp1-*`.
+- EXL3 MTP4 improves C1 code/math medians to 217.18/236.29 tokens/s,
+  versus MTP3's 205.58/214.97. Its weighted C1 blend is 150.63, slightly
+  below MTP3's 152.97; fable and Chinese slow to 111.16/116.42. C8/C16
+  probes measure 408.90/486.12, with only 14 overlapping C16 streams.
+  The C1 workload tradeoff remains useful even though this is not the
+  best measured mixed-workload default. Receipts:
+  `recipe/benchmarks/exl3-dev13-mtp4-*`.
