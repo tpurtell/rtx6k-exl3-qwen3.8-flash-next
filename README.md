@@ -9,6 +9,9 @@ Recipe under development for:
 Target: TP=1, host-resident embeddings and n-gram tables, FP8 KV, vision, tuned
 MTP, 262144 context and concurrency 16 (minimum 8 subject to measured capacity).
 
+C1 performance is the priority for selecting the default profile. The recipe
+also records the C16 throughput and capacity tradeoffs from tuning.
+
 Both quants serve with CUDA graphs, FP8 KV, host token embeddings and the
 entire n-gram PLE table in host RAM. EXL3 preserves each expert's independent
 gate/up/down K4/K5 allocation, including MTP. This mixed-projection support

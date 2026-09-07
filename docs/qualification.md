@@ -1,5 +1,9 @@
 # Qualification ledger
 
+Selection priority: the user clarified that C1 matters most. Final defaults
+should favor measured C1 performance; retain C16 tuning and capacity results
+as documented tradeoffs rather than optimizing the default primarily for C16.
+
 Status: development; no serving or performance claims yet.
 
 ## Required release gates
