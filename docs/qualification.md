@@ -468,3 +468,8 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   65% faster on the blend. C8/C16 target-only probes measure 465.99/762.88
   tokens/s. The C16 result exceeds static MTP2's 718.39, motivating a
   shorter-draft batch comparison. Receipts: `recipe/benchmarks/exl3-dev12-mtp0-*`.
+- EXL3 MTP1 measures 131.54 weighted tokens/s and 141.99 median code
+  tokens/s. Its C8/C16 probes improve to 561.14/861.92 tokens/s; all 16
+  client streams overlap. This supports testing a shorter draft at larger
+  batch sizes, while retaining longer drafts for low concurrency.
+  Receipts: `recipe/benchmarks/exl3-dev13-mtp1-*`.
