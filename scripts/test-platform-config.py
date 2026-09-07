@@ -35,6 +35,9 @@ with tempfile.TemporaryDirectory() as folder:
                            'bb252820ade1b6aa1316c45485186db90fe67f1d7ea48826169bf92f634d2e73')
         assert pull[0] == 'pull' and pull[1].endswith('@sha256:'+expected_digest)
         assert pull[2:] == ['tag', pull[1], image]
+        download = subprocess.check_output(['bash', str(root/'download.sh')], env=env, text=True).splitlines()
+        assert image in download
+        assert 'MODEL_REVISION=73a050c27b8c488c65acd6d1c74e45ff02be5fab' in download
         args = subprocess.check_output(['bash', str(root/'start.sh')], env=env, text=True).splitlines()
         assert image in args
         assert args[args.index('--gpu-memory-utilization')+1] == fraction

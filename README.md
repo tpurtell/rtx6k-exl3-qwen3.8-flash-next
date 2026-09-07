@@ -19,8 +19,8 @@ The shipping default is **`exl3` with mmap enabled**, retaining the original
 BF16 PLE table. Choose `exl3-ple8` to save about 47.7 GiB of checkpoint payload,
 reduce download/storage requirements, or fit more PLE rows in the available
 file cache on a lower-RAM system. Its FP8 PLE table is approximately half the
-size of the BF16 table. This preference change does not add a new measurement
-of the default profile.
+size of the BF16 table. The existing RTX measurements do not include a new
+BF16 mmap default run.
 
 The `exl3-ple8` profile now has a full benchmark matrix with **mmap enabled**
 in v0.2.0, including the quality checks in the main tables below.
@@ -76,8 +76,8 @@ Install Docker with NVIDIA GPU access. Build and run from the repository root;
 the scripts select the native RTX or Spark defaults automatically:
 
 ```bash
-bash download.sh
 bash build.sh
+bash download.sh
 bash start.sh
 curl http://127.0.0.1:8001/health
 ```
@@ -218,7 +218,7 @@ QUANT=exl3 PLE_MMAP=0 MTP_TOKENS=0 bash start.sh --speculative-config \
 ```
 
 For code-heavy C1 traffic, EXL3 MTP4 reached 217.18 tokens/s on the greedy
-`merge_intervals` workload, versus approximately 203–206 with MTP3. NVIDIA
+`merge_intervals` workload, versus 202.99 in the qualified MTP3 run. NVIDIA
 MTP3 reached 202.67 versus 182.82 with MTP2. These are workload-specific options:
 set `MTP_TOKENS=4` or `3` respectively. They are not the separate sampled async
 coding task reported below. Full tuning receipts and exceptions are in the
