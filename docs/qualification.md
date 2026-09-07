@@ -136,3 +136,24 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   They are development commands, not a qualified release. Token embedding
   offload, complete host-residency checks, and all full-model release gates
   remain outstanding.
+
+## Host embeddings and single-GPU PLE worker
+
+- Native CUDA UVA allows the ordinary embedding gather to access pinned host
+  memory. `qwen_host_embedding.py` applies it only to token embeddings, not
+  the output head. A GPU test confirms `cudaPointerGetAttributes` reports
+  host memory, exact lookups, and exact graph replay after token-ID mutation.
+  Receipt: `recipe/benchmarks/host-embedding-gpu.txt`.
+- `dev6` target+MTP memory profiling completed for both quants. The processes
+  then stalled in real warmup; a live py-spy stack found the driver waiting
+  during QSA kernel loading. Source inspection shows PLE spawn/wait methods
+  are called only in `multiproc_executor.py`, not the default TP1 uniproc
+  executor. Both probes had a registered PLE connector but no PLE CPU process.
+  The GPU semaphore wait consequently had no producer. They were explicitly
+  stopped after this diagnosis, not merely because observation timed out.
+- `start.sh` now selects `--distributed-executor-backend mp` with TP1.
+  This uses vLLM's native PLE worker lifecycle and still exposes exactly one
+  GPU per server. `dev7` includes the verified host-token-embedding helper;
+  `qwen38-exl3-fp8-dev7` and `qwen38-nvfp4-fp8-dev7` are the new probes.
+- Ported the reference's generic decode/prefill, seven semantic content and
+  vision harnesses, with provenance. Full benchmark execution remains pending.

@@ -17,7 +17,8 @@ docker run -d --name "${CONTAINER_NAME:-qwen38-${QUANT:-exl3}}" \
   -v "$HF_CACHE:/root/.cache/huggingface:ro" \
   "${IMAGE:-qwen38-rtx:local}" "$MODEL_PATH" \
   --served-model-name "qwen38-${QUANT:-exl3}" --port "${PORT:-8001}" \
-  --tensor-parallel-size 1 --max-model-len "${MAX_MODEL_LEN:-262144}" \
+  --tensor-parallel-size 1 --distributed-executor-backend mp \
+  --max-model-len "${MAX_MODEL_LEN:-262144}" \
   --max-num-seqs "${MAX_NUM_SEQS:-16}" \
   --max-num-batched-tokens "${MAX_BATCHED_TOKENS:-2048}" \
   --gpu-memory-utilization "${GPU_MEMORY_UTILIZATION:-0.94}" \
