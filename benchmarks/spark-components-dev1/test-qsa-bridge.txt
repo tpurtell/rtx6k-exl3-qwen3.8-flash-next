@@ -1,0 +1,8 @@
+PASS dtype=torch.bfloat16 rows=1 oracle and mutated graph replay
+PASS dtype=torch.bfloat16 rows=64 oracle and mutated graph replay
+PASS dtype=torch.bfloat16 rows=65 oracle and mutated graph replay
+PASS dtype=torch.bfloat16 rows=2048 oracle and mutated graph replay
+PASS dtype=torch.float8_e4m3fn rows=1 oracle and mutated graph replay
+PASS dtype=torch.float8_e4m3fn rows=64 oracle and mutated graph replay
+PASS dtype=torch.float8_e4m3fn rows=65 oracle and mutated graph replay
+PASS dtype=torch.float8_e4m3fn rows=2048 oracle and mutated graph replay

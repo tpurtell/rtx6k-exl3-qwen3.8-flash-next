@@ -1,0 +1,544 @@
+........................................................................ [ 33%]
+......................................................FF.FF......F.F.... [ 66%]
+..........F.F.F.....................................................FFF. [ 99%]
+..                                                                       [100%]
+=================================== FAILURES ===================================
+______ test_ngram_embedding_mmap_load_weights_intercepts_shards_and_scale ______
+
+    def test_ngram_embedding_mmap_load_weights_intercepts_shards_and_scale() -> None:
+        module = _mmap_ngram_module_for_load_test(vocab=8, cols=2)
+        shard_0 = torch.arange(8, dtype=torch.float32).reshape(4, 2)
+        shard_0 = shard_0.to(torch.float8_e4m3fn)
+        shard_1 = torch.arange(8, 16, dtype=torch.float32).reshape(4, 2)
+        shard_1 = shard_1.to(torch.float8_e4m3fn)
+        weight_scale = torch.tensor([0.25], dtype=torch.bfloat16)
+    
+        loaded = module.load_weights(
+            [
+                ("ngram_embedding.shard_0.weight", shard_0),
+                ("ngram_embedding.shard_1.weight", shard_1),
+                ("ngram_embedding.weight_scale", weight_scale),
+            ]
+        )
+    
+>       assert loaded == {"ngram_embedding.weight", "ngram_embedding.weight_scale"}
+E       AssertionError: assert {'ngram_embed...weight_scale'} == {'ngram_embed...weight_scale'}
+E         
+E         Extra items in the right set:
+E         'ngram_embedding.weight'
+E         Use -v to get more diff
+
+tests/test_ple_mmap_upstream.py:3442: AssertionError
+___ test_forward_raises_named_error_when_streamed_but_build_tables_never_ran ___
+
+    def test_forward_raises_named_error_when_streamed_but_build_tables_never_ran() -> None:
+        """A real load_weights pass over PLE shards, with
+        build_tables never called, must not silently serve fp8 zeros — that
+        would be indistinguishable from a legitimate --load-format dummy probe.
+        weights_streamed=True (set once load_weights sees a real shard tensor)
+        is exactly the signal that distinguishes the two, and forward must
+        raise the named error instead."""
+        module = _mmap_ngram_module_for_load_test(vocab=8, cols=2)
+        shard_0 = torch.arange(8, dtype=torch.float32).reshape(4, 2).to(torch.float8_e4m3fn)
+        shard_1 = torch.arange(8, 16, dtype=torch.float32).reshape(4, 2)
+        shard_1 = shard_1.to(torch.float8_e4m3fn)
+        weight_scale = torch.tensor([0.25], dtype=torch.bfloat16)
+    
+        module.load_weights(
+            [
+                ("ngram_embedding.shard_0.weight", shard_0),
+                ("ngram_embedding.shard_1.weight", shard_1),
+                ("ngram_embedding.weight_scale", weight_scale),
+            ]
+        )
+    
+        assert module.ngram_embedding.table is None  # build_tables never ran
+>       with pytest.raises(
+            RuntimeError,
+            match="PLE mmap table not initialized",
+        ):
+E       Failed: DID NOT RAISE RuntimeError
+
+tests/test_ple_mmap_upstream.py:3470: Failed
+____ test_ngram_embedding_mmap_load_weights_rejects_mismatched_shard_shape _____
+
+    def test_ngram_embedding_mmap_load_weights_rejects_mismatched_shard_shape() -> None:
+        module = _mmap_ngram_module_for_load_test(vocab=8, cols=2)
+    
+>       with pytest.raises(ValueError, match=r"Shape mismatch for PLE embedding shard 0"):
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_ple_mmap_upstream.py:3500: Failed
+_____ test_ngram_embedding_mmap_load_weights_rejects_same_instance_reload ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_ngram_embedding_mmap_load0')
+
+    def test_ngram_embedding_mmap_load_weights_rejects_same_instance_reload(
+        tmp_path: Path,
+    ) -> None:
+        """A same-path iterator reload must not mix
+        checkpoint A's attached table with checkpoint B's scale. Once a table
+        is attached, load_weights must fail closed on any later invocation on
+        the SAME module — before consuming or mutating checkpoint B's iterator
+        — leaving A's table identity, scale, weights_streamed, and a
+        representative gathered row untouched. build_tables' own model_path
+        check never catches this: the path never changes, so it silently
+        reuses the attached table while an unguarded load_weights would have
+        already stomped weight_scale/weights_streamed."""
+        full_a = _write_ple_layer(
+            tmp_path, layer_idx=0, vocab=8, parts=2, cols=2, scale=0.25
+        )
+        module = _mmap_ngram_module_for_load_test(vocab=8, cols=2)
+        module.load_weights(
+            [
+                ("ngram_embedding.shard_0.weight", full_a[0:4]),
+                ("ngram_embedding.shard_1.weight", full_a[4:8]),
+                (
+                    "ngram_embedding.weight_scale",
+                    torch.tensor([0.25], dtype=torch.bfloat16),
+                ),
+            ]
+        )
+        cc = SimpleNamespace(
+            static_forward_context={"a.ple": _fake_ple_layer(0, module.ngram_embedding, 2)}
+        )
+        ple_mmap.build_tables(_model_config(tmp_path), cc)
+        embedding = module.ngram_embedding
+        table_a = embedding.table
+        assert table_a is not None
+        scale_a = embedding.weight_scale.clone()
+        ids = torch.tensor([0, 7], dtype=torch.long)
+        row_a_before = embedding(ids).clone()
+        assert torch.equal(row_a_before, full_a[ids])  # sanity: A's gather is correct
+    
+        # Checkpoint B: distinct shard values and scale, never written to
+        # `tmp_path` — the bug is keyed on the SAME module already holding a
+        # table, not on any particular directory, so build_tables must never
+        # even be reached to reproduce it.
+        full_b = _synthetic_weight(8, 2, layer_idx=1)
+        consumed: list[str] = []
+    
+        def checkpoint_b_iter():
+            for name, tensor in (
+                ("ngram_embedding.shard_0.weight", full_b[0:4]),
+                ("ngram_embedding.shard_1.weight", full_b[4:8]),
+                (
+                    "ngram_embedding.weight_scale",
+                    torch.tensor([0.75], dtype=torch.bfloat16),
+                ),
+            ):
+                consumed.append(name)
+                yield name, tensor
+    
+        with pytest.raises(RuntimeError, match="already has a table attached"):
+            module.load_weights(checkpoint_b_iter())
+    
+        assert consumed == []  # raised before the iterator was ever advanced
+        assert embedding.table is table_a  # A's table identity is unchanged
+        assert torch.equal(embedding.weight_scale, scale_a)  # A's scale is unchanged
+>       assert embedding.weights_streamed is True  # unchanged from A's load
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert False is True
+E        +  where False = MmapNgramEmbedding().weights_streamed
+
+tests/test_ple_mmap_upstream.py:3567: AssertionError
+----------------------------- Captured stdout call -----------------------------
+WARNING 09-07 12:30:25 [ple_mmap.py:1956] PLE mmap: layer 0 weight_scale falling back to a direct header read — this layer's ngram_embedding family was never streamed through the checkpoint loader
+INFO 09-07 12:30:25 [ple_mmap.py:2057] PLE mmap: layer 0 attached, 2 shards, 8 rows x 2 B (0.00 GiB on disk), 32 workers
+------------------------------ Captured log call -------------------------------
+WARNING  vllm.models.qwen3_8_flash_next.nvidia.ple_mmap:ple_mmap.py:1956 PLE mmap: layer 0 weight_scale falling back to a direct header read — this layer's ngram_embedding family was never streamed through the checkpoint loader
+INFO     vllm.models.qwen3_8_flash_next.nvidia.ple_mmap:ple_mmap.py:2057 PLE mmap: layer 0 attached, 2 shards, 8 rows x 2 B (0.00 GiB on disk), 32 workers
+__ test_build_tables_attaches_a_bf16_table_and_forward_gathers_it_value_exact __
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_build_tables_attaches_a_b0')
+
+    def test_build_tables_attaches_a_bf16_table_and_forward_gathers_it_value_exact(
+        tmp_path: Path,
+    ) -> None:
+        """Intel AutoRound W4A16 exports pass the PLE table through as
+        unquantized BF16 with no weight_scale on disk: a real streamed load sets
+        weights_streamed True but weight_scale_loaded stays False (there is no
+        scale tensor to stream) — the True/False quadrant that the
+        streamed-loader's fail-closed error would otherwise refuse. For a
+        requires_scale=False dtype this must still attach and serve real values
+        through the full load_weights -> build_tables -> forward chain, not
+        raise."""
+        full = _write_ple_layer(
+            tmp_path,
+            layer_idx=0,
+            vocab=8,
+            parts=2,
+            cols=2,
+            scale=0.0,
+            write_scale=False,
+            table_dtype=torch.bfloat16,
+        )
+        module = _mmap_ngram_module_for_load_test(vocab=8, cols=2)
+        module.load_weights(
+            [
+                ("ngram_embedding.shard_0.weight", full[0:4]),
+                ("ngram_embedding.shard_1.weight", full[4:8]),
+            ]
+        )
+>       assert module.ngram_embedding.weights_streamed is True
+E       assert False is True
+E        +  where False = MmapNgramEmbedding().weights_streamed
+E        +    where MmapNgramEmbedding() = Qwen3_8FlashNextNGramEmbedding(\n  (ngram_embedding): MmapNgramEmbedding()\n).ngram_embedding
+
+tests/test_ple_mmap_upstream.py:3798: AssertionError
+_________ test_build_tables_raises_when_weight_scale_was_never_loaded __________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_build_tables_raises_when_1')
+
+    def test_build_tables_raises_when_weight_scale_was_never_loaded(tmp_path: Path) -> None:
+        """Rows streamed but weight_scale absent from the same iterable is a
+        broken or truncated weight iterator, not an unstreamed family — this
+        must stay in the fail-closed True/False quadrant (weights_streamed
+        True, weight_scale_loaded False), never fall back to a header read."""
+        full = _write_ple_layer(
+            tmp_path, layer_idx=0, vocab=8, parts=2, cols=2, scale=0.25, write_scale=True
+        )
+        module = _mmap_ngram_module_for_load_test(vocab=8, cols=2)
+    
+        module.load_weights(
+            [
+                ("ngram_embedding.shard_0.weight", full[0:4]),
+                ("ngram_embedding.shard_1.weight", full[4:8]),
+            ]
+        )
+    
+>       assert module.ngram_embedding.weights_streamed is True
+E       assert False is True
+E        +  where False = MmapNgramEmbedding().weights_streamed
+E        +    where MmapNgramEmbedding() = Qwen3_8FlashNextNGramEmbedding(\n  (ngram_embedding): MmapNgramEmbedding()\n).ngram_embedding
+
+tests/test_ple_mmap_upstream.py:3853: AssertionError
+___________ test_env_on_off_forward_equivalence_fp8_and_dequantized ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xf80a90345cd0>
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_env_on_off_forward_equiva0')
+
+    def test_env_on_off_forward_equivalence_fp8_and_dequantized(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        """env-off: a real stock PLEVocabParallelEmbedding under
+        Qwen3_8FlashNextPLEFp8EmbeddingMethod (real FP8 weight + weight_scale
+        Parameters, mirrors test_ple.py's _make_fp8_embedding_layer). env-on:
+        an MmapNgramEmbedding placeholder attached to shard files holding the
+        IDENTICAL weight values, staged explicitly via
+        initialize_mmap_staging/prepare_mmap_rows, then read back through
+        forward(). Same input_ids/query_start_loc/ngram_context on both sides;
+        compared byte-equal at fp8 AND through _dequantize_embeddings to bf16.
+        Proves weight-loading/gather/dequant equivalence between the two paths,
+        not hashing correctness (both arms share the same compute_ngram_ids
+        call, see module comment above).
+        """
+        config = _make_text_config()  # ngram_size=3, heads_per_ngram=2 -> 4 heads
+        embedding_dim = 8  # head_dim = 2
+        scale = 0.5
+    
+        # --- env-off: real stock FP8 VocabParallelEmbedding. ---
+        quant_config = Fp8Config(
+            is_checkpoint_fp8_serialized=True,
+            ignored_layers=[],
+            weight_block_size=[128, 128],
+        )
+        stock = Qwen3_8FlashNextNGramEmbedding(
+            config,
+            embedding_dim,
+            0,
+            "model.layers.1.ple.ple_embedding",
+            "model.layers.1.ple",
+            quant_config=quant_config,
+            params_dtype=torch.bfloat16,
+        )
+>       assert isinstance(stock.ngram_embedding, PLEVocabParallelEmbedding)
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_ple_mmap_upstream.py:4299: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Qwen3_8FlashNextNGramEmbedding(), name = 'ngram_embedding'
+
+    def __getattr__(self, name: str) -> Union[Tensor, "Module"]:
+        if "_parameters" in self.__dict__:
+            _parameters = self.__dict__["_parameters"]
+            if name in _parameters:
+                return _parameters[name]
+        if "_buffers" in self.__dict__:
+            _buffers = self.__dict__["_buffers"]
+            if name in _buffers:
+                return _buffers[name]
+        if "_modules" in self.__dict__:
+            modules = self.__dict__["_modules"]
+            if name in modules:
+                return modules[name]
+>       raise AttributeError(
+            f"'{type(self).__name__}' object has no attribute '{name}'"
+        )
+E       AttributeError: 'Qwen3_8FlashNextNGramEmbedding' object has no attribute 'ngram_embedding'
+
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1967: AttributeError
+__________________ test_compute_ngram_ids_matches_golden_ids ___________________
+
+    def test_compute_ngram_ids_matches_golden_ids() -> None:
+        """Golden values captured by running this exact scenario once and
+        hardcoding the result — they pin the xor-chain/remainder/offset math
+        in compute_ngram_ids (ngram_size=3, heads_per_ngram=2, seed=1234,
+        ple_dense_layer_id=0), not merely its shape.
+        """
+        config = _make_text_config()  # ngram_size=3, heads_per_ngram=2 -> 4 heads
+        module = Qwen3_8FlashNextNGramEmbedding(
+            config,
+            8,
+            0,
+            "model.layers.1.ple.ple_embedding",
+            "model.layers.1.ple",
+            params_dtype=torch.float32,
+        )
+    
+        input_ids = torch.tensor([11, 22, 33], dtype=torch.long)
+        query_start_loc = torch.tensor([0, 2, 3], dtype=torch.long)
+        ngram_context = torch.tensor([[44, 55], [66, 77]], dtype=torch.long)
+    
+>       ngram_ids = module.compute_ngram_ids(input_ids, query_start_loc, ngram_context)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_ple_mmap_upstream.py:4463: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.12/dist-packages/vllm/models/qwen3_8_flash_next/nvidia/ple_layer.py:401: in compute_ngram_ids
+    if num_tokens > self.positions_buffer.numel():
+                    ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Qwen3_8FlashNextNGramEmbedding(), name = 'positions_buffer'
+
+    def __getattr__(self, name: str) -> Union[Tensor, "Module"]:
+        if "_parameters" in self.__dict__:
+            _parameters = self.__dict__["_parameters"]
+            if name in _parameters:
+                return _parameters[name]
+        if "_buffers" in self.__dict__:
+            _buffers = self.__dict__["_buffers"]
+            if name in _buffers:
+                return _buffers[name]
+        if "_modules" in self.__dict__:
+            modules = self.__dict__["_modules"]
+            if name in modules:
+                return modules[name]
+>       raise AttributeError(
+            f"'{type(self).__name__}' object has no attribute '{name}'"
+        )
+E       AttributeError: 'Qwen3_8FlashNextNGramEmbedding' object has no attribute 'positions_buffer'
+
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1967: AttributeError
+______ test_ngram_embedding_stores_the_layer_name_it_is_constructed_with _______
+
+    def test_ngram_embedding_stores_the_layer_name_it_is_constructed_with() -> None:
+        config = _make_text_config()
+        module = Qwen3_8FlashNextNGramEmbedding(
+            config,
+            8,
+            0,
+            "model.layers.1.ple.ple_embedding",
+            "model.layers.1.ple",
+            params_dtype=torch.float32,
+        )
+    
+>       assert module.layer_name == "model.layers.1.ple"
+               ^^^^^^^^^^^^^^^^^
+
+tests/test_ple_mmap_upstream.py:4579: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Qwen3_8FlashNextNGramEmbedding(), name = 'layer_name'
+
+    def __getattr__(self, name: str) -> Union[Tensor, "Module"]:
+        if "_parameters" in self.__dict__:
+            _parameters = self.__dict__["_parameters"]
+            if name in _parameters:
+                return _parameters[name]
+        if "_buffers" in self.__dict__:
+            _buffers = self.__dict__["_buffers"]
+            if name in _buffers:
+                return _buffers[name]
+        if "_modules" in self.__dict__:
+            modules = self.__dict__["_modules"]
+            if name in modules:
+                return modules[name]
+>       raise AttributeError(
+            f"'{type(self).__name__}' object has no attribute '{name}'"
+        )
+E       AttributeError: 'Qwen3_8FlashNextNGramEmbedding' object has no attribute 'layer_name'
+
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1967: AttributeError
+___________ test_default_off_uses_the_stock_vocab_parallel_embedding ___________
+
+    def test_default_off_uses_the_stock_vocab_parallel_embedding() -> None:
+        assert ple_mmap.enabled() is False
+        config = _make_text_config()
+    
+        module = Qwen3_8FlashNextNGramEmbedding(
+            config,
+            8,
+            0,
+            "model.layers.1.ple.ple_embedding",
+            "model.layers.1.ple",
+            params_dtype=torch.float32,
+        )
+    
+>       assert isinstance(module.ngram_embedding, PLEVocabParallelEmbedding)
+                          ^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_ple_mmap_upstream.py:6718: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Qwen3_8FlashNextNGramEmbedding(), name = 'ngram_embedding'
+
+    def __getattr__(self, name: str) -> Union[Tensor, "Module"]:
+        if "_parameters" in self.__dict__:
+            _parameters = self.__dict__["_parameters"]
+            if name in _parameters:
+                return _parameters[name]
+        if "_buffers" in self.__dict__:
+            _buffers = self.__dict__["_buffers"]
+            if name in _buffers:
+                return _buffers[name]
+        if "_modules" in self.__dict__:
+            modules = self.__dict__["_modules"]
+            if name in modules:
+                return modules[name]
+>       raise AttributeError(
+            f"'{type(self).__name__}' object has no attribute '{name}'"
+        )
+E       AttributeError: 'Qwen3_8FlashNextNGramEmbedding' object has no attribute 'ngram_embedding'
+
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1967: AttributeError
+___________ test_default_off_forward_never_calls_the_mmap_gather_op ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xf80a93c90aa0>
+
+    def test_default_off_forward_never_calls_the_mmap_gather_op(
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """With VLLM_PLE_MMAP unset, forward() must take the exact stock branch
+        (direct call + .flatten(-2)). There is no mmap gather op left to spy on
+        -- test_mmap_gather_op_is_not_registered above pins its complete
+        removal from torch.ops.vllm; this test pins that the stock branch is
+        the one actually taken."""
+        config = _make_text_config()
+        module = Qwen3_8FlashNextNGramEmbedding(
+            config,
+            8,
+            0,
+            "model.layers.1.ple.ple_embedding",
+            "model.layers.1.ple",
+            params_dtype=torch.float32,
+        )
+        sentinel = torch.arange(2 * 4 * 2, dtype=torch.bfloat16).reshape(2, 4, 2)
+        calls: list[torch.Tensor] = []
+    
+        def spy_forward(ids: torch.Tensor) -> torch.Tensor:
+            calls.append(ids)
+            return sentinel
+    
+>       monkeypatch.setattr(module.ngram_embedding, "forward", spy_forward)
+                            ^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_ple_mmap_upstream.py:6746: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Qwen3_8FlashNextNGramEmbedding(), name = 'ngram_embedding'
+
+    def __getattr__(self, name: str) -> Union[Tensor, "Module"]:
+        if "_parameters" in self.__dict__:
+            _parameters = self.__dict__["_parameters"]
+            if name in _parameters:
+                return _parameters[name]
+        if "_buffers" in self.__dict__:
+            _buffers = self.__dict__["_buffers"]
+            if name in _buffers:
+                return _buffers[name]
+        if "_modules" in self.__dict__:
+            modules = self.__dict__["_modules"]
+            if name in modules:
+                return modules[name]
+>       raise AttributeError(
+            f"'{type(self).__name__}' object has no attribute '{name}'"
+        )
+E       AttributeError: 'Qwen3_8FlashNextNGramEmbedding' object has no attribute 'ngram_embedding'
+
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1967: AttributeError
+___________ test_default_off_load_weights_matches_the_stock_contract ___________
+
+    def test_default_off_load_weights_matches_the_stock_contract() -> None:
+        module = Qwen3_8FlashNextNGramEmbedding.__new__(Qwen3_8FlashNextNGramEmbedding)
+        torch.nn.Module.__init__(module)
+        module.split_ngram_parts = 2
+        module.register_buffer("layer_multipliers", torch.zeros(1, dtype=torch.long))
+        module.register_buffer("ngram_heads_offsets", torch.zeros(1, dtype=torch.long))
+        module.register_buffer("ngram_heads_vocab_sizes", torch.zeros(1, dtype=torch.long))
+        embedding = SimpleNamespace(
+            org_vocab_size=8,
+            embedding_dim=2,
+            weight=torch.nn.Parameter(torch.full((4, 2), -1.0)),
+            shard_indices=SimpleNamespace(org_vocab_start_index=2, org_vocab_end_index=6),
+        )
+        # Real PLEVocabParallelEmbedding construction attaches weight_loader to
+        # the weight Parameter itself (see VocabParallelEmbedding.__init__ ->
+        # quant_method.create_weights(..., weight_loader=self.weight_loader));
+        # this fake embedding needs the same attribute for load_weights's
+        # generic `embedding.weight.weight_loader(...)` dispatch to resolve.
+        # Mirrors test_ple.py's _set_test_embedding_weight_loader.
+        embedding.weight.weight_loader = partial(
+            copy_ple_embedding_shard_,
+            tp_start=embedding.shard_indices.org_vocab_start_index,
+            tp_end=embedding.shard_indices.org_vocab_end_index,
+        )
+        module.ngram_embedding = embedding  # not MmapNgramEmbedding -> mmap_enabled=False
+    
+        shard_0 = torch.arange(8, dtype=torch.float32).reshape(4, 2)
+        shard_1 = torch.arange(8, 16, dtype=torch.float32).reshape(4, 2)
+        loaded = module.load_weights(
+            [
+                ("ngram_embedding.shard_0.weight", shard_0),
+                ("ngram_embedding.shard_1.weight", shard_1),
+            ]
+        )
+    
+>       assert loaded == {"ngram_embedding.weight"}
+E       AssertionError: assert set() == {'ngram_embedding.weight'}
+E         
+E         Extra items in the right set:
+E         'ngram_embedding.weight'
+E         Use -v to get more diff
+
+tests/test_ple_mmap_upstream.py:6793: AssertionError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:365: 14 warnings
+  /usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:469
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:469: PytestCacheWarning: could not create cache path /workspace/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/workspace/pytest-cache-files-mjokuoje'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:423
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:423: PytestCacheWarning: could not create cache path /workspace/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/workspace/pytest-cache-files-cwcojil7'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_ple_mmap_upstream.py::test_ngram_embedding_mmap_load_weights_intercepts_shards_and_scale
+FAILED tests/test_ple_mmap_upstream.py::test_forward_raises_named_error_when_streamed_but_build_tables_never_ran
+FAILED tests/test_ple_mmap_upstream.py::test_ngram_embedding_mmap_load_weights_rejects_mismatched_shard_shape
+FAILED tests/test_ple_mmap_upstream.py::test_ngram_embedding_mmap_load_weights_rejects_same_instance_reload
+FAILED tests/test_ple_mmap_upstream.py::test_build_tables_attaches_a_bf16_table_and_forward_gathers_it_value_exact
+FAILED tests/test_ple_mmap_upstream.py::test_build_tables_raises_when_weight_scale_was_never_loaded
+FAILED tests/test_ple_mmap_upstream.py::test_env_on_off_forward_equivalence_fp8_and_dequantized
+FAILED tests/test_ple_mmap_upstream.py::test_compute_ngram_ids_matches_golden_ids
+FAILED tests/test_ple_mmap_upstream.py::test_ngram_embedding_stores_the_layer_name_it_is_constructed_with
+FAILED tests/test_ple_mmap_upstream.py::test_default_off_uses_the_stock_vocab_parallel_embedding
+FAILED tests/test_ple_mmap_upstream.py::test_default_off_forward_never_calls_the_mmap_gather_op
+FAILED tests/test_ple_mmap_upstream.py::test_default_off_load_weights_matches_the_stock_contract
+12 failed, 206 passed, 16 warnings in 11.39s

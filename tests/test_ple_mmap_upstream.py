@@ -80,6 +80,7 @@ class Qwen3_8FlashNextNGramEmbedding(_BaseNGramEmbedding):
 def _reset_ple_mmap_env(monkeypatch: pytest.MonkeyPatch) -> None:
     """Every test starts from a clean, default-off environment."""
     for name in (
+        "VLLM_PLE_CPU_OFFLOAD",  # Isolate the unit fixture from image resident-mode defaults.
         "VLLM_PLE_MMAP",
         "VLLM_PLE_MMAP_WORKERS",
         "VLLM_PLE_MMAP_CHUNK",

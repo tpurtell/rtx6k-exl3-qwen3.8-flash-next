@@ -1,0 +1,3 @@
+INFO 09-07 12:30:33 [ple_mmap.py:2057] PLE mmap: layer 1 attached, 128 shards, 320001536 rows x 320 B (95.37 GiB on disk), 32 workers
+PASS: 512 real checkpoint rows, both boundaries of all 128 shards, byte-exact against safetensors slices
+PASS: 8 CUDA graph replays with changed real rows, exact scaled BF16 output

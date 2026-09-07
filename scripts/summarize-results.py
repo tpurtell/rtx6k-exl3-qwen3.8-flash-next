@@ -28,11 +28,14 @@ lines = ["# Final serving measurements", "",
          "profiles retain resident host tables. All decode rates below exclude prefill.", ""]
 if args.mmap:
     lines += ["EXL3 and NVFP4 columns retain the v0.1.0 measurements; only the mmap-enabled "
-              "EXL3 PLE8 column records its v0.2.0 qualification. Spark receives its own new "
-              "qualification. The RTX EXL3 baseline also has a different "
+              "EXL3 PLE8 column records its v0.2.0 qualification. The RTX EXL3 baseline has "
+              "a different "
               "PLE storage precision, so this is not a controlled mmap-on/off ablation. "
               "The mmap run uses existing Linux page cache and benchmark warmups; it is "
               "not a cold-disk or constrained-RAM test.", ""]
+
+if args.spark:
+    lines += ["The Spark column is newly qualified on native arm64 with the original BF16 PLE checkpoint.", ""]
 
 def read(root, name):
     path = root / name

@@ -26,3 +26,26 @@ Pending qualification:
 
 The 0.7 utilization cap is enforced for Spark configuration; no qualification
 result is claimed until the actual run has completed.
+
+## First native build and component results
+
+All four native arm64 builds pass the strict mmap base-file hashes and patch
+application. Emu verifies byte-exact gathers at both row edges of all 128 BF16
+PLE shards plus random rows (512 total), followed by eight changed-row CUDA
+graph replays. The mapped table is 95.37 GiB. The QSA FP8/BF16 bridge, host
+embedding and optional vocabulary bridge checks pass.
+
+The first unit run passed 206 tests and failed 12 because its default-off
+fixture cleared mmap variables while retaining the image's resident-offload
+flag. The fixture now also clears that flag; all 218 tests pass on arm64.
+Both receipts are retained, and no runtime behavior or numerical tolerance
+was changed for this test isolation fix.
+
+Component comparisons on emu: vocabulary projection median is 7310 us native
+and 5172 us B12x. HC is faster native at decode sizes and essentially tied at
+2048 rows, including the B12x injection-pack cost. GDN fails its numerical
+check, so it cannot become the serving default. These component findings do
+not establish end-to-end gains; vocabulary still needs a serving comparison.
+
+Four concurrent initial serving candidates use MTP1 (kiwi), MTP2 (ostrich),
+MTP3 (dodo), and MTP4 (emu), with identical BF16 PLE/mmap and 0.7 memory cap.
