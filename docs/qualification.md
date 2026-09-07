@@ -430,3 +430,37 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   blend by approximately 58%; MTP1 improves the C16 probe by approximately
   7%. Raw responses, client timings and runtime configuration are retained
   in `recipe/benchmarks/nvfp4-dev11-mtp0-*`.
+
+## Adaptive draft schedule and precise NVFP4 MoE candidate
+
+- NVIDIA's native dynamic schedule `[[1,4,2],[5,16,1]]` at maximum MTP2
+  measures 146.04 weighted tokens/s, below static MTP2's 152.40. Its
+  independent C8/C16 probes measure 585.89/858.97 tokens/s. It does not
+  establish an overall advantage, so static MTP2 remains the leading profile.
+  Runtime, raw responses and all client timings are retained as
+  `recipe/benchmarks/nvfp4-dev11-adaptive21-*`.
+- EXL3 MTP2 measures 149.16 weighted tokens/s, versus MTP3's 152.97.
+  Code measures 179.04 versus 205.58. Independent C8/C16 probes measure
+  532.52/718.39 tokens/s. Receipts: `recipe/benchmarks/exl3-dev11-mtp2-*`.
+- The pinned fork's checkpoint-backed NVFP4 MoE benchmark compares layer 0,
+  TP1, H2560/I640/E512/top10, shared activation scales, synthetic routes,
+  three timing repetitions and 256 MiB L2 eviction per launch. Fast math
+  fails the unchanged 0.9999 cosine threshold at six of seven shapes;
+  FlashInfer also misses that oracle threshold and is reported separately
+  as a reference warning. No tolerance was relaxed.
+- Disabling fast math passes all seven candidate oracle checks, with
+  cosine similarity 0.999958–0.999966. Precise B12x CUDA graph medians at
+  M1/3/4/16/48/64/2048 are 47.1/73.7/98.3/264.2/591.9/692.2/1283.1
+  microseconds, versus FlashInfer 61.4/100.4/118.8/311.3/632.4/738.6/1371.6.
+  Full command configuration, error metrics and timing ranges are in
+  `recipe/benchmarks/nvfp4-moe-fast-math.txt` and `nvfp4-moe-precise.txt`.
+  These are component measurements; serving integration is still under test.
+- The opt-in `B12X_NVFP4=1` bridge in dev13 passes all 21 mutated graph
+  checks against the unchanged oracle, using the checkpoint's real weights
+  and scales. The test exercises the patched FlashInfer expert class,
+  BF16 input deferral, output dimensions and pointer-identical weight
+  storage at M1/3/4/16/48/64/2048. Runtime scratch is shared serially across
+  layers within each CUDA stream. Native routing and shared-expert handling
+  remain in vLLM's modular pipeline. Full-model qualification is pending.
+  Receipt: `recipe/benchmarks/nvfp4-moe-bridge-gpu.txt`; runner:
+  `recipe/scripts/test-nvfp4-moe.py`.

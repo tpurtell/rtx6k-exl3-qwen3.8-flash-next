@@ -1,0 +1,171 @@
+MoE benchmark (Pre-routed MoE kernel only)
+Qwen3.8 Flash Next  TP=1, K=2560, I_tp=640, E=512, top_k=10
+Model path: /root/.cache/huggingface/hub/models--nvidia--Qwen3.8-Flash-Next-NVFP4/snapshots/2061e0b0c5d92bdf7c8fbd4241bbc2af239d7e2d
+Layer: 0
+Activation: silu
+Quant mode: nvfp4
+Routing source: synthetic
+Batch-size profile: micro -> [1, 3, 4, 16, 48, 64, 2048]
+Backend: b12x
+B12X policy mode: auto
+Reference: flashinfer
+Scale contract: shared
+Validation: oracle
+Fast math: on
+L2 flush: on (256.0 MiB per launch)
+Graph mode: single-op
+Graph only: no
+Timing passes per batch size: 3 x 20 iterations
+Timed region: backend launch only
+Oracle mode: nvfp4
+
+  Loading 512 experts... done.
+Source format: modelopt_nvfp4
+  Warming up b12x (compilation)... done.
+
+======================================================================
+  batch_size=1  (tokens*top_k = 10 expert calls)
+======================================================================
+  routing: 10 active experts, 1.0 routed rows/active expert
+  policy: source=preplanned, backend=dynamic, route_planner=internal, max_active_clusters=None, profile=nvidia.rtx.pro.6000.blackwell, rule=config-e1191fdeea6e
+  oracle:                    norm=1.74160 max=0.20996
+  b12x vs FlashInfer: max_abs=0.00679 rmse=0.00128 mean_abs=0.00100 cos=0.999317
+  b12x vs oracle: max_abs=0.00391 rmse=0.00110 mean_abs=0.00088 cos=0.999495
+  FlashInfer vs oracle: max_abs=0.00484 rmse=0.00087 mean_abs=0.00068 cos=0.999682
+  FlashInfer (no graph):         62.7 us (repeat medians 62.5-62.9, sample min 62.1)
+  b12x (no graph):              641.5 us (repeat medians 629.2-642.6, sample min 622.6)
+    ratio vs flashinfer:      10.23x (repeat range 10.01-10.28)
+  FlashInfer (CUDA graph):       61.4 us (repeat medians 61.4-61.4, sample min 59.4)
+  b12x (CUDA graph):             45.0 us (repeat medians 45.0-45.1, sample min 42.9)
+    graph ratio vs flashinfer: 0.73x (repeat range 0.73-0.73)
+
+======================================================================
+  batch_size=3  (tokens*top_k = 30 expert calls)
+======================================================================
+  routing: 30 active experts, 1.0 routed rows/active expert
+  policy: source=preplanned, backend=dynamic, route_planner=internal, max_active_clusters=None, profile=nvidia.rtx.pro.6000.blackwell, rule=config-e1191fdeea6e
+  oracle:                    norm=3.13417 max=0.18262
+  b12x vs FlashInfer: max_abs=0.00848 rmse=0.00107 mean_abs=0.00081 cos=0.999579
+  b12x vs oracle: max_abs=0.00818 rmse=0.00094 mean_abs=0.00064 cos=0.999701
+  FlashInfer vs oracle: max_abs=0.00391 rmse=0.00078 mean_abs=0.00060 cos=0.999760
+  FlashInfer (no graph):        104.9 us (repeat medians 104.4-105.5, sample min 102.4)
+  b12x (no graph):              632.3 us (repeat medians 631.8-638.0, sample min 624.6)
+    ratio vs flashinfer:      6.03x (repeat range 5.99-6.11)
+  FlashInfer (CUDA graph):      100.4 us (repeat medians 100.4-100.4, sample min 98.3)
+  b12x (CUDA graph):             71.7 us (repeat medians 71.7-71.7, sample min 69.6)
+    graph ratio vs flashinfer: 0.71x (repeat range 0.71-0.71)
+
+======================================================================
+  batch_size=4  (tokens*top_k = 40 expert calls)
+======================================================================
+  routing: 40 active experts, 1.0 routed rows/active expert
+  policy: source=preplanned, backend=dynamic, route_planner=triton, max_active_clusters=141, profile=nvidia.rtx.pro.6000.blackwell, rule=config-fa1dab3c5fc2
+  oracle:                    norm=3.58817 max=0.40430
+  b12x vs FlashInfer: max_abs=0.01074 rmse=0.00098 mean_abs=0.00076 cos=0.999621
+  b12x vs oracle: max_abs=0.00977 rmse=0.00075 mean_abs=0.00050 cos=0.999786
+  FlashInfer vs oracle: max_abs=0.00562 rmse=0.00075 mean_abs=0.00058 cos=0.999778
+  FlashInfer (no graph):        124.0 us (repeat medians 124.0-124.1, sample min 121.6)
+  b12x (no graph):              693.8 us (repeat medians 676.4-736.3, sample min 667.6)
+    ratio vs flashinfer:      5.59x (repeat range 5.45-5.93)
+  FlashInfer (CUDA graph):      116.8 us (repeat medians 116.7-116.9, sample min 116.4)
+  b12x (CUDA graph):             96.3 us (repeat medians 96.3-96.3, sample min 94.2)
+    graph ratio vs flashinfer: 0.82x (repeat range 0.82-0.82)
+
+======================================================================
+  batch_size=16  (tokens*top_k = 160 expert calls)
+======================================================================
+  routing: 138 active experts, 1.2 routed rows/active expert
+  policy: source=preplanned, backend=dynamic, route_planner=triton, max_active_clusters=141, profile=nvidia.rtx.pro.6000.blackwell, rule=config-fa1dab3c5fc2
+  oracle:                    norm=7.11658 max=0.30469
+  b12x vs FlashInfer: max_abs=0.00635 rmse=0.00099 mean_abs=0.00076 cos=0.999595
+  b12x vs oracle: max_abs=0.00488 rmse=0.00055 mean_abs=0.00034 cos=0.999882
+  FlashInfer vs oracle: max_abs=0.00562 rmse=0.00086 mean_abs=0.00066 cos=0.999684
+  FlashInfer (no graph):        316.4 us (repeat medians 314.4-316.4, sample min 308.3)
+  b12x (no graph):              668.2 us (repeat medians 663.5-671.2, sample min 658.4)
+    ratio vs flashinfer:      2.11x (repeat range 2.11-2.12)
+  FlashInfer (CUDA graph):      311.3 us (repeat medians 310.8-311.3, sample min 305.2)
+  b12x (CUDA graph):            261.3 us (repeat medians 261.1-262.1, sample min 260.0)
+    graph ratio vs flashinfer: 0.84x (repeat range 0.84-0.84)
+
+======================================================================
+  batch_size=48  (tokens*top_k = 480 expert calls)
+======================================================================
+  routing: 316 active experts, 1.5 routed rows/active expert
+  policy: source=preplanned, backend=dynamic, route_planner=internal, max_active_clusters=None, profile=nvidia.rtx.pro.6000.blackwell, rule=config-13437ddae9d1
+  oracle:                    norm=12.67292 max=0.45898
+  b12x vs FlashInfer: max_abs=0.00879 rmse=0.00094 mean_abs=0.00071 cos=0.999668
+  b12x vs oracle: max_abs=0.00586 rmse=0.00047 mean_abs=0.00029 cos=0.999911
+  FlashInfer vs oracle: max_abs=0.00781 rmse=0.00084 mean_abs=0.00064 cos=0.999733
+  FlashInfer (no graph):        639.0 us (repeat medians 637.0-640.0, sample min 629.9)
+  b12x (no graph):              665.1 us (repeat medians 662.5-667.1, sample min 650.2)
+    ratio vs flashinfer:      1.04x (repeat range 1.04-1.05)
+  FlashInfer (CUDA graph):      636.8 us (repeat medians 636.1-638.4, sample min 628.6)
+  b12x (CUDA graph):            587.8 us (repeat medians 587.8-588.0, sample min 586.8)
+    graph ratio vs flashinfer: 0.92x (repeat range 0.92-0.92)
+
+======================================================================
+  batch_size=64  (tokens*top_k = 640 expert calls)
+======================================================================
+  routing: 370 active experts, 1.7 routed rows/active expert
+  policy: source=preplanned, backend=dynamic, route_planner=internal, max_active_clusters=None, profile=nvidia.rtx.pro.6000.blackwell, rule=config-27e74707ac79
+  oracle:                    norm=14.25466 max=0.43555
+  b12x vs FlashInfer: max_abs=0.00983 rmse=0.00098 mean_abs=0.00074 cos=0.999615
+  b12x vs oracle: max_abs=0.00854 rmse=0.00064 mean_abs=0.00038 cos=0.999841
+  FlashInfer vs oracle: max_abs=0.00732 rmse=0.00085 mean_abs=0.00064 cos=0.999711
+  FlashInfer (no graph):        734.7 us (repeat medians 731.6-735.3, sample min 726.0)
+  b12x (no graph):              688.1 us (repeat medians 688.1-688.1, sample min 686.0)
+    ratio vs flashinfer:      0.94x (repeat range 0.94-0.94)
+  FlashInfer (CUDA graph):      741.4 us (repeat medians 739.3-750.1, sample min 731.2)
+  b12x (CUDA graph):            686.6 us (repeat medians 686.1-686.8, sample min 685.1)
+    graph ratio vs flashinfer: 0.93x (repeat range 0.92-0.93)
+
+======================================================================
+  batch_size=2048  (tokens*top_k = 20480 expert calls)
+======================================================================
+  routing: 512 active experts, 40.0 routed rows/active expert
+  policy: source=preplanned, backend=dynamic, route_planner=internal, max_active_clusters=None, profile=nvidia.rtx.pro.6000.blackwell, rule=config-ba4ba424dc7b
+  oracle:                    norm=80.18397 max=0.84766
+  b12x vs FlashInfer: max_abs=0.01953 rmse=0.00096 mean_abs=0.00073 cos=0.999621
+  b12x vs oracle: max_abs=0.01367 rmse=0.00059 mean_abs=0.00035 cos=0.999856
+  FlashInfer vs oracle: max_abs=0.01605 rmse=0.00083 mean_abs=0.00063 cos=0.999720
+  FlashInfer (no graph):       1266.8 us (repeat medians 1266.4-1362.4, sample min 1255.5)
+  b12x (no graph):             1169.0 us (repeat medians 1068.1-1253.8, sample min 1065.1)
+    ratio vs flashinfer:      0.92x (repeat range 0.84-0.92)
+  FlashInfer (CUDA graph):     1366.8 us (repeat medians 1354.0-1409.7, sample min 1342.5)
+  b12x (CUDA graph):           1316.9 us (repeat medians 1305.6-1334.8, sample min 1302.5)
+    graph ratio vs flashinfer: 0.96x (repeat range 0.93-0.99)
+
+======================================================================
+  Summary
+======================================================================
+  bs=1 | ref 61.4 us | b12x 45.0 us | ratio 0.73x (repeat range 0.73-0.73)
+  bs=3 | ref 100.4 us | b12x 71.7 us | ratio 0.71x (repeat range 0.71-0.71)
+  bs=4 | ref 116.8 us | b12x 96.3 us | ratio 0.82x (repeat range 0.82-0.82)
+  bs=16 | ref 311.3 us | b12x 261.3 us | ratio 0.84x (repeat range 0.84-0.84)
+  bs=48 | ref 636.8 us | b12x 587.8 us | ratio 0.92x (repeat range 0.92-0.92)
+  bs=64 | ref 741.4 us | b12x 686.6 us | ratio 0.93x (repeat range 0.92-0.93)
+  bs=2048 | ref 1366.8 us | b12x 1316.9 us | ratio 0.96x (repeat range 0.93-0.99)
+  geo mean: 0.84x
+
+[1;33m======================================================================
+  REFERENCE WARNING
+======================================================================
+  bs=1 FlashInfer vs oracle: cos=0.999682 < 0.9999
+  bs=3 FlashInfer vs oracle: cos=0.999760 < 0.9999
+  bs=4 FlashInfer vs oracle: cos=0.999778 < 0.9999
+  bs=16 FlashInfer vs oracle: cos=0.999684 < 0.9999
+  bs=48 FlashInfer vs oracle: cos=0.999733 < 0.9999
+  bs=64 FlashInfer vs oracle: cos=0.999711 < 0.9999
+  bs=2048 FlashInfer vs oracle: cos=0.999720 < 0.9999
+======================================================================[0m
+
+[1;31m======================================================================
+  ACCURACY CHECK FAILED
+======================================================================
+  bs=1 b12x vs oracle: cos=0.999495 < 0.9999
+  bs=3 b12x vs oracle: cos=0.999701 < 0.9999
+  bs=4 b12x vs oracle: cos=0.999786 < 0.9999
+  bs=16 b12x vs oracle: cos=0.999882 < 0.9999
+  bs=64 b12x vs oracle: cos=0.999841 < 0.9999
+  bs=2048 b12x vs oracle: cos=0.999856 < 0.9999
+======================================================================[0m

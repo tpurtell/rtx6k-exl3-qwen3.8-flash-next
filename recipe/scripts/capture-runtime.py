@@ -14,10 +14,10 @@ logs = subprocess.run(["docker", "logs", args.container], capture_output=True,
                       text=True, check=True)
 markers = ("PLE offload matched", "Token embedding offloaded", "Model loading took",
            "Worker ready -", "GPU KV cache size:", "Graph capturing finished",
-           "B12x vocabulary")
+           "B12x vocabulary", "Qwen NVFP4 experts use precise B12x")
 environment_names = {"VLLM_PLE_CPU_OFFLOAD", "VLLM_EXL3_TRELLIS_MIN_M",
                      "VLLM_EXL3_PREFILL_TRELLIS", "VLLM_EXL3_PREFILL_CAPACITY",
-                     "QWEN38_B12X_VOCAB", "OMP_NUM_THREADS"}
+                     "QWEN38_B12X_VOCAB", "QWEN38_B12X_NVFP4", "OMP_NUM_THREADS"}
 receipt = {
     "container": args.container,
     "image_id": info["Image"],

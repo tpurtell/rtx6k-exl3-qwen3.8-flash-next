@@ -1,0 +1,24 @@
+  Loading 512 experts... done.
+INFO 09-07 09:01:25 [qwen_nvfp4_moe.py:50] Qwen NVFP4 experts use precise B12x; packed weights shared
+{"rows": 1, "mutation": 0, "cosine": 0.999969482421875, "max_abs": 0.0029296875, "passed": true}
+{"rows": 1, "mutation": 1, "cosine": 0.9999666810035706, "max_abs": 0.001953125, "passed": true}
+{"rows": 1, "mutation": 2, "cosine": 0.9999629855155945, "max_abs": 0.001953125, "passed": true}
+{"rows": 3, "mutation": 0, "cosine": 0.999961256980896, "max_abs": 0.00244140625, "passed": true}
+{"rows": 3, "mutation": 1, "cosine": 0.9999626874923706, "max_abs": 0.00244140625, "passed": true}
+{"rows": 3, "mutation": 2, "cosine": 0.9999634623527527, "max_abs": 0.001953125, "passed": true}
+{"rows": 4, "mutation": 0, "cosine": 0.9999587535858154, "max_abs": 0.0029296875, "passed": true}
+{"rows": 4, "mutation": 1, "cosine": 0.9999610781669617, "max_abs": 0.00390625, "passed": true}
+{"rows": 4, "mutation": 2, "cosine": 0.9999616146087646, "max_abs": 0.00390625, "passed": true}
+{"rows": 16, "mutation": 0, "cosine": 0.9999585151672363, "max_abs": 0.00390625, "passed": true}
+{"rows": 16, "mutation": 1, "cosine": 0.9999597072601318, "max_abs": 0.00244140625, "passed": true}
+{"rows": 16, "mutation": 2, "cosine": 0.9999567866325378, "max_abs": 0.00390625, "passed": true}
+{"rows": 48, "mutation": 0, "cosine": 0.9999608397483826, "max_abs": 0.00390625, "passed": true}
+{"rows": 48, "mutation": 1, "cosine": 0.9999597072601318, "max_abs": 0.00341796875, "passed": true}
+{"rows": 48, "mutation": 2, "cosine": 0.9999586939811707, "max_abs": 0.005859375, "passed": true}
+{"rows": 64, "mutation": 0, "cosine": 0.9999615550041199, "max_abs": 0.01171875, "passed": true}
+{"rows": 64, "mutation": 1, "cosine": 0.9999618530273438, "max_abs": 0.00390625, "passed": true}
+{"rows": 64, "mutation": 2, "cosine": 0.999961793422699, "max_abs": 0.00390625, "passed": true}
+{"rows": 2048, "mutation": 0, "cosine": 0.9999616146087646, "max_abs": 0.01171875, "passed": true}
+{"rows": 2048, "mutation": 1, "cosine": 0.9999614953994751, "max_abs": 0.0078125, "passed": true}
+{"rows": 2048, "mutation": 2, "cosine": 0.9999615550041199, "max_abs": 0.0078125, "passed": true}
+Patched NVFP4 expert ABI: weight sharing, BF16 input/output, and 21 mutated graph oracle checks passed.
