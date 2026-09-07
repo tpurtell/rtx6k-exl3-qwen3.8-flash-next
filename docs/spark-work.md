@@ -145,3 +145,8 @@ Suites are assigned to ostrich (core and coding), dodo (prefill and retrieval),
 emu (context and exact boundary), and kiwi (C8 tool evaluation). Each host
 starts the same default configuration; no measurement combines GPU capacity
 across hosts. Startup and all suites are still in progress.
+
+The registry manifest confirms `linux/arm64`. Dodo has begun prefill, ostrich
+has begun API constraints, and kiwi has begun the full 88-case C8 tool suite.
+Captured startup receipts include B12x vocabulary preparation. Final results
+are not yet complete.
