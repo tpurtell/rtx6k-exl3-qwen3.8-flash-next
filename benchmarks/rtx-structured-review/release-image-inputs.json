@@ -1,0 +1,33 @@
+{
+  "built_source_commit": "616522bf7c9b798031fab22bfcaad60691704fef",
+  "image": "ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next@sha256:45a001844695bccce3d23361733055d96aeb3e5f44922ed91220f8b3abf1664a",
+  "image_id": "sha256:45a001844695bccce3d23361733055d96aeb3e5f44922ed91220f8b3abf1664a",
+  "native_build_args": {
+    "CUTE_DSL_ARCH": "sm_120a",
+    "B12X_VOCAB": "0"
+  },
+  "input_sha256": {
+    "Dockerfile": "8764e22206f4ba2b1b5ec5f04d4342b4666d7d996dd645535576b9f21d441bce",
+    "patches/b12x_qsa_attention.py": "6f19ce98125868376ea29cc69c61dd48a4ac792fed915f6a2ce73c239f88faef",
+    "patches/ple-mmap-base-hashes.json": "5a85f36c69bc96b26c3ab9335d46a245f8e2edd1c743bbce4a0e44170521aa54",
+    "patches/ple-mmap-pr54129.patch": "6059771d2f37d798bb87567db584ef86b6223aef7bfbc2dae7a5005f927f196a",
+    "patches/port-exl3-ple-fp8.py": "01e553b6d40284858b41769bf4ad8a60d3aac4a5a7786b397fdf5b23d8902d15",
+    "patches/port-exl3-qwen38.py": "9a188496e332c7d0e77cdfaad022290f741b5cf06917b45f3635213a3e35908e",
+    "patches/port-host-embedding.py": "28d9b9073ca12e9640fbbc8d78174a02c9206c9db45518fd242c401fcd5cbcbd",
+    "patches/port-nvfp4-moe.py": "62d23ed16acf4eb36abee56a4a4190ca2f388e20a36ffac80e9ee8f17e304278",
+    "patches/port-nvidia-mtp-fp8.py": "94aba9ef6f02965d0082af2d000e4bc1ecdd4e6de098cba95385ce94a9562470",
+    "patches/port-nvidia-ple-fp8.py": "0e9bd53215a6e5a5a63efbeb674578d0fe245a8b333aae4142acfa56ad1a6101",
+    "patches/port-ple-mmap.py": "24a116a94f797ecf3dbe6288f9dc5be653ce8f04e899ec0887085f793c62dcc8",
+    "patches/port-qsa-fp8.py": "699b8bd0536d4ba1c4da53c17eed8cdc4d424644f62b253651a9f87eda937691",
+    "patches/port-qwen-tool-constraints.py": "0eef8d55b58b753dbb5c596d38ef6309db832934f14e9b633b59d7afaafd964d",
+    "patches/port-structured-output-reasoning.py": "9c36335f17709db5b6f5018afab9bb26b6b990a394dcb694b3c581b26dbfb071",
+    "patches/port-vocab-projection.py": "810bc8074a0b9db4e6a052ee08ca4c9092aef0853897472e94d8d2d7b0d8b2f2",
+    "patches/port-xgrammar-termination.py": "7b8d5378ae962883224567ee5ea986479eb2442a7738356b287071f544da0944",
+    "patches/qwen_host_embedding.py": "c08da894e85e2e26f8edc00f40d1dae6ada2a80aa2b6534e591ec4d862048066",
+    "patches/qwen_nvfp4_moe.py": "d68827c0ad5df2056dcff4749088d82469499a326f20b46555e47b4b47c5e848",
+    "patches/qwen_vocab_projection.py": "56d40c59812e6dcf2f34a7dea8f6ce4bcedeb08cd6fd38264b149c647b0a0ca4",
+    "scripts/test-structured-output-reasoning.py": "c94d09e347d70e37a7e27b77b3ede1549a4228ddf86fb3b91fc3371ac7d4387c",
+    "scripts/test-xgrammar-termination.py": "d3a555dd305d476c02e92e376cc6c64a40a6e1b5cec1b88f12c0ac32ede8c4a1"
+  },
+  "platform_manifest_digest": "sha256:328a38835b073939af5baba688df4d6b75292f51b0ac3accf91456f41079c4cb"
+}

@@ -19,3 +19,8 @@ TC-42 extra-parameter failure was caused by that path.
 
 [Unfiltered matching diagnostic lines](server-diagnostics.json) are retained.
 The TC-42 quality failure remains in the main tables and full tool traces.
+
+These are the original qualification image's diagnostics. The reviewed
+[structured-output backports](../spark-structured-review/README.md) address
+the speculative reasoning and termination paths; the release uses corrected
+images while preserving these original receipts.

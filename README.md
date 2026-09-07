@@ -67,9 +67,13 @@ Use `B12X_VOCAB=0` for the native vocabulary projection or
 `PLE_MMAP_READAHEAD=0` to disable targeted readahead.
 
 Spark's original BF16 PLE default has completed the full qualification below.
-The RTX columns retain their existing measurements. The
-[Spark prerelease](https://github.com/tpurtell/sm12x-exl3-qwen3.8-flash-next/releases/tag/v0.3.0-spark.1)
-is on the `spark` branch; `main` remains unchanged.
+The RTX columns retain their existing measurements.
+[Release v0.3.0](https://github.com/tpurtell/sm12x-exl3-qwen3.8-flash-next/releases/tag/v0.3.0)
+provides native images for both platforms, including the reviewed speculative
+reasoning and xgrammar termination fixes. Both images pass 14 targeted
+regressions, 218 mmap tests, 16 API checks and 29 live JSON/reasoning/EOS canaries.
+The [RTX shipping-default structured-output qualification](benchmarks/rtx-structured-final/qualification.json)
+adds a C8 tool run without changing the historical RTX table columns.
 
 ## Run
 
@@ -90,8 +94,8 @@ used by `start.sh`. Immutable image digests are recorded in
 
 | Platform | Image package | Status |
 |---|---|---|
-| RTX, linux/amd64 | `ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next` | v0.2.0 |
-| Spark, linux/arm64 | `ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next` | v0.3.0-spark.1 |
+| RTX, linux/amd64 | `ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next` | v0.3.0 |
+| Spark, linux/arm64 | `ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next` | v0.3.0 |
 
 The new Spark package currently requires registry authentication while its
 visibility is private. The package owner can enable public pulls in GitHub

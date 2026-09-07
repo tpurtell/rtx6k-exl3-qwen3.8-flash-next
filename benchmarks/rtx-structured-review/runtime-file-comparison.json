@@ -1,0 +1,20 @@
+{
+  "images": {
+    "previous": "ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next:v0.2.0",
+    "corrected": "qwen38-rtx:structured-1"
+  },
+  "files_compared": 5738,
+  "changes": [
+    {
+      "path": "/usr/local/lib/python3.12/dist-packages/vllm/v1/structured_output/__init__.py",
+      "previous_sha256": "355f6f1193c15d5d6901a0f567e2e16005e3681f04f70079c6ba11e020b4d33a",
+      "corrected_sha256": "63b0b02f97a3d41d1a1c201551a3c764672c0ede8ebd163582015dd473910116"
+    },
+    {
+      "path": "/usr/local/lib/python3.12/dist-packages/vllm/v1/structured_output/backend_xgrammar.py",
+      "previous_sha256": "cdaebca794c8aa919097ee250f1bc0fa87f8fe52a026eee4877605e18134752e",
+      "corrected_sha256": "6ae5e83cfd0de3eeeaaacb5414eaf94b102d319c4ad12f6a7663064772208794"
+    }
+  ],
+  "scope": "Installed vLLM and B12x files excluding bytecode and git metadata; defaults/labels are separately recorded in image metadata."
+}

@@ -30,9 +30,9 @@ with tempfile.TemporaryDirectory() as folder:
         build = subprocess.check_output(['bash', str(root/'build.sh')], env=env, text=True).splitlines()
         assert image in build and 'CUTE_DSL_ARCH='+cute in build
         pull = subprocess.check_output(['bash', str(root/'pull.sh')], env=env, text=True).splitlines()
-        expected_digest = ('0e17cebbff2a95de615f4c1f68ba4e16ad07710164e82c0bf90f044216e8cbd3'
+        expected_digest = ('3eeb9f92f2bee873b08ceafb06e421d383042a4f810578e4f680a7080f0eedc4'
                            if arch == 'aarch64' else
-                           'bb252820ade1b6aa1316c45485186db90fe67f1d7ea48826169bf92f634d2e73')
+                           '45a001844695bccce3d23361733055d96aeb3e5f44922ed91220f8b3abf1664a')
         assert pull[0] == 'pull' and pull[1].endswith('@sha256:'+expected_digest)
         assert pull[2:] == ['tag', pull[1], image]
         download = subprocess.check_output(['bash', str(root/'download.sh')], env=env, text=True).splitlines()

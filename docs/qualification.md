@@ -637,10 +637,18 @@ with digest `sha256:bb252820ade1b6aa1316c45485186db90fe67f1d7ea48826169bf92f634d
 The GHCR package is public. The qualified mmap PLE8 server remains on GPU1,
 port 8001; the shipping default is configured independently of that live test.
 
-## Spark branch qualification
+## Spark qualification and v0.3.0
 
-Native arm64 qualification and tuning are complete on the `spark` branch,
+Native arm64 qualification and tuning are complete,
 with the original EXL3 BF16 PLE mmap profile. See
 [Spark qualification and tuning](spark-work.md) and the
 [complete four-profile report](../benchmarks/RESULTS.md). The historical RTX
 receipts above remain unchanged.
+
+Both v0.3.0 native images include the reviewed structured-output corrections.
+See [Spark backport review](../benchmarks/spark-structured-review/README.md)
+and [RTX update and qualification](../benchmarks/rtx-structured-review/README.md).
+The RTX shipping BF16 mmap/MTP3 profile passes API16/16 and 29/29 live JSON
+canaries, then completes C8 tools with 148/176 points and 29/38 Hard Mode points.
+There are zero evaluator request errors and no FSM/termination errors in its
+server log. This scoped requalification adds no RTX performance measurements.

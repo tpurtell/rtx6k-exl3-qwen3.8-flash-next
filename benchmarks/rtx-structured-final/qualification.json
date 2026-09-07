@@ -1,0 +1,27 @@
+{
+  "schema": "rtx-structured-qualification-v1",
+  "status": "PASS",
+  "corrected_image_id": "sha256:45a001844695bccce3d23361733055d96aeb3e5f44922ed91220f8b3abf1664a",
+  "host": "raptor",
+  "scope": "Shipping EXL3 BF16 PLE mmap, native vocabulary, MTP3, readahead2048. API16, JSON/reasoning/EOS29 and C8 tools88. Historical performance/profile measurements are retained unchanged.",
+  "files": {
+    "api-tools.jsonl": {
+      "sha256": "09057634ef571551f863647468faef1ff619eb10bcafca1f1ac9ddc1b6649e44"
+    },
+    "json-reasoning.json": {
+      "sha256": "3fbb8936a95c9df5669518e0e9fdee9088105f1ffd37ae0383074613a3cf03e6"
+    },
+    "runtime.json": {
+      "sha256": "389c216f253eab9865891436482ea67117afe9db237edca9b821e8e7a66387b9"
+    },
+    "server-diagnostics.json": {
+      "sha256": "729c8ff7cd86c3836edb28de10f6dfc704c6254028d755fa406648fa2eaf8420"
+    },
+    "tools.json": {
+      "sha256": "29f0b85e3a1f8c634ac85af174a20be11688caa85943c0e7699f01c77a820a78"
+    },
+    "tools.md": {
+      "sha256": "24e163214e65cd3552246a3b181ebdb658c028e2f30b9b77b7465f8851b850f1"
+    }
+  }
+}

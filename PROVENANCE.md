@@ -37,7 +37,7 @@ only to `exl3-ple8` with mmap enabled; v0.1.0 results remain historical.
 
 ## Native Spark build and qualification
 
-The `spark` branch uses the same pinned multiarch vLLM base for native
+The recipe uses the same pinned multiarch vLLM base for native
 linux/arm64 builds, selecting `sm_121a` for CuTe. The amd64 EXL3 source
 stage supplies only its Python adapter. The per-projection expert allocation
 and checkpoint revisions are unchanged. Spark defaults select MTP2 and
@@ -56,3 +56,19 @@ script requires identical immutable image IDs, serving arguments and selected
 environment settings across hosts, and records each result's originating host
 and SHA-256. The completed qualification is in `benchmarks/spark-final`, including that
 manifest, all four runtime captures and post-qualification memory snapshots.
+
+## Structured-output corrections in v0.3.0
+
+Both native images include the reasoning-end guard from vLLM commit
+[c6e19b3be243](https://github.com/vllm-project/vllm/commit/c6e19b3be243)
+and termination correction from [PR 52805](https://github.com/vllm-project/vllm/pull/52805).
+They were reviewed against upstream and the adjacent GLM recipe at commit
+`9c35641652670bd216a4ad29495c3edd41f0828c`, with strict Qwen source hashes.
+[Review and negative controls](benchmarks/spark-structured-review/README.md)
+record the port and regressions. Both builds run all fourteen regression tests.
+
+Spark preserves every original numerical image layer. The RTX comparison hashes
+all 5738 installed vLLM/B12x files: only the two structured-output Python files
+differ from v0.2.0. Image defaults additionally enable readahead2048 and native
+architecture settings. Existing performance receipts retain their original
+image IDs and environments; these are not new RTX performance measurements.
