@@ -464,3 +464,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   remain in vLLM's modular pipeline. Full-model qualification is pending.
   Receipt: `recipe/benchmarks/nvfp4-moe-bridge-gpu.txt`; runner:
   `recipe/scripts/test-nvfp4-moe.py`.
+- EXL3's no-MTP control measures 92.76 weighted tokens/s; MTP3 is about
+  65% faster on the blend. C8/C16 target-only probes measure 465.99/762.88
+  tokens/s. The C16 result exceeds static MTP2's 718.39, motivating a
+  shorter-draft batch comparison. Receipts: `recipe/benchmarks/exl3-dev12-mtp0-*`.
