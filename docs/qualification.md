@@ -54,3 +54,24 @@ Port the GLM recipe's mature EXL3 adapter and mixed-projection preparation to
 Qwen namespaces and geometry. Establish independent single-GPU baseline servers,
 then address correctness/capacity and profile before tuning. GLM-specific MLA,
 mHC and DCP patches require architecture review, not mechanical reuse.
+
+## Runtime integration progress
+
+- `qwen38-rtx:dev1` builds from the pinned Qwen base plus the released GLM
+  adapter artifact, preserving its mixed projection preparation. Build/import
+  passed. `recipe/patches/port-exl3-qwen38.py` adds Qwen config types, MTP
+  metadata aliases, and distinguishes individual EXL3 trellis tensors from
+  fused expert-bank tensors in the modern vLLM loader. Serving remains unproven.
+- NVIDIA baseline `qwen38-nvfp4-baseline` exited during construction with
+  `NotImplementedError: Qwen3.8-Flash-Next QSA requires a BF16 main KV cache`.
+  Requested TP1, FP8 KV, context 262144, 16 sequences, MTP3, batch tokens 2048,
+  memory utilization 0.94, PLE CPU offload. Full local log:
+  `.work/nvfp4-baseline.log`.
+- FP8 QSA integration is required. B12x already contains BF16/FP8 E4M3 sparse
+  GQA support with explicit K/V descales in `attention/qsa/_sparse_gqa.py`;
+  its serving integration and correctness gates are outstanding.
+- `qwen38-exl3-loader-dev1` is a diagnostic startup on GPU0, port 8001:
+  MTP3, 16 sequences, eager mode, 8192 context, BF16 KV, PLE CPU offload.
+  This isolates the EXL3 loader from the known FP8 construction failure and
+  does not qualify the requested release configuration. Inspect current
+  container state and logs before proceeding or restarting.

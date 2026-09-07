@@ -1,0 +1,28 @@
+# syntax=docker/dockerfile:1.7
+ARG EXL3_SOURCE_IMAGE=ghcr.io/tpurtell/glm-5.3-flash-exl3-4bpw-2x-rtx@sha256:48e254d94f58137c8707e6044cde4528c6af3fdd9702726b9b362e9b0e0b4629
+ARG VLLM_BASE_IMAGE=vllm/vllm-openai@sha256:fc120ece0a388cc0aa1caad4a9f1cd92113484ab7ec2fd0efadd62585be05bf8
+FROM ${EXL3_SOURCE_IMAGE} AS exl3_source
+FROM ${VLLM_BASE_IMAGE}
+ARG B12X_COMMIT=53f9d89c16f70e6580d0015de2934a882c61ed29
+RUN B12X_COMMIT=${B12X_COMMIT} python3 - <<'PY'
+import os, tarfile, urllib.request
+from pathlib import Path
+commit = os.environ['B12X_COMMIT']
+urllib.request.urlretrieve(f'https://github.com/tpurtell/sparkinfer-glmrt/archive/{commit}.tar.gz', '/tmp/b12x.tar.gz')
+with tarfile.open('/tmp/b12x.tar.gz') as archive:
+    archive.extractall('/opt', filter='data')
+Path(f'/opt/sparkinfer-glmrt-{commit}').rename('/opt/b12x')
+Path('/tmp/b12x.tar.gz').unlink()
+PY
+RUN python3 -m pip install --no-deps -e /opt/b12x
+COPY --from=exl3_source /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/quantization/exl3.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/quantization/exl3.py
+COPY patches/port-exl3-qwen38.py /tmp/port-exl3-qwen38.py
+RUN python3 /tmp/port-exl3-qwen38.py /usr/local/lib/python3.12/dist-packages/vllm \
+ && python3 -c 'from vllm.model_executor.layers.quantization import get_quantization_config; assert get_quantization_config("exl3").__name__ == "Exl3Config"'
+ENV VLLM_EXL3_TRELLIS_MIN_M=1 \
+    VLLM_EXL3_PREFILL_TRELLIS=1 \
+    VLLM_EXL3_PREFILL_CAPACITY=2048 \
+    VLLM_PLE_CPU_OFFLOAD=1 \
+    VLLM_PLE_OFFLOAD_READY_TIMEOUT=1800
+LABEL org.opencontainers.image.source="https://github.com/tpurtell/rtx6k-exl3-qwen3.8-flash-next" \
+      io.tpurtell.b12x.commit="${B12X_COMMIT}"
