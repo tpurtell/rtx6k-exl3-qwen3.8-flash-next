@@ -568,3 +568,19 @@ Hard Mode points (13 pass, 3 partial, 3 fail in Hard Mode). The earlier tuning
 run scored 153/176; the final run is reported without selecting the better
 score. `benchmarks/nvfp4-final/tools.json` and `tools.md` retain all traces,
 and `benchmarks/RESULTS.md` renders both completed performance profiles.
+
+## EXL3 FP8-PLE quality qualification
+
+The dev14 `exl3-ple8` profile loads both materialized PLE parameters (FP8
+weight and scalar scale), preserves the 71.99 GiB GPU model allocation, and
+captures graphs with static MTP3. Its host table payload is approximately
+48 GiB rather than the BF16 parent's approximately 95 GiB. Header audits
+confirm identical mixed-projection tier counts and 5951 unequal-tier experts.
+
+Quality checks pass 16/16 tool API constraints, all 1/4/16-image probes and
+all six retrieval cases at 8K/240K filler depths. Content contracts pass
+18/21 and exact orchid repetition passes 2/5. The full Hard Mode tool result
+is pending. No performance matrix is run for this extra profile.
+
+The dev14 NVIDIA release-image regression also passes all 16 tool API checks;
+receipts are `benchmarks/nvfp4-release-api-dev14.jsonl` and its runtime JSON.
