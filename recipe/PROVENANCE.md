@@ -13,6 +13,13 @@ instead of manually adding GLM's closing thinking marker. Benchmark schema
 identifiers and the default model alias were adapted for Qwen. No GLM
 performance results are copied into this recipe.
 
+`code-agent-prompt.txt` preserves the async task-runner prompt from the
+reference's `benchmark-dflash2-vllm.py`. `benchmark-code-agent-depth.py`
+adapts its depth experiment to native Qwen non-thinking rendering and retains
+all output tokens and client timings. It reports both the post-initial-burst
+decode rate and the reference's N−1 rate; forced output length does not
+establish generated-code correctness.
+
 Kernel/bridge test receipts are not full-model benchmark results. Model loading
 memory figures in the qualification ledger are startup observations, not
 steady-state capacity guarantees. Recipe and borrowed vLLM/B12x code are

@@ -13,11 +13,13 @@ prefill = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(prefill)
 
 
-def measure(base, model, prompt, output_tokens):
-    payload = {"model": model, "prompt": prompt, "temperature": 0,
+def measure(base, model, prompt, output_tokens, *, temperature=0, seed=None):
+    payload = {"model": model, "prompt": prompt, "temperature": temperature,
                "max_tokens": output_tokens, "min_tokens": output_tokens,
                "ignore_eos": True, "stream": True,
                "stream_options": {"include_usage": True}, "return_token_ids": True}
+    if seed is not None:
+        payload["seed"] = seed
     req = urllib.request.Request(base.rstrip("/") + "/v1/completions",
                                  data=json.dumps(payload).encode(),
                                  headers={"Content-Type": "application/json"})

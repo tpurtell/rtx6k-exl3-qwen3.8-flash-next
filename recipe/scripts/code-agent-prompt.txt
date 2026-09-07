@@ -1,0 +1,21 @@
+You are editing an async Python task runner. Fix the cancellation and
+exception-handling bugs in this implementation, preserve result ordering, and add precise type
+hints. Return only the complete replacement Python module.
+
+```python
+import asyncio
+
+async def run_all(factories, limit=8):
+    sem = asyncio.Semaphore(limit)
+    results = []
+    async def one(factory):
+        async with sem:
+            results.append(await factory())
+    tasks = [asyncio.create_task(one(factory)) for factory in factories]
+    try:
+        await asyncio.gather(*tasks)
+    except Exception:
+        for task in tasks:
+            task.cancel()
+    return results
+```

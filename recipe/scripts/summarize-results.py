@@ -94,8 +94,9 @@ for name, root in roots.items():
         spread([r["decode_tps"] for r in samples]), link("responses", root, "orchid.jsonl")])
 table(["Quant", "Word counts", "Exact contract", "Decode tokens/s", "Raw"], orchid_rows)
 
-lines += ["## Independent clients", "",
-          "Each client requests 256 forced output tokens. Two full warmups and three "
+lines += ["## Sampled prose: independent clients", "",
+          "Each client requests 256 forced output tokens at temperature 0.7 with fixed "
+          "sampling seeds and thinking disabled. Two full warmups and three "
           "measurements per concurrency. Aggregate rate divides the sum of each client's "
           "N−1 tokens by the whole batch's first-to-last token window. Overlap counts "
           "come from client stream intervals, not a GPU occupancy gauge.", ""]
@@ -144,6 +145,25 @@ for depth in (2048, 8192, 32768, 65536, 131072, 261632):
     context_rows.append(row)
 table(["Prompt tokens", "EXL3 decode tokens/s", "EXL3 TTFT, s", "NVFP4 decode tokens/s", "NVFP4 TTFT, s"], context_rows)
 lines += ["Raw: " + ", ".join(link(name, root, "context.jsonl") for name, root in roots.items()) + ".", ""]
+lines += ["## Reference coding task: C1 across KV depths", "",
+          "The async task-runner prompt is identical to the reference recipe. Qwen's "
+          "native non-thinking template replaces GLM's template. Temperature is 0.2, "
+          "with a fixed seed and 256 forced output tokens. One warmup precedes three "
+          "measurements per depth. Prompts repeat to retain existing KV; these TTFTs "
+          "are not uncached prefill measurements. Rates use the reference's N−1 token "
+          "convention; raw receipts also retain the rate excluding the whole initial "
+          "SSE burst. The fixed token cap is not a generated-code correctness test.", ""]
+coding = {name: timed(read(root, "code-agent.jsonl")) for name, root in roots.items()}
+coding_rows = []
+for depth in (0, 8192, 32768, 65536, 128000, 261632):
+    row = ["Task only" if depth == 0 else depth]
+    for name in roots:
+        samples = [r for r in coding[name] if r["depth"] == depth]
+        assert len(samples) == 3
+        row.append(spread([r["reference_n_minus_one_tps"] for r in samples]))
+    coding_rows.append(row)
+table(["Prompt depth", "EXL3 decode tokens/s", "NVFP4 decode tokens/s"], coding_rows)
+lines += ["Raw: " + ", ".join(link(name, root, "code-agent.jsonl") for name, root in roots.items()) + ".", ""]
 for name, root in roots.items():
     boundary = timed(read(root, "context-boundary.jsonl"))
     assert len(boundary) == 1
