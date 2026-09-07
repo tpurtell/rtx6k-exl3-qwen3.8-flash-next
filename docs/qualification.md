@@ -403,3 +403,25 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   stated tolerance. Native remains the serving choice; no HC bridge is
   installed. Runner: `recipe/scripts/benchmark-hc.py`; complete timings:
   `recipe/benchmarks/hc-native-vs-b12x.txt`.
+
+## MTP1 and GDN comparisons
+
+- NVIDIA dev11 MTP1 at .94 measures 130.35 weighted tokens/s on the same
+  seven-workload suite, versus 152.40 for MTP2. Acceptance is 76.58%, but
+  mean acceptance length is only 1.766. Independent C8/C16 probes improve
+  to 597.43/915.16 tokens/s. These are one measured run after one warmup;
+  a batch-size-dependent draft schedule remains a candidate, not a default.
+  Receipts: `recipe/benchmarks/nvfp4-dev11-mtp1-*`.
+- The public B12x GDN transaction was compared with native post-convolution
+  GDN at QK16/V48, FP32 recurrent state, BF16 activations and sigmoid gating.
+  Native was faster for B1 with 1/3/4 tokens and B8 with 3 tokens; for B8,
+  native measured 30.43 microseconds versus B12x 42.99. These comparisons
+  use contiguous inputs and restore state outside the timed CUDA events.
+- The B16/3-token candidate failed numerical verification after mutated
+  graph replay. The independent reference agrees with native (maximum
+  output error 0.015625), while B12x has a maximum error of 1.684 and a
+  state error of 0.06675. The runner stops without reporting B16 timing.
+  No B12x GDN bridge is installed. Native remains the serving path based
+  on both performance and correctness. The reproducible runner is
+  `recipe/scripts/benchmark-gdn.py`; full measurements and failure evidence
+  are in `recipe/benchmarks/gdn-native-vs-b12x.txt`.
