@@ -1,0 +1,18 @@
+{
+  "ostrich": [
+    "(Worker pid=158) INFO 09-07 13:45:34 [gpu_worker.py:697] Available KV cache memory: 7.3 GiB",
+    "(EngineCore pid=131) INFO 09-07 13:45:34 [kv_cache_utils.py:2258] GPU KV cache size: 456,130 tokens, Maximum concurrency for 262,144 tokens per request: 1.74x"
+  ],
+  "dodo": [
+    "(Worker pid=158) INFO 09-07 13:44:56 [gpu_worker.py:697] Available KV cache memory: 7.06 GiB",
+    "(EngineCore pid=131) INFO 09-07 13:44:57 [kv_cache_utils.py:2258] GPU KV cache size: 440,401 tokens, Maximum concurrency for 262,144 tokens per request: 1.68x"
+  ],
+  "emu": [
+    "(Worker pid=158) INFO 09-07 13:45:09 [gpu_worker.py:697] Available KV cache memory: 6.31 GiB",
+    "(EngineCore pid=131) INFO 09-07 13:45:09 [kv_cache_utils.py:2258] GPU KV cache size: 393,216 tokens, Maximum concurrency for 262,144 tokens per request: 1.50x"
+  ],
+  "kiwi": [
+    "(Worker pid=158) INFO 09-07 13:44:09 [gpu_worker.py:697] Available KV cache memory: 7.25 GiB",
+    "(EngineCore pid=131) INFO 09-07 13:44:09 [kv_cache_utils.py:2258] GPU KV cache size: 450,887 tokens, Maximum concurrency for 262,144 tokens per request: 1.72x"
+  ]
+}
