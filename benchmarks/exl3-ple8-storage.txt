@@ -1,0 +1,7 @@
+INFO 09-07 09:59:25 [importing.py:53] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+INFO 09-07 09:59:25 [importing.py:88] Triton not installed or not compatible; certain GPU-related functions will not be available.
+WARNING 09-07 09:59:25 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+W0907 09:59:25.865000 1 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+WARNING 09-07 09:59:26 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 09-07 09:59:26 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+PASS: real checkpoint PLE metadata, FP8 CPU allocation, scalar scale and byte-exact lookup
