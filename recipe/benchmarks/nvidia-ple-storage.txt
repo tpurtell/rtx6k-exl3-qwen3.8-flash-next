@@ -1,0 +1,5 @@
+WARNING 09-07 07:03:57 [modelopt.py:378] Detected ModelOpt fp8 checkpoint (quant_algo=FP8). Please note that the format is experimental and could change.
+WARNING 09-07 07:03:57 [modelopt.py:1011] Detected ModelOpt NVFP4 checkpoint (quant_algo=NVFP4). Please note that the format is experimental and could change in future.
+WARNING 09-07 07:03:57 [modelopt.py:1011] Detected ModelOpt NVFP4 checkpoint (quant_algo=W4A16_NVFP4). Please note that the format is experimental and could change in future.
+WARNING 09-07 07:03:57 [modelopt.py:1675] Detected ModelOpt MXFP8 checkpoint. Please note that the format is experimental and could change in future.
+PASS: real NVIDIA PLE metadata, FP8 CPU allocation, scalar scale and byte-exact lookup

@@ -157,3 +157,41 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   `qwen38-exl3-fp8-dev7` and `qwen38-nvfp4-fp8-dev7` are the new probes.
 - Ported the reference's generic decode/prefill, seven semantic content and
   vision harnesses, with provenance. Full benchmark execution remains pending.
+
+## NVIDIA FP8 PLE and first serving diagnostic
+
+- `dev7` revealed that native PLE dispatch recognized `Fp8Config` but not
+  ModelOpt mixed metadata. NVIDIA's FP8 ngram table was allocated as BF16;
+  concurrent EXL3 startup exhausted host RAM. The new patch selects the
+  existing scalar-scale FP8 PLE implementation for the actual NVIDIA layer
+  metadata. A storage test verifies FP8 CPU allocation, scalar scale loading,
+  and byte-exact CPU lookup (`recipe/benchmarks/nvidia-ple-storage.txt`).
+  This isolated test mocks tensor-parallel rank/world size; it does not test
+  the complete serving lifecycle.
+- `dev8` NVIDIA successfully starts its PLE CPU worker, loads target and
+  MTP, and serves with host token embeddings, host FP8 PLE, FP8 KV, MTP3,
+  TP1 and eager execution. An arithmetic smoke returned 42 for 19+23.
+  Reported KV capacity is 661722 tokens: 16 scheduler slots do **not** imply
+  16 simultaneous 262144-token requests (capacity ratio is about 2.52).
+- The first seven-workload diagnostic is preserved in
+  `recipe/benchmarks/nvfp4-dev8-seven-diagnostic.jsonl`. It has no warmup,
+  one repetition and eager execution; it is not a release performance result.
+  Code, greeting, topic and JSON pass the inherited validators. Math runs
+  out of its 128-token budget before the final answer; fable has 173 words
+  against a 140–170 requirement. Chinese explains the mechanism and fork
+  example, but fails the validator's literal phrase check. These failures
+  remain recorded; full numerical and task-quality qualification is pending.
+- Added a streaming workload harness retaining complete responses, token IDs,
+  usage and SSE chunk times. Decode timing excludes every token in the first
+  burst; the conventional N−1 rate is also retained. Compiler caches now
+  persist under `~/.cache/qwen38-rtx/<quant>` between recipe containers.
+- EXL3 mixed K4/K5 projection support remains mandatory, including MTP.
+  Its loader and geometry tests pass, but successful full serving and all
+  requested benchmark suites still need qualification. Initial full-model
+  tests run one quant at a time to respect host RAM capacity.
+- The eager NVIDIA orchid diagnostic (one warmup, three measured runs) also
+  fails exact-100 repetition quality: measured counts 101, 750, 750; the last
+  two terminate at the 1500-token limit. Raw responses and timings are in
+  `recipe/benchmarks/nvfp4-dev8-orchid-diagnostic.jsonl`. The roughly 90–94
+  measured decode tokens/s are diagnostic throughput, not successful-task
+  performance. MTP and target-only comparisons remain necessary.
