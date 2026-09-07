@@ -120,7 +120,7 @@ measurements, not the final qualification medians. The recipe now defaults
 to 2048 ranges globally, including newly built images; RTX is not remeasured.
 
 The same-host vocabulary comparison improves the C1 blend from 29.21 to
-30.75 tokens/s. MTP0 is about 16.7 tokens/s, and the MTP3 K128 experiment
+30.75 tokens/s. MTP0 is 16.75 tokens/s, and the MTP3 K128 experiment
 shows little overall improvement over K64. The combined qualification
 candidate therefore uses MTP2, readahead2048, B12x vocabulary, and the
 existing expert tile policy. RTX retains MTP3 and native vocabulary defaults.
