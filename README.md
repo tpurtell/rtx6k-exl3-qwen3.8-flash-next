@@ -5,11 +5,11 @@ n-gram tables, FP8 KV cache, vision, CUDA graphs, and tuned MTP. The configured
 context is 262144 tokens and the scheduler has 16 request slots. C1 performance
 is the priority for the defaults; C16 throughput tradeoffs are recorded below.
 
-| Profile (`QUANT`) | Checkpoint | PLE table format | Default MTP |
+| Profile (`QUANT`) | Checkpoint | PLE table format | Default MTP (RTX / Spark) |
 |---|---|---|---:|
-| `exl3` | [EXL3 K4.25](https://huggingface.co/wrldsuksgo2mars/Qwen3.8-Flash-Next-EXL3-K4.25-v1) | BF16, about 95 GiB | 3 |
-| `exl3-ple8` | [EXL3 K4.25 PLE FP8](https://huggingface.co/wrldsuksgo2mars/Qwen3.8-Flash-Next-EXL3-K4.25-PLE-FP8-v1) | FP8 with shared scale, about 48 GiB | 3 |
-| `nvfp4` | [NVIDIA NVFP4](https://huggingface.co/nvidia/Qwen3.8-Flash-Next-NVFP4) | FP8 with shared scale, about 48 GiB | 2 |
+| `exl3` | [EXL3 K4.25](https://huggingface.co/wrldsuksgo2mars/Qwen3.8-Flash-Next-EXL3-K4.25-v1) | BF16, about 95 GiB | 3 / 2 |
+| `exl3-ple8` | [EXL3 K4.25 PLE FP8](https://huggingface.co/wrldsuksgo2mars/Qwen3.8-Flash-Next-EXL3-K4.25-PLE-FP8-v1) | FP8 with shared scale, about 48 GiB | 3 / 2 |
+| `nvfp4` | [NVIDIA NVFP4](https://huggingface.co/nvidia/Qwen3.8-Flash-Next-NVFP4) | FP8 with shared scale, about 48 GiB | 2 / 2 |
 
 EXL3 requires independent K4/K5 allocation for each expert's gate, up and down
 projection. The pinned B12x fork supports this geometry and preserves all 5951
@@ -52,6 +52,19 @@ arm64 selects DGX Spark SM121 settings; x86_64 selects RTX SM120 settings.
 Both default to the original EXL3 K4.25 checkpoint with BF16 PLE and mmap.
 Spark caps GPU memory utilization at **0.7** to leave unified memory available
 for checkpoint pages and the host. A lower value is configurable.
+
+| Recipe default | RTX SM120 | Spark SM121 |
+|---|---|---|
+| Native architecture | x86_64 | arm64 |
+| GPU memory utilization | 0.94 | 0.7 maximum |
+| EXL3 MTP draft tokens | 3 | 2 |
+| Vocabulary projection | Native | B12x |
+| PLE storage | BF16 mmap | BF16 mmap |
+| Targeted readahead range limit | 2048 | 2048 |
+| Maximum context / request slots | 262144 / 16 | 262144 / 16 |
+
+Use `B12X_VOCAB=0` for the native vocabulary projection or
+`PLE_MMAP_READAHEAD=0` to disable targeted readahead.
 
 Spark qualification and tuning are in progress on the `spark` branch. The
 existing RTX measurements below remain unchanged; no Spark numbers are claimed

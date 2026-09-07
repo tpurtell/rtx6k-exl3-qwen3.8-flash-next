@@ -82,8 +82,9 @@ for name, root in roots.items():
     serial = next((v.split("=",1)[1] for v in env if v.startswith("VLLM_PLE_MMAP_SERIAL=")), "—") if mmap else "—"
     profile_rows.append([name, spec["num_speculative_tokens"], memory,
                          "mmap" if mmap else "resident", serial,
+                         next((v.split("=",1)[1] for v in env if v.startswith("VLLM_PLE_MMAP_READAHEAD=")), "0") if mmap else "—",
                          link("runtime", root, "runtime.json")])
-table(["Profile", "MTP draft tokens", "GPU memory fraction", "PLE storage", "Serial threshold", "Configuration"], profile_rows)
+table(["Profile", "MTP draft tokens", "GPU memory fraction", "PLE storage", "Serial threshold", "Readahead range limit", "Configuration"], profile_rows)
 
 lines += ["## Seven content workloads: C1", "",
           "One warmup and three measured responses per workload, temperature zero and "
