@@ -311,3 +311,22 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   `exl3-dev9-profile-summary.json`. Profiled timings are not throughput results.
 - Prefill harness invocations now use a unique nonce so repeating a run on
   the same server cannot accidentally reuse the prior run's prompt cache.
+
+## NVIDIA graph-mode serving and live tool constraints
+
+- `qwen38-nvfp4-fp8-graph-dev10` successfully starts with FlashInfer MoE
+  autotuning and CUDA graphs. Capture uses 1.00 GiB and takes 9 seconds;
+  reported KV capacity is 621001 tokens (2.37×262144). Both token tables
+  and the FP8 PLE remain host-resident. Runtime receipt:
+  `recipe/benchmarks/nvfp4-dev10-graph-runtime.json`.
+- All 16 live API tool-constraint checks pass: required/named/auto/none ×
+  thinking on/off × streaming/nonstreaming. Raw requests and responses are
+  in `recipe/benchmarks/nvfp4-dev10-tool-constraints.jsonl`; runner:
+  `recipe/scripts/test-api-tool-constraints.py`.
+- The seven-workload blend (one warmup, three measured runs, MTP3, 400 W)
+  records 149.46 weighted decode tokens/s. Medians: code202.67, math214.94,
+  fable115.08, greeting181.44, topic149.99, JSON174.13, Chinese119.90.
+  18/21 content checks pass; all three failures are overlong fables.
+  MTP counters: 2010 accepted / 3879 draft tokens over 1293 drafts,
+  51.82% acceptance and mean acceptance length2.555. Raw evidence:
+  `recipe/benchmarks/nvfp4-dev10-graph-seven.jsonl`.
