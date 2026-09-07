@@ -1,0 +1,6 @@
+ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next@sha256:0e17cebbff2a95de615f4c1f68ba4e16ad07710164e82c0bf90f044216e8cbd3: Pulling from tpurtell/spark-exl3-qwen3.8-flash-next
+Digest: sha256:0e17cebbff2a95de615f4c1f68ba4e16ad07710164e82c0bf90f044216e8cbd3
+Status: Image is up to date for ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next@sha256:0e17cebbff2a95de615f4c1f68ba4e16ad07710164e82c0bf90f044216e8cbd3
+ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next@sha256:0e17cebbff2a95de615f4c1f68ba4e16ad07710164e82c0bf90f044216e8cbd3
+Fetching 37 files:   0%|          | 0/37 [00:00<?, ?it/s]/hf/hub/models--wrldsuksgo2mars--Qwen3.8-Flash-Next-EXL3-K4.25-v1/snapshots/73a050c27b8c488c65acd6d1c74e45ff02be5fab
+Fetching 37 files: 100%|██████████| 37/37 [00:00<00:00, 2814.92it/s]
