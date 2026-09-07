@@ -26,8 +26,12 @@ Blackwell 96 GB (TP=1):
 - Reference: `/home/tj/Developer/brandon-glm-5.3-flash/recipe`.
 - B12x fork HEAD: `53f9d89c16f70e6580d0015de2934a882c61ed29`, merging Qwen
   support while retaining GLM and mixed EXL3 kernels. Local checkout: `.work/b12x`.
-- Base image pull: `vllm/vllm-openai:qwen38-flash-next`; must record digest and
-  inspect its APIs before implementing ports. Initial exec session: 81523.
+- Base image downloaded: `vllm/vllm-openai:qwen38-flash-next` at digest
+  `sha256:fc120ece0a388cc0aa1caad4a9f1cd92113484ab7ec2fd0efadd62585be05bf8`.
+  Torch `2.13.0+cu130`, vLLM `0.1.dev20073+g8e685d198`, CUTLASS `4.6.2`.
+  Source copied to `.work/vllm` from idle inspection container `qwen38-source`.
+  Model implementation: `vllm/models/qwen3_8_flash_next/nvidia/`; PLE already
+  has a `VLLM_PLE_CPU_OFFLOAD` process path. No EXL3 module is present in base.
 - Two idle RTX PRO 6000 GPUs, each 97887 MiB; 183 GiB total system RAM.
 - Checkpoint header audit receipts in `recipe/benchmarks/*-checkpoint-audit.json`.
   These verify indexed tensors, projection metadata and packed shapes, not
