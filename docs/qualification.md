@@ -562,3 +562,9 @@ The additional dev14 loader change selects FP8 PLE only when an EXL3 checkpoint
 has the explicit hybrid annotation. Original EXL3 retains unquantized PLE;
 the NVIDIA ModelOpt branch is unchanged and its dev14 storage regression
 passes (`benchmarks/nvidia-ple-storage-dev14.txt`).
+
+NVIDIA's final full tool run scores **149/176 (85/100)**, including **29/38**
+Hard Mode points (13 pass, 3 partial, 3 fail in Hard Mode). The earlier tuning
+run scored 153/176; the final run is reported without selecting the better
+score. `benchmarks/nvfp4-final/tools.json` and `tools.md` retain all traces,
+and `benchmarks/RESULTS.md` renders both completed performance profiles.
