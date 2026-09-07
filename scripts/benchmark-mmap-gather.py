@@ -16,10 +16,15 @@ p = argparse.ArgumentParser(description=__doc__)
 p.add_argument('model', type=Path)
 p.add_argument('--runs', type=int, default=24)
 p.add_argument('--rows', type=int, nargs='+', default=[32, 64, 80])
+p.add_argument('--variants', nargs='+', default=['128:0:32','0:0:32','128:128:32','0:128:32','0:0:8','0:0:16'],
+               help='serial:readahead:workers triples')
 a = p.parse_args()
 shards = ple_mmap.discover_shards(str(a.model))[1]
 rows = sum(v[2] for v in shards.shards.values())
-variants = [(128,0,32), (0,0,32), (128,128,32), (0,128,32), (0,0,8), (0,0,16)]
+variants = [tuple(map(int, item.split(':'))) for item in a.variants]
+if (len(set(variants)) != len(variants) or any(len(v) != 3 for v in variants)
+        or any(s < 0 or r < 0 or w < 1 for s,r,w in variants)):
+    p.error('variants must be distinct serial:readahead:workers triples with nonnegative limits and positive workers')
 tables = {}
 for serial, readahead, workers in variants:
     import os

@@ -12,17 +12,17 @@ All four hosts (ostrich, dodo, emu, kiwi) are available for concurrent work.
 Initial builds use the existing pinned multiarch vLLM base and B12x commit;
 the EXL3 source stage copies Python from its pinned amd64 image only.
 
-Pending qualification:
+Qualification checklist:
 
-- Native arm64 build and strict mmap patch/base checks.
-- Mixed-projection loading, BF16 checkpoint gathers and mutable CUDA graphs.
-- Component numerical checks and kernel comparisons on Spark.
-- End-to-end C1 MTP and mmap tuning, plus C16 tradeoffs.
-- Full final default-profile performance, API, vision, retrieval and C8 tool
+- [x] Native arm64 build and strict mmap patch/base checks.
+- [x] Mixed-projection loading, BF16 checkpoint gathers and mutable CUDA graphs.
+- [x] Component numerical checks and kernel comparisons on Spark.
+- [ ] End-to-end C1 MTP and mmap tuning, plus C16 tradeoffs.
+- [ ] Full final default-profile performance, API, vision, retrieval and C8 tool
   qualification using the existing contracts and complete raw receipts.
-- Fourth table entry: EXL3 mmap Spark (BF16 PLE), compact README tables and
+- [ ] Fourth table entry: EXL3 mmap Spark (BF16 PLE), compact README tables and
   platform defaults comparison. Historical RTX evidence remains unchanged.
-- Published arm64 image, source branch and verifiable release evidence.
+- [ ] Published arm64 image, source branch and verifiable release evidence.
 
 The 0.7 utilization cap is enforced for Spark configuration; no qualification
 result is claimed until the actual run has completed.
@@ -85,3 +85,30 @@ measurements retain their original readahead-off configuration and will be
 labeled historical; this defaults change does not trigger RTX remeasurement.
 The value is pending the serving comparisons, rather than selected solely
 from the random-row component test.
+
+Threaded gathering measures 27.53 tokens/s at MTP2 and 27.58 at MTP3; the
+MTP2 targeted-readahead-128 run measures 29.21 tokens/s. These completed C1
+results support testing targeted readahead in the final configuration.
+
+A larger-gather comparison on idle-loaded ostrich measures 1280 random rows
+at 52.66 ms without readahead, 52.72 ms with a 128-range limit (skipped), and
+14.20 ms with a 2048-range limit. A serving comparison of the higher limit
+is pending. The same existing-cache/interleaved method is used.
+
+The expert-tile numerical probe could not allocate its separate CUDA process
+while the full model remained loaded. Its receipt is retained as a test setup
+resource failure; the serving run completed normally. The numerical probe is
+being rerun alone after stopping that completed benchmark's server.
+
+The standalone tile check passes all twelve H2560/I640 K4/K5 combinations
+(M=1,2,3,4,5,8; K tile 64 and 128), including changed-input graph replay against
+the serial-tier reference. The reproducer is `scripts/test-spark-trellis-tiles.py`;
+it requires an otherwise free GPU. The experimental serving patch retains
+N=128, applies only to small Qwen batches, and leaves checkpoint packing and
+projection-tier descriptors unchanged. It remains an experiment pending
+end-to-end results.
+
+The MTP3 readahead-128 blend is 27.74 tokens/s, below the MTP2 result of 29.21.
+The next round evaluates MTP2/readahead2048 on ostrich, MTP0/readahead2048 on
+dodo, MTP2/readahead128/B12x vocabulary on kiwi, and MTP3/readahead128/K128
+tiles on emu. Vocabulary and tile comparisons retain their same-host baselines.

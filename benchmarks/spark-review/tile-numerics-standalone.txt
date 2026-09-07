@@ -1,0 +1,13 @@
+spark-qwen38-mtp3-serial0
+PASS: Qwen H2560/I640 K4/K5, M=1, K tile=64, serial oracle and changed-input CUDA graph
+PASS: Qwen H2560/I640 K4/K5, M=2, K tile=64, serial oracle and changed-input CUDA graph
+PASS: Qwen H2560/I640 K4/K5, M=3, K tile=64, serial oracle and changed-input CUDA graph
+PASS: Qwen H2560/I640 K4/K5, M=4, K tile=64, serial oracle and changed-input CUDA graph
+PASS: Qwen H2560/I640 K4/K5, M=5, K tile=64, serial oracle and changed-input CUDA graph
+PASS: Qwen H2560/I640 K4/K5, M=8, K tile=64, serial oracle and changed-input CUDA graph
+PASS: Qwen H2560/I640 K4/K5, M=1, K tile=128, serial oracle and changed-input CUDA graph
+PASS: Qwen H2560/I640 K4/K5, M=2, K tile=128, serial oracle and changed-input CUDA graph
+PASS: Qwen H2560/I640 K4/K5, M=3, K tile=128, serial oracle and changed-input CUDA graph
+PASS: Qwen H2560/I640 K4/K5, M=4, K tile=128, serial oracle and changed-input CUDA graph
+PASS: Qwen H2560/I640 K4/K5, M=5, K tile=128, serial oracle and changed-input CUDA graph
+PASS: Qwen H2560/I640 K4/K5, M=8, K tile=128, serial oracle and changed-input CUDA graph
