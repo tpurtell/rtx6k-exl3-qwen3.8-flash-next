@@ -1,0 +1,12 @@
+emu
+2026-09-07T12:25:53+00:00
+Linux emu 6.17.0-1026-nvidia #26-Ubuntu SMP PREEMPT_DYNAMIC Thu Jun 25 00:57:17 UTC 2026 aarch64 aarch64 aarch64 GNU/Linux
+name, uuid, driver_version, power.limit [W]
+NVIDIA GB10, GPU-a9dc037f-1c24-dd33-6308-c741f76d5659, 580.159.03, [N/A]
+               total        used        free      shared  buff/cache   available
+Mem:           121Gi       4.5Gi        89Gi       1.7Mi        28Gi       117Gi
+Swap:           15Gi       239Mi        15Gi
+SOURCE         FSTYPE TARGET
+/dev/nvme0n1p2 ext4   /
+NAME    MODEL                                    SIZE ROTA
+nvme0n1 ESL04TBTLCZ-27J4-TYN                     3.6T    0

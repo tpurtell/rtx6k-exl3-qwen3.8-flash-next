@@ -1,0 +1,12 @@
+kiwi
+2026-09-07T12:25:53+00:00
+Linux kiwi 6.17.0-1026-nvidia #26-Ubuntu SMP PREEMPT_DYNAMIC Thu Jun 25 00:57:17 UTC 2026 aarch64 aarch64 aarch64 GNU/Linux
+name, uuid, driver_version, power.limit [W]
+NVIDIA GB10, GPU-6b4560e3-c627-e051-1a52-638a1555d1ab, 580.159.03, [N/A]
+               total        used        free      shared  buff/cache   available
+Mem:           121Gi       4.8Gi       1.0Gi       2.3Mi       116Gi       116Gi
+Swap:           15Gi        80Mi        15Gi
+SOURCE         FSTYPE TARGET
+/dev/nvme0n1p2 ext4   /
+NAME    MODEL                                    SIZE ROTA
+nvme0n1 ESL04TBTLCZ-27J4-TYN                     3.6T    0
