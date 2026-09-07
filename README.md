@@ -174,7 +174,7 @@ not establish cold-disk throughput or a minimum host-RAM requirement.
 
 ## MTP tuning and C16 tradeoffs
 
-These v0.1.0 resident-mode development comparisons use the same seven C1 workloads (three measured
+These RTX v0.1.0 resident-mode development comparisons use the same seven C1 workloads (three measured
 responses each). C8/C16 are shorter probes: 128 forced prose tokens, one measured
 batch after warmup. They are distinct from the final 256-token, three-run client
 matrix below. Small differences between runs are not a statistical proof of
@@ -214,6 +214,16 @@ set `MTP_TOKENS=4` or `3` respectively. They are not the separate sampled async
 coding task reported below. Full tuning receipts and exceptions are in the
 [qualification ledger](docs/qualification.md) and [raw benchmarks](benchmarks).
 
+Spark's BF16 mmap comparisons favor **MTP2** for the mixed C1 workload.
+The initial readahead-off sweep measured 26.29, 27.32, 25.72 and 24.14 tokens/s
+for MTP1 through MTP4. Targeted readahead raised the MTP2 blend to 29.21;
+adding B12x vocabulary on the same host raised it to 30.75. The combined
+MTP2 / readahead2048 / B12x vocabulary profile is undergoing full qualification.
+[All Spark tuning receipts](benchmarks/spark-review/TUNING.md) retain the
+C16 probes and same-host comparisons. The 128-range and 2048-range short
+C16 probes measured 89.09 and 97.14 tokens/s; these single probes are distinct
+from the final client matrix.
+
 ## Kernel choices
 
 - **EXL3 mixed MoE:** B12x, including the Qwen H2560/I640 projection planner fix
@@ -224,11 +234,13 @@ coding task reported below. Full tuning receipts and exceptions are in the
 - **NVIDIA MoE:** native FlashInfer CUTLASS. Precise B12x won isolated component
   timings but lost the end-to-end C1 blend, 136.74 versus 152.40 tokens/s.
   `B12X_NVFP4=1` retains the tested optional bridge; it is off by default.
-- **Vocabulary projection:** native. B12x improved the isolated M1 projection
-  but did not improve the mixed C1 blend. `B12X_VOCAB=1` is optional and off.
-- **HC and GDN:** native. HC packing costs erased the small component advantage;
-  GDN was slower at tested small batches and failed a B16 mutable-graph numerical
-  check. The reproducer and failure remain in the repository.
+- **Vocabulary projection:** native on RTX; B12x on Spark. B12x did not improve
+  the RTX mixed C1 blend, but improved the same-host Spark comparison from
+  29.21 to 30.75 tokens/s. `B12X_VOCAB` overrides the platform default.
+- **HC and GDN:** native on both platforms. Spark's native HC was faster at
+  decode sizes; the optional B12x GDN path failed its B16/Q3 numerical check
+  and showed no timing advantage in the earlier cases. RTX comparisons also
+  retained native paths. Reproducers and failures remain in the repository.
 
 The [Dockerfile](Dockerfile) pins the base image and B12x revision. The
 [patches](patches) also handle EXL3 MTP layer mapping, NVIDIA's FP8 draft weights,
@@ -237,9 +249,10 @@ FP8 PLE storage, exact host token embeddings and required/named tool constraints
 integration work. Model licenses apply separately from the recipe's [license](LICENSE).
 
 The v0.1.0 runtime receipts retain the original image IDs. The follow-on
-release adds optional mmap support and its reviewed validation fixes. Only
-mmap-enabled `exl3-ple8` receives a new full qualification; the other profile
-settings remain available and their historical evidence is retained.
+v0.2.0 release adds mmap support and its reviewed validation fixes, with full
+`exl3-ple8` mmap qualification on RTX. This branch adds native Spark support
+and qualification of the original BF16 PLE default. Historical RTX evidence
+is retained.
 
 ## Reproduce qualification
 
@@ -250,6 +263,7 @@ existing result directory.
 # With the mmap-enabled exl3-ple8 server already running:
 QUANT=exl3-ple8 MTP_TOKENS=3 RESULT_DIR=benchmarks/my-mmap \
   bash scripts/benchmark-suite.sh
+# Spark default: QUANT=exl3 MTP_TOKENS=2, with a new result directory.
 # NVIDIA: QUANT=nvfp4 MTP_TOKENS=2, with its endpoint and a new result directory.
 
 # Install tool-eval-bench at the recorded revision, using its uv environment.
