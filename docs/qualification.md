@@ -425,3 +425,8 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   on both performance and correctness. The reproducible runner is
   `recipe/scripts/benchmark-gdn.py`; full measurements and failure evidence
   are in `recipe/benchmarks/gdn-native-vs-b12x.txt`.
+- NVIDIA's no-MTP control measures 96.38 weighted tokens/s, with C8/C16
+  independent clients at 500.96/855.50 tokens/s. Static MTP2 improves the
+  blend by approximately 58%; MTP1 improves the C16 probe by approximately
+  7%. Raw responses, client timings and runtime configuration are retained
+  in `recipe/benchmarks/nvfp4-dev11-mtp0-*`.
