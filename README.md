@@ -437,6 +437,8 @@ API checks cover required/named/auto/none choices, thinking on/off and streaming
 
 Tool-eval-bench is pinned at `cf54b4bfe705f12f71e8866f10730572497c8105`. Results are earned/possible points from a C8 run (eight concurrent cases), not a normalized score for comparison with other execution setups. The full 88-case suite includes 19 Hard Mode scenarios, with thinking enabled, temperature zero, one trial, eight parallel cases and at most eight turns. The linked reports retain failures and partial scores.
 
+The Spark tool server logged two XGrammar FSM-rejection diagnostics, with no grammar-triggered request termination logged and zero evaluator-reported request errors. [Diagnostic review](benchmarks/spark-review/SERVER-DIAGNOSTICS.md).
+
 ## mmap memory snapshot
 
 Captured after the performance/retrieval suite, before the full tool evaluation. These are process mapping observations, not a working-set ceiling or a low-RAM test. Linux can retain and reclaim clean checkpoint pages as workloads change.

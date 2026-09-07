@@ -243,6 +243,12 @@ lines += ["API checks cover required/named/auto/none choices, thinking on/off an
           "The full 88-case suite includes 19 Hard Mode scenarios, with thinking enabled, "
           "temperature zero, one trial, eight parallel cases and at most eight turns. "
           "The linked reports retain failures and partial scores.", ""]
+if args.spark:
+    diagnostics = args.spark.parent / "spark-review" / "SERVER-DIAGNOSTICS.md"
+    lines += ["The Spark tool server logged two XGrammar FSM-rejection diagnostics, with no "
+              "grammar-triggered request termination logged and zero evaluator-reported request errors. "
+              f"[Diagnostic review]({os.path.relpath(diagnostics, args.output.parent)}).", ""]
+
 if args.mmap:
     memory = read(args.mmap, "memory.json")
     worker = next(p for p in memory["processes"] if p["checkpoint_mappings"])

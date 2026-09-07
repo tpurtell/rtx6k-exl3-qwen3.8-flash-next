@@ -42,7 +42,7 @@ All 5951 unequal per-projection expert allocations remain preserved.
   overlapping streams in each measurement; the remaining requests queue.
 - API constraints **16/16**; vision **1/4/16 images**; retrieval **6/6**.
 - Exact context boundary: **261888 input + 256 output = 262144 tokens**.
-- C8 tool evaluation: **154/176 points**, Hard Mode **29/38**, no backend errors.
+- C8 tool evaluation: **154/176 points**, Hard Mode **29/38**, zero evaluator-reported request errors.
   TC-42 adds extra parameters despite `additionalProperties: false`; the
   warning and full failed trace remain visible. Orchid repetition passes 3/5.
 - All 218 mmap tests pass in the final image with NVIDIA device access.
