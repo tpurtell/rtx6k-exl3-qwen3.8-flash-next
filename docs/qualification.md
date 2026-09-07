@@ -259,3 +259,27 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   recipe's commit `cf54b4bfe705f12f71e8866f10730572497c8105`, version
   2.6.1.dev45, containing 88 public cases including Hard Mode. The older,
   locally modified checkout in `~/Developer/tool-eval-bench` is untouched.
+
+## EXL3 graph-mode serving
+
+- `qwen38-exl3-fp8-graph-dev9` starts successfully with piecewise and full
+  CUDA graphs. Capture takes 7 seconds and 0.96 GiB; KV capacity reports
+  850059 tokens (3.24×262144). Runtime evidence is in
+  `recipe/benchmarks/exl3-dev9-graph-runtime.json`. The torch profiler is
+  configured but was not activated during the content measurements.
+- The seven-workload run uses one warmup and three measured repetitions,
+  native nonthinking chat, temperature0, MTP3 and 400 W. Weighted decode is
+  152.97 tokens/s; medians: code205.58, math214.97, fable117.65,
+  greeting175.90, topic148.78, JSON167.21, Chinese127.58 tokens/s.
+  19/21 content checks pass; two fables exceed the requested word count.
+  This is a measured development configuration, not a final tuned release.
+- Timed-suite MTP counters record 2137 accepted / 3813 draft tokens, across
+  1271 drafts: 56.05% acceptance and mean acceptance length2.681.
+  The harness waits 11 seconds (outside request timing) before and after
+  timed runs for vLLM's 10-second statistics interval. Raw snapshots and
+  all responses are in `recipe/benchmarks/exl3-dev9-graph-seven.jsonl`.
+  Counters are suite-level and require exclusive access to the endpoint.
+- A full 88-case tool run, with thinking enabled and evaluation parallelism8,
+  is underway against this configuration. Its results, graph vision/context
+  reruns, target-only controls, MTP tuning and NVIDIA graph qualification
+  remain pending.

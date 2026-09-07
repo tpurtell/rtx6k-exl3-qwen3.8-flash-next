@@ -1,0 +1,62 @@
+{
+  "container": "qwen38-exl3-fp8-graph-dev9",
+  "image_id": "sha256:684951804d35270f0092dfc9a7eebd6019f9934da69b08d8870800504154248f",
+  "args": [
+    "serve",
+    "/root/.cache/huggingface/hub/models--wrldsuksgo2mars--Qwen3.8-Flash-Next-EXL3-K4.25-v1/snapshots/73a050c27b8c488c65acd6d1c74e45ff02be5fab",
+    "--served-model-name",
+    "qwen38-exl3",
+    "--port",
+    "8001",
+    "--tensor-parallel-size",
+    "1",
+    "--distributed-executor-backend",
+    "mp",
+    "--max-model-len",
+    "262144",
+    "--max-num-seqs",
+    "16",
+    "--max-num-batched-tokens",
+    "2048",
+    "--gpu-memory-utilization",
+    "0.94",
+    "--kv-cache-dtype",
+    "fp8",
+    "--enable-auto-tool-choice",
+    "--tool-call-parser",
+    "qwen3_coder",
+    "--reasoning-parser",
+    "qwen3",
+    "--speculative-config",
+    "{\"method\":\"mtp\",\"num_speculative_tokens\":3}",
+    "--profiler-config",
+    "{\"profiler\":\"torch\",\"torch_profiler_dir\":\"/root/.cache/profiles\",\"torch_profiler_with_stack\":false,\"torch_profiler_record_shapes\":true,\"ignore_frontend\":true}"
+  ],
+  "started_at": "2026-09-07T07:26:13.960558895Z",
+  "device_requests": [
+    {
+      "Driver": "",
+      "Count": 0,
+      "DeviceIDs": [
+        "0"
+      ],
+      "Capabilities": [
+        [
+          "gpu"
+        ]
+      ],
+      "Options": {}
+    }
+  ],
+  "selected_startup_lines": [
+    "(PleOffloadWorker pid=357) INFO 09-07 07:27:29 [worker.py:448] PLE offload matched 131 checkpoint tensor(s), loaded 4 offload entries, and verified 1/1 materialized parameter(s) for layers: ['language_model.model.layers.1.ple.ple_embedding']",
+    "(Worker pid=253) INFO 09-07 07:27:42 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+    "(Worker pid=253) INFO 09-07 07:28:15 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+    "(Worker pid=253) INFO 09-07 07:28:16 [exl3.py:2443] EXL3 projection-mixed Trellis mtp.layers.48.mlp.experts: tiers=(bits,gate,up,down)((4, 440, 392, 320), (5, 72, 120, 192))",
+    "(Worker pid=253) INFO 09-07 07:28:17 [model_runner.py:407] Model loading took 71.99 GiB memory and 74.717645 seconds",
+    "(Worker pid=253) INFO 09-07 07:28:18 [worker.py:232] Worker ready - 1 PleOffloadLayer(s): ['language_model.model.layers.1.ple.ple_embedding']",
+    "(EngineCore pid=226) INFO 09-07 07:28:29 [kv_cache_utils.py:2258] GPU KV cache size: 850,059 tokens, Maximum concurrency for 262,144 tokens per request: 3.24x",
+    "(Worker pid=253) INFO 09-07 07:28:37 [model_runner.py:953] Graph capturing finished in 7 secs, took 0.96 GiB"
+  ],
+  "gpu_snapshot": "index, name, driver_version, memory.total [MiB], power.limit [W]\n0, NVIDIA RTX PRO 6000 Blackwell Workstation Edition, 595.71.05, 97887 MiB, 400.00 W\n1, NVIDIA RTX PRO 6000 Blackwell Workstation Edition, 595.71.05, 97887 MiB, 400.00 W\n"
+}
