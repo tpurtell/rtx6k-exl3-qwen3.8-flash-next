@@ -579,8 +579,26 @@ confirm identical mixed-projection tier counts and 5951 unequal-tier experts.
 
 Quality checks pass 16/16 tool API constraints, all 1/4/16-image probes and
 all six retrieval cases at 8K/240K filler depths. Content contracts pass
-18/21 and exact orchid repetition passes 2/5. The full Hard Mode tool result
-is pending. No performance matrix is run for this extra profile.
+18/21 and exact orchid repetition passes 2/5. The full tool suite scores **149/176 (85/100)**, with **32/38** Hard Mode
+points. Overall counts are 65 pass, 19 partial and 4 fail. The evaluator flags
+TC-33 internal-data request handling and TC-42 forbidden extra tool parameters.
+These findings are retained in the full report rather than treated as passes. No performance matrix is run for this extra profile.
 
 The dev14 NVIDIA release-image regression also passes all 16 tool API checks;
 receipts are `benchmarks/nvfp4-release-api-dev14.jsonl` and its runtime JSON.
+
+## Release v0.1.0
+
+The final original-EXL3 smoke run on dev14 passes all 16 tool API checks,
+including streaming/non-streaming and thinking on/off. All three profiles
+have now exercised the exact published image. Original EXL3 is left serving
+on GPU1, port 8001, as `qwen38-exl3-release-dev14`; the other model test
+containers are stopped. The user's `qflashrt-quant-wip` container is untouched.
+
+The image is published as
+`ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next:v0.1.0` and `:latest`, with
+immutable digest
+`sha256:9dab4b0b3ce01eab748f3d264cabfc206be467e596e6470b1be68a2ddcfe6840`.
+Registry inspection confirms its linux/amd64 manifest. The release archive
+and manifest record the source and evidence hashes. GHCR package visibility
+is the user's manual post-publication step.

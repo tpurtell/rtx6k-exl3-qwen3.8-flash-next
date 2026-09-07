@@ -47,5 +47,8 @@ lines = ['## EXL3 with FP8 PLE: quality-only qualification', '',
     'These are not controlled perplexity/KL comparisons or a proof of unchanged model quality. '
     'The content contracts include literal wording proxies; all failed and partial results '
     'remain available for inspection.', '', 'Runtime and memory observations: '+link('runtime.json')+'.', '']
+warnings = tool.get('safety_warnings', [])
+if warnings:
+    lines += ['Evaluator-flagged cases:', ''] + ['- ' + warning for warning in warnings] + ['']
 a.output.parent.mkdir(parents=True, exist_ok=True)
 a.output.write_text('\n'.join(lines))

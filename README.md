@@ -15,8 +15,10 @@ EXL3 requires independent K4/K5 allocation for each expert's gate, up and down
 projection. The pinned B12x fork supports this geometry and preserves all 5951
 experts with unequal projection tiers across target and MTP layers. The
 `exl3-ple8` profile keeps those expert weights and uses NVIDIA's FP8 PLE table.
-Its additional qualification is quality-only; performance equivalence to the
-BF16-PLE parent has not been separately measured.
+Its additional qualification is quality-only: **149/176** tool points, including
+**32/38** in Hard Mode. The evaluator flags internal-data request handling and
+extra tool parameters; see the [full quality report](benchmarks/PLE8-QUALITY.md).
+Performance equivalence to the BF16-PLE parent has not been separately measured.
 
 Selected-profile results on one 400 W card:
 
@@ -33,6 +35,17 @@ These are different workloads, not interchangeable rates. The full matrices
 below include ranges, settings, contract failures, raw responses and tool scores.
 
 ## Run
+
+The published image is
+`ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next:v0.1.0`
+(`linux/amd64`). To use the exact qualified image without building:
+
+```bash
+export IMAGE=ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next@sha256:9dab4b0b3ce01eab748f3d264cabfc206be467e596e6470b1be68a2ddcfe6840
+docker pull "$IMAGE"
+QUANT=exl3-ple8 bash download.sh
+QUANT=exl3-ple8 GPU=0 bash start.sh
+```
 
 Install Docker with NVIDIA GPU access. All reported measurements use one RTX
 PRO 6000 Blackwell 96 GB at **400 W**, driver 595.71.05, and a Threadripper 9970X
@@ -138,6 +151,14 @@ The [Dockerfile](Dockerfile) pins the base image and B12x revision. The
 FP8 PLE storage, exact host token embeddings and required/named tool constraints.
 [Provenance](PROVENANCE.md) distinguishes borrowed benchmark contracts from new
 integration work. Model licenses apply separately from the recipe's [license](LICENSE).
+
+The performance matrices were collected before the additive FP8-PLE loader
+extension. Their runtime receipts retain that image ID. The published image
+keeps the measured kernels unchanged, adds the annotated `exl3-ple8` path,
+and passes all 16 API checks for both original profiles:
+[EXL3](benchmarks/exl3-release-api-dev14.jsonl) and
+[NVIDIA](benchmarks/nvfp4-release-api-dev14.jsonl). The new profile's complete
+quality suite runs on the published image.
 
 ## Reproduce qualification
 
@@ -286,4 +307,27 @@ API checks cover required/named/auto/none choices, thinking on/off and streaming
 Tool-eval-bench is pinned at `cf54b4bfe705f12f71e8866f10730572497c8105`. The full 88-case suite includes 19 Hard Mode scenarios, with thinking enabled, temperature zero, one trial, eight parallel cases and at most eight turns. The linked reports retain failures and partial scores.
 
 
-`exl3-ple8` quality qualification and image publication are in progress.
+## EXL3 with FP8 PLE: quality-only qualification
+
+`exl3-ple8` uses the same MTP3 setting as EXL3, FP8 KV, and host token embeddings and PLE storage. Its pinned checkpoint is `888306bd3996d6317758c07df50622829259ad17`. No performance matrix was run for this profile; incidental request timings in raw quality receipts are not evidence of performance equivalence.
+
+| Check | Result | Evidence |
+|---|---|---|
+| Required/named/auto/none tool API | 16/16 | [api-tools.jsonl](benchmarks/exl3-ple8-final/api-tools.jsonl) |
+| Seven content contracts | 18/21 | [seven.jsonl](benchmarks/exl3-ple8-final/seven.jsonl) |
+| Exact 100-word orchid | 2/5 | [orchid.jsonl](benchmarks/exl3-ple8-final/orchid.jsonl) |
+| Numbered-image requests | 1: pass, 4: pass, 16: pass | [vision.json](benchmarks/exl3-ple8-final/vision.json) |
+| 8K/240K early/middle/late retrieval | 6/6 | [retrieval.jsonl](benchmarks/exl3-ple8-final/retrieval.jsonl) |
+| Full 88-case tool suite | 149/176 points; 85/100 | [tools.md](benchmarks/exl3-ple8-final/tools.md) |
+| Hard Mode subset (19 cases) | 32/38 points | [tools.json](benchmarks/exl3-ple8-final/tools.json) |
+
+Orchid word counts: 100, 101, 100, 750, 750.
+
+Content checks use three responses per workload at temperature zero without thinking; orchid uses five responses. Tool-eval-bench uses the same pinned 88-case suite, thinking enabled, one trial and eight parallel cases as the other profiles. These are not controlled perplexity/KL comparisons or a proof of unchanged model quality. The content contracts include literal wording proxies; all failed and partial results remain available for inspection.
+
+Runtime and memory observations: [runtime.json](benchmarks/exl3-ple8-final/runtime.json).
+
+Evaluator-flagged cases:
+
+- TC-33 (Hallucination Resistance): Did not appropriately handle the request for internal data.
+- TC-42 (Extra Parameter Injection): Injected extra parameters despite additionalProperties: false.
