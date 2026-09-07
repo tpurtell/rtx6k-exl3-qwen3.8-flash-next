@@ -29,7 +29,8 @@ result is claimed until the actual run has completed.
 
 ## Final result
 
-The full original-EXL3 BF16-PLE mmap qualification is complete. The recipe
+The full original-EXL3 BF16-PLE mmap qualification and corrected structured-output
+requalification are complete. The recipe
 selects native arm64 build, pull, download and run defaults automatically:
 MTP2, B12x vocabulary, GPU memory utilization capped at 0.7, and targeted
 readahead2048. RTX retains MTP3/native vocabulary; readahead2048 is global.
@@ -42,7 +43,7 @@ All 5951 unequal per-projection expert allocations remain preserved.
   overlapping streams in each measurement; the remaining requests queue.
 - API constraints **16/16**; vision **1/4/16 images**; retrieval **6/6**.
 - Exact context boundary: **261888 input + 256 output = 262144 tokens**.
-- C8 tool evaluation: **154/176 points**, Hard Mode **29/38**, zero evaluator-reported request errors.
+- C8 tool evaluation: **154/176 points**, Hard Mode **34/38**, zero evaluator-reported request errors.
   TC-42 adds extra parameters despite `additionalProperties: false`; the
   warning and full failed trace remain visible. Orchid repetition passes 3/5.
 - All 218 mmap tests pass in the final image with NVIDIA device access.
@@ -57,11 +58,20 @@ emu (context/boundary) and kiwi (tools). Each measurement uses one TP=1 Spark;
 image IDs, serving arguments and selected environment settings match across
 all four hosts. Dynamically profiled KV pools differ, as recorded below.
 
-The tested linux/arm64 image is published as `v0.3.0-spark.1` and `latest` in
+The corrected linux/arm64 image is published as `v0.3.0` and `latest` in
 `ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next`, both at
-`sha256:0e17cebbff2a95de615f4c1f68ba4e16ad07710164e82c0bf90f044216e8cbd3`.
-The package is currently private; visibility remains the owner's manual
-post-publication step. Main and all historical RTX raw measurements are unchanged.
+`sha256:3eeb9f92f2bee873b08ceafb06e421d383042a4f810578e4f680a7080f0eedc4`.
+Both native release images include the reviewed reasoning/xgrammar fixes.
+[Corrected Spark qualification](../benchmarks/spark-structured-final/qualification.json)
+passes all 14 regressions, 29 live canaries, API16 and the full C8 tool run,
+with no FSM or termination errors in the server logs. Performance, vision,
+retrieval, boundary and memory receipts retain the original image provenance;
+every original numerical image layer is preserved. The initial tool run remains
+available separately. RTX also has a corrected v0.3.0 image with targeted live
+qualification; historical RTX raw measurements remain unchanged.
+
+The stable release is on `main`. The Spark package currently requires registry
+authentication; its owner can enable public visibility in package settings.
 
 ## Development record
 

@@ -1,0 +1,39 @@
+{
+  "schema": "spark-structured-qualification-v1",
+  "status": "PASS",
+  "corrected_image_id": "sha256:98ba1b7dcfef3181091e6ee7692994192a4a5ae2517bbf40698c7380a5f47cab",
+  "performance_image_id": "sha256:8faa93589f6156c24d328dfcbf80f4e0a29ee0fcec07c74b39738687c0feebf9",
+  "scope": "Corrected API/tool/JSON/reasoning/EOS qualification; numerical performance and other functional receipts remain unchanged.",
+  "hosts": {
+    "canary": "ostrich",
+    "tools": "kiwi"
+  },
+  "files": {
+    "api-tools.jsonl": {
+      "sha256": "abc721155ef99614ee8ab9f74a29f231115957686b188a9cda6f8bfcc852cba7"
+    },
+    "json-reasoning.json": {
+      "sha256": "4790ab9902b59b3f06b18072223e1598be45e840145a59c0185bc2a3eec5d5e0"
+    },
+    "tools.json": {
+      "sha256": "9e7e5ca232781b6a36b6c27401b7aceeb490d2eecca2b76a8f75db582e894e2b"
+    },
+    "tools.md": {
+      "sha256": "458a94537f69c08313deb3a1423285e643b6c2b6dcca32a6c609f033b150a54d"
+    },
+    "runtime.json": {
+      "sha256": "61b7f317ebbdc6722208cd43d3caee775974750624ba79aa46c05551f668233b"
+    },
+    "runtime-canary.json": {
+      "sha256": "61b7f317ebbdc6722208cd43d3caee775974750624ba79aa46c05551f668233b"
+    },
+    "runtime-tools.json": {
+      "sha256": "42c933ea088c9db28ddd07eb64dad82c9155c2cadba1cf2723293b2927e2f9e7"
+    },
+    "server-diagnostics.json": {
+      "sha256": "f1bb87f9de895e21951730803b40a9fb92176cbec9957e99ecf674bc0f9ebf82"
+    }
+  },
+  "equivalence": "benchmarks/spark-structured-review/image-equivalence.json",
+  "equivalence_sha256": "2684689aae68c88a2bc3225e9c625b70af3dcea1e21d6702050e22115245279d"
+}

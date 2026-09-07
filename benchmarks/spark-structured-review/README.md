@@ -21,14 +21,19 @@ and reset clears the cached termination state. Invalid active-grammar tokens
 continue to fail.
 
 Negative controls against the installed qualification image fail two reasoning
-regressions and three termination regressions. The image build will execute all
-fourteen CPU regressions against the actual installed method bodies. Full
-structured-output qualification of the corrected image is pending.
+regressions and three termination regressions. Both native image builds pass all
+fourteen CPU regressions against the actual installed method bodies. The corrected
+Spark image also passes all 218 mmap tests, API16/16 and 29 complete live
+JSON/reasoning/EOS canaries with speculation active. Its full C8 tool run earns
+154/176 points and 34/38 Hard Mode points, with zero evaluator request errors.
+TC-42 still adds prohibited extra arguments; its warning and trace are retained.
+No FSM rejection, request termination, traceback, CUDA error or OOM appears in
+the corrected server logs. [Completed qualification](../spark-structured-final/qualification.json).
 
 Only the structured-output manager/backend are changed. Completed performance,
 vision, retrieval and boundary measurements remain immutable; the corrected
-image must prove unchanged numerical layers and rerun the affected API and C8
-tool checks plus the focused JSON/reasoning/EOS canary. The previous diagnostic
+image preserves every original numerical layer and reruns the affected API and
+C8 tool checks plus the focused JSON/reasoning/EOS canary. The previous diagnostic
 receipts and tool results remain available.
 
 Release instruction: after the corrected image is qualified and uploaded,

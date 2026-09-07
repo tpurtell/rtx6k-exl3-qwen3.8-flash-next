@@ -431,7 +431,7 @@ EXL3 mmap Spark (BF16 PLE) also returned all 256 requested tokens after a 261888
 | EXL3 | 152/176 | 32/38 | [full tool traces](benchmarks/exl3-final/tools.md) |
 | NVFP4 | 149/176 | 29/38 | [full tool traces](benchmarks/nvfp4-final/tools.md) |
 | EXL3 PLE8 mmap | 146/176 | 27/38 | [full tool traces](benchmarks/exl3-ple8-mmap-final/tools.md) |
-| EXL3 mmap Spark (BF16 PLE) | 154/176 | 29/38 | [full tool traces](benchmarks/spark-final/tools.md) |
+| EXL3 mmap Spark (BF16 PLE) | 154/176 | 34/38 | [full tool traces](benchmarks/spark-structured-final/tools.md) |
 
 EXL3 mmap Spark (BF16 PLE) evaluator-flagged cases:
 
@@ -441,7 +441,7 @@ API checks cover required/named/auto/none choices, thinking on/off and streaming
 
 Tool-eval-bench is pinned at `cf54b4bfe705f12f71e8866f10730572497c8105`. Results are earned/possible points from a C8 run (eight concurrent cases), not a normalized score for comparison with other execution setups. The full 88-case suite includes 19 Hard Mode scenarios, with thinking enabled, temperature zero, one trial, eight parallel cases and at most eight turns. The linked reports retain failures and partial scores.
 
-The Spark tool server logged two XGrammar FSM-rejection diagnostics, with no grammar-triggered request termination logged and zero evaluator-reported request errors. [Diagnostic review](benchmarks/spark-review/SERVER-DIAGNOSTICS.md).
+Spark API and C8 tool results above use the corrected structured-output image. All 14 structured-output regressions and 29 complete JSON/reasoning/EOS canaries pass, with no XGrammar FSM errors in the corrected server logs. [Corrected qualification and runtime](benchmarks/spark-structured-final/qualification.json). Performance, vision, retrieval and boundary receipts retain the original qualified image; the corrected image preserves every original filesystem layer and adds only the structured-output backports and their tests. [Earlier tool run](benchmarks/spark-final/tools.md).
 
 ## mmap memory snapshot
 
