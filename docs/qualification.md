@@ -540,3 +540,25 @@ and substitutes NVIDIA's FP8 PLE table and shared scale. The loader honors
 its explicit `qflashrt.fp8-ple.v1` metadata, scoped to the annotated table.
 Qualification for this additional profile covers quality only; no separate
 performance matrix or claim of measured performance equivalence is planned.
+
+## NVIDIA final performance qualification
+
+`benchmarks/nvfp4-final/` uses dev13, native FlashInfer experts, static MTP2,
+CUDA graphs, FP8 KV and full host tables on GPU1 at 400 W. The weighted C1
+blend is 151.11 tokens/s. The separate sampled reference coding task measures
+166.92 tokens/s at C1 and 177.83 at a 261632-token prompt depth. Sampled prose
+C1/C2/C4/C8/C16 medians are 113.24/213.17/365.63/620.24/930.71 tokens/s with
+full stream overlap at each concurrency, using 256 output tokens, two warmups
+and three measurements. These final results supersede short tuning probes for
+reporting the selected profile.
+
+API tool constraints pass 16/16, numbered-image tests pass at 1/4/16 images,
+and all six retrieval checks pass. Exact context-boundary usage is 261888
+prompt plus 256 output tokens, with 29.328 s TTFT and 194.70 decode tokens/s.
+Seven content contracts pass 17/21; orchid is exact in 1/5 measured runs
+(counts 102, 101, 101, 100, 101). Full tool results will be recorded separately.
+
+The additional dev14 loader change selects FP8 PLE only when an EXL3 checkpoint
+has the explicit hybrid annotation. Original EXL3 retains unquantized PLE;
+the NVIDIA ModelOpt branch is unchanged and its dev14 storage regression
+passes (`benchmarks/nvidia-ple-storage-dev14.txt`).

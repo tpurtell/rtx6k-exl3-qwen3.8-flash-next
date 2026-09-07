@@ -1,0 +1,11 @@
+INFO 09-07 10:03:18 [importing.py:53] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+INFO 09-07 10:03:18 [importing.py:88] Triton not installed or not compatible; certain GPU-related functions will not be available.
+WARNING 09-07 10:03:18 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+W0907 10:03:18.816000 1 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+WARNING 09-07 10:03:18 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 09-07 10:03:18 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 09-07 10:03:19 [modelopt.py:378] Detected ModelOpt fp8 checkpoint (quant_algo=FP8). Please note that the format is experimental and could change.
+WARNING 09-07 10:03:19 [modelopt.py:1011] Detected ModelOpt NVFP4 checkpoint (quant_algo=NVFP4). Please note that the format is experimental and could change in future.
+WARNING 09-07 10:03:19 [modelopt.py:1011] Detected ModelOpt NVFP4 checkpoint (quant_algo=W4A16_NVFP4). Please note that the format is experimental and could change in future.
+WARNING 09-07 10:03:19 [modelopt.py:1677] Detected ModelOpt MXFP8 checkpoint. Please note that the format is experimental and could change in future.
+PASS: real checkpoint PLE metadata, FP8 CPU allocation, scalar scale and byte-exact lookup
