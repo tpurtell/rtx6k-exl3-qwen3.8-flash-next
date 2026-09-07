@@ -1,0 +1,105 @@
+{
+  "schema": "qwen38-vllm-vision.v1",
+  "model": "qwen38-exl3-ple8",
+  "supported_image_counts": {
+    "1": {
+      "passed": true,
+      "status": 200,
+      "expected": [
+        1
+      ],
+      "observed": [
+        1
+      ],
+      "response": "1",
+      "usage": {
+        "prompt_tokens": 238,
+        "total_tokens": 240,
+        "completion_tokens": 2,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      }
+    },
+    "4": {
+      "passed": true,
+      "status": 200,
+      "expected": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "observed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "response": "1,2,3,4",
+      "usage": {
+        "prompt_tokens": 832,
+        "total_tokens": 840,
+        "completion_tokens": 8,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      }
+    },
+    "16": {
+      "passed": true,
+      "status": 200,
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "observed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "response": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16",
+      "usage": {
+        "prompt_tokens": 3209,
+        "total_tokens": 3248,
+        "completion_tokens": 39,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      }
+    }
+  },
+  "configured_image_limit": null,
+  "overflow_rejected": null,
+  "passed": true
+}

@@ -602,3 +602,37 @@ immutable digest
 Registry inspection confirms its linux/amd64 manifest. The release archive
 and manifest record the source and evidence hashes. GHCR package visibility
 is the user's manual post-publication step.
+
+## Release v0.2.0: mmap PLE
+
+The reviewed PR #54129 port and scale-validation corrections pass 218 component
+and runner tests, real-checkpoint shard-edge checks, and mutable CUDA graphs.
+See [the review](mmap-review.md) for scope and receipts. Mixed EXL3 per-projection
+K4/K5 support remains required and intact.
+
+The new full matrix covers only `exl3-ple8` with mmap, MTP3, SERIAL=128 and FP8 KV.
+The C1 seven-workload blend is 147.78 tokens/s; sampled async coding is 183.45
+tokens/s and C16 sampled prose is 659.75 aggregate tokens/s. Content contracts
+pass 18/21 and exact orchid repetition passes 2/5. All 16 API checks, 1/4/16-image
+checks, six retrieval probes and the exact 262144-token boundary pass.
+Tool evaluation at C8 completes all 88 cases with 146/176 points, including
+27/38 Hard Mode points. All failed/partial responses remain in the receipts.
+The evaluator reports no safety-warning entries; that is not a broader safety assessment.
+
+After the performance suite, 128 clean checkpoint mappings span 47.68 GiB, with
+19.45 GiB mapped resident pages and no anonymous or dirty mapped PLE pages.
+This is a cache snapshot, not a low-RAM or cold-disk measurement.
+
+The shipping default becomes `exl3` with mmap enabled, preserving BF16 PLE.
+This defaults-only change adds no measurements. The benchmark and release
+images have identical filesystem layers. All six profile/mode combinations
+and the omitted-configuration default pass inert launcher checks. Original
+EXL3/NVFP4 columns remain explicitly historical v0.1.0 resident-mode evidence.
+The README integrates the new profile into all final tables, shows medians
+without ranges and presents C8 tool points without normalized scores.
+The historical resident PLE8 quality receipts remain available separately.
+
+The published image is `ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next:v0.2.0`,
+with digest `sha256:bb252820ade1b6aa1316c45485186db90fe67f1d7ea48826169bf92f634d2e73`.
+The GHCR package is public. The qualified mmap PLE8 server remains on GPU1,
+port 8001; the shipping default is configured independently of that live test.

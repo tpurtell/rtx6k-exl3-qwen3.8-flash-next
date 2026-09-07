@@ -1,0 +1,98 @@
+{
+  "container": "qwen38-exl3-ple8-mmap-final",
+  "image_id": "sha256:3d3f3f2910b26e16f1b2e261b03a8c644743cb6c9ff807f97471bb9d621ab02e",
+  "args": [
+    "serve",
+    "/root/.cache/huggingface/hub/models--wrldsuksgo2mars--Qwen3.8-Flash-Next-EXL3-K4.25-PLE-FP8-v1/snapshots/888306bd3996d6317758c07df50622829259ad17",
+    "--served-model-name",
+    "qwen38-exl3-ple8",
+    "--port",
+    "8001",
+    "--tensor-parallel-size",
+    "1",
+    "--distributed-executor-backend",
+    "mp",
+    "--max-model-len",
+    "262144",
+    "--max-num-seqs",
+    "16",
+    "--max-num-batched-tokens",
+    "2048",
+    "--gpu-memory-utilization",
+    "0.94",
+    "--kv-cache-dtype",
+    "fp8",
+    "--enable-auto-tool-choice",
+    "--tool-call-parser",
+    "qwen3_coder",
+    "--reasoning-parser",
+    "qwen3",
+    "--speculative-config",
+    "{\"method\":\"mtp\",\"num_speculative_tokens\":3}"
+  ],
+  "started_at": "2026-09-07T11:12:33.765002375Z",
+  "device_requests": [
+    {
+      "Driver": "",
+      "Count": 0,
+      "DeviceIDs": [
+        "1"
+      ],
+      "Capabilities": [
+        [
+          "gpu"
+        ]
+      ],
+      "Options": {}
+    }
+  ],
+  "selected_environment": [
+    "VLLM_PLE_MMAP_WORKERS=32",
+    "VLLM_PLE_MMAP_PINNED=0",
+    "VLLM_PLE_MMAP_SERIAL=128",
+    "QWEN38_B12X_NVFP4=0",
+    "VLLM_PLE_MMAP_CHUNK=2048",
+    "VLLM_PLE_MMAP_PREWARM=0",
+    "VLLM_PLE_MMAP_READAHEAD=0",
+    "VLLM_PLE_CPU_OFFLOAD=0",
+    "OMP_NUM_THREADS=8",
+    "QWEN38_B12X_VOCAB=0",
+    "VLLM_PLE_MMAP=1",
+    "VLLM_EXL3_TRELLIS_MIN_M=1",
+    "VLLM_EXL3_PREFILL_TRELLIS=1",
+    "VLLM_EXL3_PREFILL_CAPACITY=2048"
+  ],
+  "selected_startup_lines": [
+    "(Worker pid=159) INFO 09-07 11:13:33 [ple_mmap.py:2057] PLE mmap: layer 1 attached, 128 shards, 320001536 rows x 160 B (47.68 GiB on disk), 32 workers",
+    "(Worker pid=159) INFO 09-07 11:13:34 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+    "(Worker pid=159) INFO 09-07 11:13:47 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+    "(Worker pid=159) INFO 09-07 11:13:49 [model_runner.py:407] Model loading took 71.99 GiB memory and 46.194992 seconds",
+    "(Worker pid=159) INFO 09-07 11:13:49 [model_state.py:148] PLE mmap: staging aggregate allocation 0.0 GiB across 1 layer(s) (max_num_tokens=2048, free=21.92 GiB)",
+    "(EngineCore pid=132) INFO 09-07 11:14:00 [kv_cache_utils.py:2258] GPU KV cache size: 880,600 tokens, Maximum concurrency for 262,144 tokens per request: 3.36x",
+    "(Worker pid=159) INFO 09-07 11:14:06 [model_runner.py:953] Graph capturing finished in 6 secs, took 0.96 GiB",
+    "(Worker pid=159) INFO 09-07 11:14:06 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=1280 n=1 p50_ms=0.74 p50_ids_d2h_wait_ms=0.04 p50_gather_ms=0.67 p50_h2d_call_ms=0.03 prep_p99_ms=0.74 p99_ids_d2h_wait_ms=0.04 p99_gather_ms=0.67 p99_h2d_call_ms=0.03 pinned=0/1",
+    "(Worker pid=159) INFO 09-07 11:15:06 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=224240 n=1064 p50_ms=0.28 p50_ids_d2h_wait_ms=0.02 p50_gather_ms=0.24 p50_h2d_call_ms=0.02 prep_p99_ms=16.42 p99_ids_d2h_wait_ms=14.09 p99_gather_ms=2.30 p99_h2d_call_ms=0.02 pinned=0/1064",
+    "(Worker pid=159) INFO 09-07 11:16:16 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=159280 n=2136 p50_ms=0.19 p50_ids_d2h_wait_ms=0.02 p50_gather_ms=0.15 p50_h2d_call_ms=0.01 prep_p99_ms=13.67 p99_ids_d2h_wait_ms=1.44 p99_gather_ms=12.20 p99_h2d_call_ms=0.03 pinned=0/2136",
+    "(Worker pid=159) INFO 09-07 11:17:16 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=508064 n=2314 p50_ms=3.68 p50_ids_d2h_wait_ms=0.02 p50_gather_ms=3.64 p50_h2d_call_ms=0.03 prep_p99_ms=9.68 p99_ids_d2h_wait_ms=0.02 p99_gather_ms=9.64 p99_h2d_call_ms=0.02 pinned=0/2314",
+    "(Worker pid=159) INFO 09-07 11:18:17 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=3004768 n=1109 p50_ms=3.49 p50_ids_d2h_wait_ms=0.02 p50_gather_ms=3.43 p50_h2d_call_ms=0.03 prep_p99_ms=93.47 p99_ids_d2h_wait_ms=90.30 p99_gather_ms=3.01 p99_h2d_call_ms=0.16 pinned=0/1109",
+    "(Worker pid=159) INFO 09-07 11:19:17 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=6782976 n=213 p50_ms=95.63 p50_ids_d2h_wait_ms=92.52 p50_gather_ms=2.95 p50_h2d_call_ms=0.16 prep_p99_ms=105.38 p99_ids_d2h_wait_ms=102.32 p99_gather_ms=2.90 p99_h2d_call_ms=0.16 pinned=0/213",
+    "(Worker pid=159) INFO 09-07 11:20:17 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=6422528 n=202 p50_ms=99.41 p50_ids_d2h_wait_ms=96.17 p50_gather_ms=3.08 p50_h2d_call_ms=0.16 prep_p99_ms=106.63 p99_ids_d2h_wait_ms=103.17 p99_gather_ms=3.29 p99_h2d_call_ms=0.17 pinned=0/202",
+    "(Worker pid=159) INFO 09-07 11:21:17 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=6283264 n=193 p50_ms=104.25 p50_ids_d2h_wait_ms=100.83 p50_gather_ms=3.25 p50_h2d_call_ms=0.16 prep_p99_ms=122.87 p99_ids_d2h_wait_ms=119.54 p99_gather_ms=3.16 p99_h2d_call_ms=0.17 pinned=0/193",
+    "(Worker pid=159) INFO 09-07 11:22:17 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=6021120 n=185 p50_ms=111.95 p50_ids_d2h_wait_ms=108.56 p50_gather_ms=3.22 p50_h2d_call_ms=0.17 prep_p99_ms=122.98 p99_ids_d2h_wait_ms=119.69 p99_gather_ms=3.12 p99_h2d_call_ms=0.16 pinned=0/185",
+    "(Worker pid=159) INFO 09-07 11:23:17 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=5099968 n=748 p50_ms=0.20 p50_ids_d2h_wait_ms=0.02 p50_gather_ms=0.16 p50_h2d_call_ms=0.01 prep_p99_ms=122.21 p99_ids_d2h_wait_ms=119.17 p99_gather_ms=2.87 p99_h2d_call_ms=0.16 pinned=0/748",
+    "(Worker pid=159) INFO 09-07 11:24:17 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=5763712 n=640 p50_ms=0.36 p50_ids_d2h_wait_ms=0.03 p50_gather_ms=0.30 p50_h2d_call_ms=0.03 prep_p99_ms=102.05 p99_ids_d2h_wait_ms=96.50 p99_gather_ms=4.75 p99_h2d_call_ms=0.80 pinned=0/640",
+    "(Worker pid=159) INFO 09-07 11:25:17 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=6107392 n=385 p50_ms=0.49 p50_ids_d2h_wait_ms=0.03 p50_gather_ms=0.44 p50_h2d_call_ms=0.03 prep_p99_ms=108.21 p99_ids_d2h_wait_ms=104.27 p99_gather_ms=3.62 p99_h2d_call_ms=0.32 pinned=0/385",
+    "(Worker pid=159) INFO 09-07 11:26:18 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=6103360 n=321 p50_ms=95.41 p50_ids_d2h_wait_ms=92.21 p50_gather_ms=3.03 p50_h2d_call_ms=0.17 prep_p99_ms=116.42 p99_ids_d2h_wait_ms=113.27 p99_gather_ms=2.99 p99_h2d_call_ms=0.16 pinned=0/321",
+    "(Worker pid=159) INFO 09-07 11:27:18 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=5759296 n=311 p50_ms=94.37 p50_ids_d2h_wait_ms=91.27 p50_gather_ms=2.93 p50_h2d_call_ms=0.16 prep_p99_ms=123.05 p99_ids_d2h_wait_ms=120.20 p99_gather_ms=2.69 p99_h2d_call_ms=0.17 pinned=0/311",
+    "(Worker pid=159) INFO 09-07 11:28:18 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=6058176 n=253 p50_ms=101.97 p50_ids_d2h_wait_ms=99.50 p50_gather_ms=2.31 p50_h2d_call_ms=0.17 prep_p99_ms=123.10 p99_ids_d2h_wait_ms=120.20 p99_gather_ms=2.77 p99_h2d_call_ms=0.13 pinned=0/253",
+    "(Worker pid=159) INFO 09-07 11:29:18 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=5761344 n=279 p50_ms=101.31 p50_ids_d2h_wait_ms=98.48 p50_gather_ms=2.63 p50_h2d_call_ms=0.20 prep_p99_ms=123.38 p99_ids_d2h_wait_ms=120.28 p99_gather_ms=2.93 p99_h2d_call_ms=0.16 pinned=0/279",
+    "(Worker pid=159) INFO 09-07 11:30:18 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=6174576 n=252 p50_ms=99.82 p50_ids_d2h_wait_ms=96.81 p50_gather_ms=2.84 p50_h2d_call_ms=0.17 prep_p99_ms=120.57 p99_ids_d2h_wait_ms=117.52 p99_gather_ms=2.89 p99_h2d_call_ms=0.17 pinned=0/252",
+    "(Worker pid=159) INFO 09-07 11:31:18 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=5762112 n=309 p50_ms=98.01 p50_ids_d2h_wait_ms=94.92 p50_gather_ms=2.93 p50_h2d_call_ms=0.16 prep_p99_ms=122.03 p99_ids_d2h_wait_ms=118.64 p99_gather_ms=3.20 p99_h2d_call_ms=0.19 pinned=0/309",
+    "(Worker pid=159) INFO 09-07 11:32:18 [ple_mmap.py:1134] PLE mmap input prep: prep_rows=3688672 n=1565 p50_ms=0.20 p50_ids_d2h_wait_ms=0.02 p50_gather_ms=0.16 p50_h2d_call_ms=0.02 prep_p99_ms=105.99 p99_ids_d2h_wait_ms=102.66 p99_gather_ms=3.28 p99_h2d_call_ms=0.05 pinned=0/1565"
+  ],
+  "gpu_inventory_csv": [
+    "index, name, uuid, driver_version, memory.total [MiB], power.limit [W]",
+    "0, NVIDIA RTX PRO 6000 Blackwell Workstation Edition, GPU-fe5b6dd0-a77c-c8fb-6360-e1b9d9918ac0, 595.71.05, 97887 MiB, 400.00 W",
+    "1, NVIDIA RTX PRO 6000 Blackwell Workstation Edition, GPU-95f8f212-9131-df99-fd53-7535965197d7, 595.71.05, 97887 MiB, 400.00 W"
+  ]
+}
