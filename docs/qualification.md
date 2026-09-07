@@ -489,3 +489,33 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   516.51/792.07. It does not establish a C1 advantage over static MTP3,
   which is selected for final qualification. Receipts:
   `recipe/benchmarks/exl3-dev13-adaptive31-*`.
+
+## Final EXL3 qualification
+
+The `recipe/benchmarks/exl3-final/` receipts use dev13, static MTP3, CUDA
+graphs, FP8 KV, .94 GPU memory fraction and GPU1 at 400 W. The CPU is an
+AMD Ryzen Threadripper 9970X (32 cores/64 threads); host RAM is 183 GiB.
+
+- C1 seven-workload blend: 152.82 tokens/s; code median: 202.99 tokens/s.
+- Reference async task-runner coding task, temperature .2: C1 median
+  185.55 tokens/s at the 159-token task prompt, and 190.37 tokens/s at
+  261632 prompt tokens. These 256-token forced completions measure speed,
+  not generated-code correctness. Full response text and token timings remain.
+- Sampled prose at temperature .7, 256 tokens, three measured runs after
+  two warmups: C1/C2/C4/C8/C16 medians are
+  111.70/191.37/347.87/532.66/696.96 tokens/s. All 16 client streams overlap
+  in every measured C16 run. Earlier 128-token tuning probes are separate
+  experiments and should not be substituted for this full curve.
+- Both the six-point prefill matrix and six-point synthetic context/decode
+  curve completed through 261632 prompt tokens. The exact boundary probe
+  also returned all 256 requested tokens after a 261888-token prompt:
+  262144 total tokens, with 40.67 seconds TTFT and 227.99 decode tokens/s.
+- All 16 API tool-choice checks, 1/4/16-image checks and six early/middle/late
+  retrieval checks at 8K/240K filler lengths pass.
+- Full 88-case tools: 152/176 points (86/100), with 67 pass, 18 partial and
+  3 fail. Hard Mode: 32/38 points, with 14 pass, 4 partial and 1 fail. This
+  run includes the parser fix; full traces and all partial/failing cases are
+  preserved in `tools.md` and `tools.json`.
+- Orchid measured counts are 750/750/101/100/102; only one of five meets the
+  exact contract. The 750-word responses hit the 1500-token cap. Raw failures
+  remain in `orchid.jsonl` and are not described as successful-task throughput.

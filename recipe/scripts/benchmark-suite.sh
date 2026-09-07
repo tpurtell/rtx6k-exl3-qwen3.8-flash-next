@@ -26,3 +26,4 @@ python3 "$SCRIPT_DIR/benchmark-prefill.py" --base-url "$BASE_URL/v1" --model "$M
 python3 "$SCRIPT_DIR/benchmark-context.py" "${COMMON[@]}" --depths 2048 8192 32768 65536 131072 261632 --output-tokens 256 --runs 3 --warmups 1 --output "$RESULT_DIR/context.jsonl"
 python3 "$SCRIPT_DIR/benchmark-context.py" "${COMMON[@]}" --depths 261888 --output-tokens 256 --runs 1 --warmups 0 --output "$RESULT_DIR/context-boundary.jsonl"
 python3 "$SCRIPT_DIR/test-context-retrieval.py" "${COMMON[@]}" --filler-tokens 8192 240000 --positions 0.05 0.5 0.95 --output "$RESULT_DIR/retrieval.jsonl"
+python3 "$SCRIPT_DIR/benchmark-code-agent-depth.py" "${COMMON[@]}" --output "$RESULT_DIR/code-agent.jsonl"
