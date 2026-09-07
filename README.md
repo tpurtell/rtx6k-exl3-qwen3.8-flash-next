@@ -373,4 +373,3 @@ Captured after the performance/retrieval suite, before the full tool evaluation.
 | 128 | 47.68 | 19.45 | 0.00 | 0.00 |
 
 The backing filesystem is ext4 on a Samsung 9100 PRO 4TB NVMe. PREWARM, READAHEAD and PINNED are off; the run uses the existing file cache and the warmups specified above. [Full memory and storage receipt](benchmarks/exl3-ple8-mmap-final/memory.json).
-
