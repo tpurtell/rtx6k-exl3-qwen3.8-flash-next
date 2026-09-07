@@ -17,7 +17,7 @@ Qualification checklist:
 - [x] Native arm64 build and strict mmap patch/base checks.
 - [x] Mixed-projection loading, BF16 checkpoint gathers and mutable CUDA graphs.
 - [x] Component numerical checks and kernel comparisons on Spark.
-- [ ] End-to-end C1 MTP and mmap tuning, plus C16 tradeoffs.
+- [x] End-to-end C1 MTP and mmap tuning, plus C16 tradeoffs.
 - [ ] Full final default-profile performance, API, vision, retrieval and C8 tool
   qualification using the existing contracts and complete raw receipts.
 - [ ] Fourth table entry: EXL3 mmap Spark (BF16 PLE), compact README tables and

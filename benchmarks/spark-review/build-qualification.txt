@@ -1,0 +1,147 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 4.00kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#2 DONE 1.3s
+
+#3 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#3 CACHED
+
+#4 [internal] load metadata for ghcr.io/tpurtell/glm-5.3-flash-exl3-4bpw-2x-rtx@sha256:48e254d94f58137c8707e6044cde4528c6af3fdd9702726b9b362e9b0e0b4629
+#4 ...
+
+#5 [auth] tpurtell/glm-5.3-flash-exl3-4bpw-2x-rtx:pull token for ghcr.io
+#5 DONE 0.0s
+
+#6 [internal] load metadata for docker.io/vllm/vllm-openai@sha256:fc120ece0a388cc0aa1caad4a9f1cd92113484ab7ec2fd0efadd62585be05bf8
+#6 ...
+
+#4 [internal] load metadata for ghcr.io/tpurtell/glm-5.3-flash-exl3-4bpw-2x-rtx@sha256:48e254d94f58137c8707e6044cde4528c6af3fdd9702726b9b362e9b0e0b4629
+#4 DONE 1.0s
+
+#6 [internal] load metadata for docker.io/vllm/vllm-openai@sha256:fc120ece0a388cc0aa1caad4a9f1cd92113484ab7ec2fd0efadd62585be05bf8
+#6 DONE 1.8s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 82B done
+#7 DONE 0.0s
+
+#8 [stage-1  1/20] FROM docker.io/vllm/vllm-openai@sha256:fc120ece0a388cc0aa1caad4a9f1cd92113484ab7ec2fd0efadd62585be05bf8
+#8 CACHED
+
+#9 [exl3_source 1/1] FROM ghcr.io/tpurtell/glm-5.3-flash-exl3-4bpw-2x-rtx@sha256:48e254d94f58137c8707e6044cde4528c6af3fdd9702726b9b362e9b0e0b4629
+#9 CACHED
+
+#10 [internal] load build context
+#10 transferring context: 815B done
+#10 DONE 0.0s
+
+#11 [stage-1  2/20] RUN B12X_COMMIT=c76a40ee684cb3ef7d2c223d56a9b9cff25a3a1e python3 - <<'PY'
+#11 DONE 1.6s
+
+#12 [stage-1  3/20] RUN python3 -m pip install --no-deps -e /opt/b12x
+#12 0.538 Obtaining file:///opt/b12x
+#12 0.539   Installing build dependencies: started
+#12 1.661   Installing build dependencies: finished with status 'done'
+#12 1.661   Checking if build backend supports build_editable: started
+#12 1.802   Checking if build backend supports build_editable: finished with status 'done'
+#12 1.802   Getting requirements to build editable: started
+#12 1.958   Getting requirements to build editable: finished with status 'done'
+#12 1.958   Preparing editable metadata (pyproject.toml): started
+#12 2.061   Preparing editable metadata (pyproject.toml): finished with status 'done'
+#12 2.066 Building wheels for collected packages: b12x
+#12 2.067   Building editable for b12x (pyproject.toml): started
+#12 2.185   Building editable for b12x (pyproject.toml): finished with status 'done'
+#12 2.185   Created wheel for b12x: filename=b12x-1.3.0-0.editable-py3-none-any.whl size=11421 sha256=bbaf2e5bce24b369093ef735634fbad8b86789d70a8ad9450ccdbf386f226e4c
+#12 2.185   Stored in directory: /tmp/pip-ephem-wheel-cache-70_ny7h5/wheels/23/c1/2a/91572ce7f8cc9084d311c510540cbdd3be1d67be4269efd1d3
+#12 2.186 Successfully built b12x
+#12 2.191 Installing collected packages: b12x
+#12 2.206 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#12 2.206 Successfully installed b12x-1.3.0
+#12 DONE 2.3s
+
+#13 [stage-1  4/20] COPY --from=exl3_source /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/quantization/exl3.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/quantization/exl3.py
+#13 DONE 0.1s
+
+#14 [stage-1  5/20] COPY patches/port-exl3-qwen38.py /tmp/port-exl3-qwen38.py
+#14 DONE 0.0s
+
+#15 [stage-1  6/20] COPY patches/b12x_qsa_attention.py /usr/local/lib/python3.12/dist-packages/vllm/models/qwen3_8_flash_next/nvidia/b12x_qsa_attention.py
+#15 DONE 0.0s
+
+#16 [stage-1  7/20] COPY patches/port-qsa-fp8.py /tmp/port-qsa-fp8.py
+#16 DONE 0.0s
+
+#17 [stage-1  8/20] COPY patches/port-nvidia-mtp-fp8.py /tmp/port-nvidia-mtp-fp8.py
+#17 DONE 0.0s
+
+#18 [stage-1  9/20] COPY patches/qwen_host_embedding.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/qwen_host_embedding.py
+#18 DONE 0.0s
+
+#19 [stage-1 10/20] COPY patches/port-host-embedding.py /tmp/port-host-embedding.py
+#19 DONE 0.0s
+
+#20 [stage-1 11/20] COPY patches/port-exl3-ple-fp8.py /tmp/port-exl3-ple-fp8.py
+#20 DONE 0.0s
+
+#21 [stage-1 12/20] COPY patches/port-nvidia-ple-fp8.py /tmp/port-nvidia-ple-fp8.py
+#21 DONE 0.0s
+
+#22 [stage-1 13/20] COPY patches/port-qwen-tool-constraints.py /tmp/port-qwen-tool-constraints.py
+#22 DONE 0.0s
+
+#23 [stage-1 14/20] COPY patches/qwen_vocab_projection.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/qwen_vocab_projection.py
+#23 DONE 0.0s
+
+#24 [stage-1 15/20] COPY patches/port-vocab-projection.py /tmp/port-vocab-projection.py
+#24 DONE 0.0s
+
+#25 [stage-1 16/20] COPY patches/qwen_nvfp4_moe.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/qwen_nvfp4_moe.py
+#25 DONE 0.0s
+
+#26 [stage-1 17/20] COPY patches/port-nvfp4-moe.py /tmp/port-nvfp4-moe.py
+#26 DONE 0.0s
+
+#27 [stage-1 18/20] RUN python3 /tmp/port-exl3-qwen38.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-qsa-fp8.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-nvidia-mtp-fp8.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-host-embedding.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-nvidia-ple-fp8.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-exl3-ple-fp8.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-qwen-tool-constraints.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-vocab-projection.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-nvfp4-moe.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 -c 'from vllm.model_executor.layers.quantization import get_quantization_config; assert get_quantization_config("exl3").__name__ == "Exl3Config"'
+#27 0.122 Qwen EXL3 namespace and per-projection loader port applied
+#27 0.153 B12x BF16/FP8 QSA serving bridge applied
+#27 0.191 NVIDIA MTP block-FP8 quantization mapping applied
+#27 0.250 ModelOpt mixed PLE preserves global-scale FP8 host storage
+#27 0.302 EXL3 annotated PLE preserves global-scale FP8 host storage
+#27 0.330 Preserved structural tool constraints through the delegating parser
+#27 0.365 Added opt-in planned B12x vocabulary projection with native dtype fallback
+#27 0.402 Optional precise Qwen NVFP4 expert bridge applied
+#27 9.375 INFO 09-07 13:28:29 [importing.py:53] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#27 9.375 INFO 09-07 13:28:29 [importing.py:88] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#27 9.505 W0907 13:28:29.911000 16 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#27 9.613 WARNING 09-07 13:28:30 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#27 9.772 WARNING 09-07 13:28:30 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#27 9.773 WARNING 09-07 13:28:30 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#27 DONE 12.2s
+
+#28 [stage-1 19/20] COPY patches/port-ple-mmap.py patches/ple-mmap-pr54129.patch patches/ple-mmap-base-hashes.json /tmp/ple-mmap/
+#28 DONE 0.0s
+
+#29 [stage-1 20/20] RUN python3 /tmp/ple-mmap/port-ple-mmap.py /usr/local/lib/python3.12/dist-packages/vllm
+#29 0.126 patching file vllm/envs.py
+#29 0.127 patching file vllm/models/qwen3_8_flash_next/nvidia/model.py
+#29 0.128 patching file vllm/models/qwen3_8_flash_next/nvidia/model_state.py
+#29 0.128 patching file vllm/models/qwen3_8_flash_next/nvidia/ple_layer.py
+#29 0.128 patching file vllm/models/qwen3_8_flash_next/nvidia/ple_mmap.py
+#29 0.130 patching file vllm/v1/worker/gpu/model_runner.py
+#29 0.131 patching file vllm/v1/worker/gpu/model_states/interface.py
+#29 0.131 patching file vllm/v1/worker/gpu_model_runner.py
+#29 0.132 patching file vllm/v1/worker/gpu_worker.py
+#29 0.132 patching file vllm/v1/worker/utils.py
+#29 0.132 Applied reviewed mmap PLE backport from PR 54129 @ 50a061f792f36364f5f95a93eee21f1e9d77f65e
+#29 DONE 0.1s
+
+#30 exporting to image
+#30 exporting layers
+#30 exporting layers 0.6s done
+#30 writing image sha256:8faa93589f6156c24d328dfcbf80f4e0a29ee0fcec07c74b39738687c0feebf9 done
+#30 naming to docker.io/library/spark-exl3-qwen3.8-flash-next:qual-e3ae4a7 done
+#30 DONE 0.6s
