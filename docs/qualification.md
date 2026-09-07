@@ -231,3 +231,15 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   Raw receipts: `exl3-dev8-context-diagnostic.jsonl` and
   `exl3-dev8-long-context-diagnostic.jsonl` under `recipe/benchmarks`.
   Both GPUs report a 400 W power limit during these probes.
+- Eager short-context parallel continuations complete at C8 and C16 after
+  one warmup per point, emitting 64 tokens per sequence. Single measured
+  aggregate rates are 203.71 / 407.27 tokens/s using the global first-to-last
+  SSE window and sum(N−1) numerator. This is a shared-prompt continuation
+  load, not 16 independent long-prefill requests; timing arrays are retained
+  in `recipe/benchmarks/exl3-dev8-concurrency-diagnostic.json`.
+- EXL3 orchid exact-count results are 100/750/100 across three measured
+  runs (one prior warmup produced 101). The 750 case hits the 1500-token
+  output limit. Raw diagnostic responses are retained in
+  `recipe/benchmarks/exl3-dev8-orchid-diagnostic.jsonl`; two successes do not
+  qualify the failing repetition workload. The next probe enables CUDA
+  graphs with the same image, checkpoint and MTP3 settings.
