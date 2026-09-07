@@ -150,3 +150,15 @@ The registry manifest confirms `linux/arm64`. Dodo has begun prefill, ostrich
 has begun API constraints, and kiwi has begun the full 88-case C8 tool suite.
 Captured startup receipts include B12x vocabulary preparation. Final results
 are not yet complete.
+
+All four startup captures contain 49 mixed-projection expert entries (target
+and draft), and each reports 71.99 GiB for model loading. Identical launcher
+settings do not force identical dynamically profiled KV pool sizes: ostrich
+reports 456130 tokens, dodo 440401, emu 393216 and kiwi 450887. All exceed the
+configured 262144-token context. These are separate host observations, and
+the runtime receipts retain them; the qualification does not claim identical
+page-cache histories or a fixed KV allocation across hosts.
+
+The completed final seven-workload C1 run measures 31.11 tokens/s weighted
+decode with 19/21 content contracts passing. API tool constraints pass 16/16
+and vision passes at 1, 4 and 16 images. Remaining suites are still running.

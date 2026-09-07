@@ -129,6 +129,8 @@ its PLE offload worker; mmap gathers rows directly in the model worker.
 Sixteen scheduler slots do **not** mean sixteen simultaneous 262144-token
 requests fit in the KV pool. The final tests include sixteen overlapping
 short-context client streams and a separate exact full-context boundary test.
+The KV pool is profiled at startup and can differ between hosts even with the
+same memory-utilization setting; runtime receipts retain the actual capacity.
 Measured startup KV pools were 796612 tokens for resident EXL3, 686817 for
 resident NVIDIA and 880600 for EXL3 PLE8 mmap (3.04×, 2.62× and 3.36× the
 configured context); actual scheduling also depends on

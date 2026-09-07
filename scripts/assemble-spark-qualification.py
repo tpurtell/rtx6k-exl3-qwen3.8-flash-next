@@ -48,6 +48,8 @@ for host in ('ostrich', 'dodo', 'emu', 'kiwi'):
              'VLLM_PLE_MMAP_READAHEAD=2048','QWEN38_B12X_VOCAB=1','CUTE_DSL_ARCH=sm_121a'} <= env,
             f'Wrong serving defaults: {host}')
     require(any('PLE mmap:' in line and 'attached' in line for line in r['selected_startup_lines']), f'No mmap attachment: {host}')
+    require(sum('EXL3 projection-mixed Trellis' in line for line in r['selected_startup_lines']) == 49,
+            f'Incomplete target/draft mixed-projection startup evidence: {host}')
     require(any('Prepared B12x BF16 vocabulary projection' in line for line in r['selected_startup_lines']), f'No vocabulary preparation: {host}')
     runtimes[host] = r
 reference = runtimes['ostrich']
