@@ -112,3 +112,16 @@ The MTP3 readahead-128 blend is 27.74 tokens/s, below the MTP2 result of 29.21.
 The next round evaluates MTP2/readahead2048 on ostrich, MTP0/readahead2048 on
 dodo, MTP2/readahead128/B12x vocabulary on kiwi, and MTP3/readahead128/K128
 tiles on emu. Vocabulary and tile comparisons retain their same-host baselines.
+
+The completed readahead-2048 run measures a 29.04 tokens/s C1 blend and
+98.67 / 97.14 tokens/s in the short C8 / C16 probes. Readahead128 measured
+29.21 and 94.53 / 89.09 respectively. These concurrency probes are single
+measurements, not the final qualification medians. The recipe now defaults
+to 2048 ranges globally, including newly built images; RTX is not remeasured.
+
+The same-host vocabulary comparison improves the C1 blend from 29.21 to
+30.75 tokens/s. MTP0 is about 16.7 tokens/s, and the MTP3 K128 experiment
+shows little overall improvement over K64. The combined qualification
+candidate therefore uses MTP2, readahead2048, B12x vocabulary, and the
+existing expert tile policy. RTX retains MTP3 and native vocabulary defaults.
+Full qualification of that combined profile remains pending.

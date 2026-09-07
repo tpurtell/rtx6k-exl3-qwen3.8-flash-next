@@ -21,7 +21,7 @@ with tempfile.TemporaryDirectory() as folder:
     (model / 'config.json').write_text('{}')
     env = os.environ | {'PATH': str(fake)+':'+os.environ['PATH'],
                        'HF_CACHE': str(tmp/'hf'), 'RUNTIME_CACHE': str(tmp/'runtime')}
-    for key in ('IMAGE','QUANT','GPU_MEMORY_UTILIZATION','PLE_MMAP','VLLM_PLE_MMAP'):
+    for key in ('IMAGE','QUANT','GPU_MEMORY_UTILIZATION','PLE_MMAP','VLLM_PLE_MMAP','PLE_MMAP_READAHEAD'):
         env.pop(key, None)
     for arch, image, fraction, cute in (
         ('x86_64','qwen38-rtx:local','0.94','sm_120a'),
@@ -33,6 +33,7 @@ with tempfile.TemporaryDirectory() as folder:
         assert image in args
         assert args[args.index('--gpu-memory-utilization')+1] == fraction
         assert 'VLLM_PLE_MMAP=1' in args
+        assert 'VLLM_PLE_MMAP_READAHEAD=2048' in args
         print(json.dumps({'architecture':arch,'image':image,'memory_fraction':fraction,'passed':True}))
     for bad in ('0.71','0.94','1','0','-1','bogus','0.5oops'):
         result = subprocess.run(['bash', str(root/'start.sh')], env=env|{'GPU_MEMORY_UTILIZATION':bad}, capture_output=True)

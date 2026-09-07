@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "original_source_commit": "fc5e19dcafd6192fe0a7a38a34d8f50363e1019f",
+  "all_command_count": 10,
+  "partition_counts": {
+    "original": 10,
+    "all": 10,
+    "core": 5,
+    "prefill": 1,
+    "context": 2,
+    "retrieval": 1,
+    "coding": 1
+  },
+  "method": "Inert Python command capture; partition union and new all mode equal original unpartitioned scripts/arguments, with only result directory normalized."
+}

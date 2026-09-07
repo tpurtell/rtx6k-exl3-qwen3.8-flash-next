@@ -130,7 +130,7 @@ QUANT=exl3-ple8 GPU=0 bash start.sh  # FP8 PLE, smaller checkpoint/cache footpri
 ```
 
 The launcher supports `PLE_MMAP_WORKERS=32`, `PLE_MMAP_CHUNK=2048`,
-`PLE_MMAP_PREWARM=0`, `PLE_MMAP_READAHEAD=0`, `PLE_MMAP_PINNED=0` and
+`PLE_MMAP_PREWARM=0`, `PLE_MMAP_READAHEAD=2048`, `PLE_MMAP_PINNED=0` and
 `PLE_MMAP_SERIAL=128`. When running the image directly, use the corresponding
 `VLLM_PLE_MMAP*` environment variables. `VLLM_PLE_MMAP=1` takes precedence
 over the image's resident-worker setting. Model Runner V2 and PP=1 are required.
@@ -138,7 +138,13 @@ over the image's resident-worker setting. Model Runner V2 and PP=1 are required.
 The serial threshold bypasses thread-pool dispatch for at most 128 distinct
 rows. We selected it for C1: the three-run blend measured 147.94 tokens/s
 versus 138.30 with the PR's SERIAL=0 default. Larger gathers still use the
-thread pool. Other mmap tuning flags retain the PR defaults.
+thread pool. Targeted readahead is enabled globally with a 2,048-range limit,
+selected from the Spark tuning runs. It asks Linux to fetch the current step's
+PLE file ranges before the gather; it does not predict future tokens or preload
+the entire table. If the coalesced range count exceeds the limit, that step's
+hints are skipped. Set `PLE_MMAP_READAHEAD=0` to disable the hints. Historical
+RTX results below retain their measured readahead-zero configuration; this
+default change does not introduce new RTX measurements.
 
 This ports [PR #54129](https://github.com/vllm-project/vllm/pull/54129) at a pinned
 commit after review, with fixes for approximate/broadcast scale comparisons

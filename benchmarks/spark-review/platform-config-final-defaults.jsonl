@@ -1,0 +1,3 @@
+{"architecture": "x86_64", "image": "qwen38-rtx:local", "memory_fraction": "0.94", "passed": true}
+{"architecture": "aarch64", "image": "spark-exl3-qwen3.8-flash-next:local", "memory_fraction": "0.7", "passed": true}
+{"spark_cap_rejects_invalid_and_cli_bypass": true, "lower_fraction_supported": true, "passed": true}
