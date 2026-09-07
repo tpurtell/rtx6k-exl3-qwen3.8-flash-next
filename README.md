@@ -72,36 +72,44 @@ until its full default-profile qualification completes.
 
 ## Run
 
-The published image is
-`ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next:v0.2.0`
-(`linux/amd64`). To use the exact qualified image without building:
+Install Docker with NVIDIA GPU access. Build and run from the repository root;
+the scripts select the native RTX or Spark defaults automatically:
 
 ```bash
-export IMAGE=ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next@sha256:bb252820ade1b6aa1316c45485186db90fe67f1d7ea48826169bf92f634d2e73
-docker pull "$IMAGE"
 bash download.sh
-GPU=0 bash start.sh
+bash build.sh
+bash start.sh
+curl http://127.0.0.1:8001/health
 ```
 
-Install Docker with NVIDIA GPU access. All reported measurements use one RTX
-PRO 6000 Blackwell 96 GB at **400 W**, driver 595.71.05, and a Threadripper 9970X
-host with 183 GiB RAM. Each target/draft token embedding adds approximately
-1.184 GiB of host storage beyond the PLE table. Leave additional RAM for model
-loading, the server and the operating system; 95/48 GiB are table sizes, not
-whole-server RAM requirements. Checkpoint weights are downloaded separately.
+To use the pinned image instead of building, replace `bash build.sh` with
+`bash pull.sh`. It selects the native image and installs the same local tag
+used by `start.sh`. Immutable image digests are recorded in
+[platform-config.sh](platform-config.sh).
+
+| Platform | Image package | Status |
+|---|---|---|
+| RTX, linux/amd64 | `ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next` | v0.2.0 |
+| Spark, linux/arm64 | `ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next` | Qualification candidate |
+
+The new Spark package currently requires registry authentication while its
+visibility is private. Full Spark qualification is in progress on this branch.
+
+The RTX measurements use one RTX PRO 6000 Blackwell 96 GB at **400 W**, driver
+595.71.05, and a Threadripper 9970X host with 183 GiB CPU RAM. Spark uses a GB10
+with approximately 121.63 GiB shared CPU/GPU memory and driver 580.159.03.
+Each target/draft token embedding adds approximately 1.184 GiB of host storage
+beyond the PLE table. Leave additional memory for model loading, the server
+and the operating system; 95/48 GiB are table sizes, not whole-server memory
+requirements. Checkpoint weights are downloaded separately.
 
 ```bash
-# Build from the repository root, or use the published image below.
-bash build.sh
-QUANT=exl3 bash download.sh
-QUANT=exl3 GPU=0 bash start.sh
-curl http://127.0.0.1:8001/health
-
 # Stop before switching models to release the host tables.
-QUANT=exl3 bash stop.sh
+bash stop.sh
 QUANT=exl3-ple8 bash download.sh
-QUANT=exl3-ple8 GPU=0 PLE_MMAP=1 bash start.sh
+QUANT=exl3-ple8 bash start.sh
 # NVIDIA: use QUANT=nvfp4 for download.sh, start.sh and stop.sh.
+# GPU=1 selects another GPU on a multi-GPU RTX host.
 ```
 
 The OpenAI-compatible endpoint is `http://127.0.0.1:8001/v1`, with served
@@ -126,7 +134,7 @@ resident NVIDIA and 880600 for EXL3 PLE8 mmap (3.04×, 2.62× and 3.36× the
 configured context); actual scheduling also depends on
 request mix. Use the context and concurrency tables below to distinguish those cases.
 
-## Optional mmap PLE (v0.2.0)
+## Mmap PLE
 
 `PLE_MMAP=1` is the shipping default and works with **all three profiles**.
 It reads the PLE table through read-only checkpoint mappings and replaces the
