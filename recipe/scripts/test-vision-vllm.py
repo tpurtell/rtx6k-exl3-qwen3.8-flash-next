@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify GLM vision at the qualified 16-image API limit."""
+"""Verify ordered image reading and, optionally, a configured API image limit."""
 
 from __future__ import annotations
 
@@ -80,9 +80,15 @@ def main() -> None:
     parser.add_argument(
         "--model", default="qwen38-exl3"
     )
+    parser.add_argument("--image-counts", type=int, nargs="+", default=[1, 4, 16])
+    parser.add_argument("--image-limit", type=int, help="Test rejection above an explicitly configured limit")
     parser.add_argument("--timeout", type=float, default=1800)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    if any(n < 1 or n > 99 for n in args.image_counts):
+        parser.error("image counts must be between 1 and 99")
+    if args.image_limit is not None and not (1 <= args.image_limit < 99):
+        parser.error("image limit must be between 1 and 98")
 
     def request(images: int) -> tuple[int, dict]:
         content: list[dict] = [
@@ -102,7 +108,7 @@ def main() -> None:
         payload = {
             "model": args.model,
             "messages": [{"role": "user", "content": content}],
-            "reasoning_effort": "low",
+            "chat_template_kwargs": {"enable_thinking": False},
             "temperature": 0,
             "max_tokens": 128,
         }
@@ -118,12 +124,11 @@ def main() -> None:
             return exc.code, json.loads(exc.read().decode("utf-8", errors="replace"))
 
     supported = {}
-    for image_count in (1, 4, 16):
+    for image_count in args.image_counts:
         status, body = request(image_count)
         if status != 200:
-            raise SystemExit(
-                f"{image_count}-image request failed with HTTP {status}: {body}"
-            )
+            supported[str(image_count)] = {"passed": False, "status": status, "response": body}
+            continue
         content = body["choices"][0]["message"].get("content") or ""
         observed = [int(value) for value in re.findall(r"\d+", content)]
         expected = list(range(1, image_count + 1))
@@ -136,22 +141,23 @@ def main() -> None:
             "usage": body.get("usage"),
         }
 
-    overflow_status, overflow_body = request(17)
-    overflow_text = json.dumps(overflow_body, ensure_ascii=False)
-    overflow_passed = overflow_status == 400 and "16" in overflow_text
-
-    report = {
-        "schema": "glm53-vllm-vision-limit.v1",
-        "model": args.model,
-        "supported_image_counts": supported,
-        "sixteen_images": supported["16"],
-        "seventeen_images_rejected": {
-            "passed": overflow_passed,
+    overflow = None
+    if args.image_limit is not None:
+        overflow_status, overflow_body = request(args.image_limit + 1)
+        overflow_text = json.dumps(overflow_body, ensure_ascii=False)
+        overflow = {
+            "passed": overflow_status == 400 and str(args.image_limit) in overflow_text,
             "status": overflow_status,
             "response": overflow_body,
-        },
+        }
+    report = {
+        "schema": "qwen38-vllm-vision.v1",
+        "model": args.model,
+        "supported_image_counts": supported,
+        "configured_image_limit": args.image_limit,
+        "overflow_rejected": overflow,
         "passed": all(item["passed"] for item in supported.values())
-        and overflow_passed,
+        and (overflow is None or overflow["passed"]),
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")

@@ -9,6 +9,12 @@ Recipe under development for:
 Target: TP=1, host-resident embeddings and n-gram tables, FP8 KV, vision, tuned
 MTP, 262144 context and concurrency 16 (minimum 8 subject to measured capacity).
 
-Serving and benchmark qualification is pending. See the
+Both quants now serve in eager mode with FP8 KV, MTP3 and host embeddings.
+EXL3 also passes ordered image reading at 1, 4 and 16 images. These are
+development diagnostics; quality, graph execution and performance tuning
+remain unfinished. The configured 16 slots share a KV pool of about 837K
+tokens (EXL3) or 662K (NVFP4), so they cannot all hold full-length contexts.
+
+See the
 [qualification ledger](docs/qualification.md) and
 [checkpoint audit receipts](recipe/benchmarks).

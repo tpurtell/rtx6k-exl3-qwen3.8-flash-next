@@ -12,6 +12,9 @@ if [[ ! -f "$HF_CACHE/hub/$MODEL_CACHE_NAME/snapshots/$MODEL_REVISION/config.jso
 fi
 EXTRA_ARGS=()
 [[ "${ENFORCE_EAGER:-0}" == 1 ]] && EXTRA_ARGS+=(--enforce-eager)
+if [[ "${MTP_TOKENS:-3}" != 0 ]]; then
+  EXTRA_ARGS+=(--speculative-config "{\"method\":\"mtp\",\"num_speculative_tokens\":${MTP_TOKENS:-3}}")
+fi
 docker run -d --name "${CONTAINER_NAME:-qwen38-${QUANT:-exl3}}" \
   --gpus "device=${GPU:-0}" --ipc=host --network=host \
   -e OMP_NUM_THREADS="${CPU_THREADS:-8}" \
@@ -28,6 +31,5 @@ docker run -d --name "${CONTAINER_NAME:-qwen38-${QUANT:-exl3}}" \
   --max-num-batched-tokens "${MAX_BATCHED_TOKENS:-2048}" \
   --gpu-memory-utilization "${GPU_MEMORY_UTILIZATION:-0.94}" \
   --kv-cache-dtype fp8 \
-  --speculative-config "{\"method\":\"mtp\",\"num_speculative_tokens\":${MTP_TOKENS:-3}}" \
   --enable-auto-tool-choice --tool-call-parser qwen3_coder --reasoning-parser qwen3 \
   "${EXTRA_ARGS[@]}" "$@"

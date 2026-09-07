@@ -1,0 +1,119 @@
+{
+  "nvfp4": {
+    "container": "qwen38-nvfp4-fp8-dev8",
+    "image_id": "sha256:3f17679d9c2967ca9ad88b76b365511d8efc8057255f8f6d06d55ce66e6b9f6c",
+    "args": [
+      "serve",
+      "/root/.cache/huggingface/hub/models--nvidia--Qwen3.8-Flash-Next-NVFP4/snapshots/2061e0b0c5d92bdf7c8fbd4241bbc2af239d7e2d",
+      "--served-model-name",
+      "qwen38-nvfp4",
+      "--port",
+      "8002",
+      "--tensor-parallel-size",
+      "1",
+      "--distributed-executor-backend",
+      "mp",
+      "--max-model-len",
+      "262144",
+      "--max-num-seqs",
+      "16",
+      "--max-num-batched-tokens",
+      "2048",
+      "--gpu-memory-utilization",
+      "0.94",
+      "--kv-cache-dtype",
+      "fp8",
+      "--speculative-config",
+      "{\"method\":\"mtp\",\"num_speculative_tokens\":3}",
+      "--enable-auto-tool-choice",
+      "--tool-call-parser",
+      "qwen3_coder",
+      "--reasoning-parser",
+      "qwen3",
+      "--enforce-eager"
+    ],
+    "started_at": "2026-09-07T07:01:41.333532668Z",
+    "device_requests": [
+      {
+        "Driver": "",
+        "Count": 0,
+        "DeviceIDs": [
+          "1"
+        ],
+        "Capabilities": [
+          [
+            "gpu"
+          ]
+        ],
+        "Options": {}
+      }
+    ],
+    "selected_startup_lines": [
+      "(PleOffloadWorker pid=377) INFO 09-07 07:02:38 [worker.py:448] PLE offload matched 132 checkpoint tensor(s), loaded 5 offload entries, and verified 2/2 materialized parameter(s) for layers: ['language_model.model.layers.1.ple.ple_embedding']",
+      "(Worker pid=278) INFO 09-07 07:03:39 [model_runner.py:407] Model loading took 75.22 GiB memory and 77.018770 seconds",
+      "(Worker pid=278) INFO 09-07 07:03:39 [worker.py:232] Worker ready - 1 PleOffloadLayer(s): ['language_model.model.layers.1.ple.ple_embedding']",
+      "(EngineCore pid=231) INFO 09-07 07:04:32 [kv_cache_utils.py:2258] GPU KV cache size: 661,722 tokens, Maximum concurrency for 262,144 tokens per request: 2.52x",
+      "(Worker pid=278) INFO 09-07 07:03:21 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+      "(Worker pid=278) INFO 09-07 07:03:35 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB"
+    ]
+  },
+  "exl3": {
+    "container": "qwen38-exl3-fp8-dev8",
+    "image_id": "sha256:3f17679d9c2967ca9ad88b76b365511d8efc8057255f8f6d06d55ce66e6b9f6c",
+    "args": [
+      "serve",
+      "/root/.cache/huggingface/hub/models--wrldsuksgo2mars--Qwen3.8-Flash-Next-EXL3-K4.25-v1/snapshots/73a050c27b8c488c65acd6d1c74e45ff02be5fab",
+      "--served-model-name",
+      "qwen38-exl3",
+      "--port",
+      "8001",
+      "--tensor-parallel-size",
+      "1",
+      "--distributed-executor-backend",
+      "mp",
+      "--max-model-len",
+      "262144",
+      "--max-num-seqs",
+      "16",
+      "--max-num-batched-tokens",
+      "2048",
+      "--gpu-memory-utilization",
+      "0.94",
+      "--kv-cache-dtype",
+      "fp8",
+      "--speculative-config",
+      "{\"method\":\"mtp\",\"num_speculative_tokens\":3}",
+      "--enable-auto-tool-choice",
+      "--tool-call-parser",
+      "qwen3_coder",
+      "--reasoning-parser",
+      "qwen3",
+      "--enforce-eager"
+    ],
+    "started_at": "2026-09-07T07:11:02.314598543Z",
+    "device_requests": [
+      {
+        "Driver": "",
+        "Count": 0,
+        "DeviceIDs": [
+          "0"
+        ],
+        "Capabilities": [
+          [
+            "gpu"
+          ]
+        ],
+        "Options": {}
+      }
+    ],
+    "selected_startup_lines": [
+      "(PleOffloadWorker pid=354) INFO 09-07 07:12:19 [worker.py:448] PLE offload matched 131 checkpoint tensor(s), loaded 4 offload entries, and verified 1/1 materialized parameter(s) for layers: ['language_model.model.layers.1.ple.ple_embedding']",
+      "(Worker pid=258) INFO 09-07 07:13:07 [exl3.py:2443] EXL3 projection-mixed Trellis mtp.layers.48.mlp.experts: tiers=(bits,gate,up,down)((4, 440, 392, 320), (5, 72, 120, 192))",
+      "(Worker pid=258) INFO 09-07 07:13:09 [model_runner.py:407] Model loading took 71.99 GiB memory and 76.749053 seconds",
+      "(Worker pid=258) INFO 09-07 07:13:09 [worker.py:232] Worker ready - 1 PleOffloadLayer(s): ['language_model.model.layers.1.ple.ple_embedding']",
+      "(EngineCore pid=231) INFO 09-07 07:14:52 [kv_cache_utils.py:2258] GPU KV cache size: 837,333 tokens, Maximum concurrency for 262,144 tokens per request: 3.19x",
+      "(Worker pid=258) INFO 09-07 07:12:34 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB",
+      "(Worker pid=258) INFO 09-07 07:13:06 [qwen_host_embedding.py:19] Token embedding offloaded to pinned host RAM: (248320, 2560), 1.184 GiB"
+    ]
+  }
+}

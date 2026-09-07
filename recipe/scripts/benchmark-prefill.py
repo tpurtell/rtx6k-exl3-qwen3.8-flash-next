@@ -131,7 +131,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-url", default="http://127.0.0.1:8001/v1")
     parser.add_argument("--model", required=True)
-    parser.add_argument("--profile", required=True, choices=["nvfp4", "fp8"])
+    parser.add_argument("--profile", required=True, choices=["nvfp4", "exl3"])
     parser.add_argument(
         "--prompt-tokens",
         nargs="+",
@@ -194,7 +194,8 @@ def main() -> None:
             "server tokenization and one-token handoff included; no prefix reuse"
         ),
         "model": args.model,
-        "kv_cache_profile": args.profile,
+        "quant_profile": args.profile,
+        "kv_cache_dtype": "fp8",
         "runs_per_point": args.runs,
         "points": points,
     }

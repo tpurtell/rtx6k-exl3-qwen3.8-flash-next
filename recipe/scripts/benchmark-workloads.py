@@ -94,7 +94,8 @@ def main():
                 else:
                     contract = contracts.validate_case_content(name, result["content"])
                 row = {"record": "measurement", "run": run, "timed": run >= 0,
-                       "case": name, "prompt": prompt, "contract": contract, **result}
+                       "case": name, "prompt": prompt, "max_tokens": case.max_tokens,
+                       "contract": contract, **result}
                 destination.write(json.dumps(row, ensure_ascii=False) + "\n")
                 destination.flush()
                 if run >= 0:

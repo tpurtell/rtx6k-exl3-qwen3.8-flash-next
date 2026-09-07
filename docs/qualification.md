@@ -195,3 +195,39 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   `recipe/benchmarks/nvfp4-dev8-orchid-diagnostic.jsonl`. The roughly 90–94
   measured decode tokens/s are diagnostic throughput, not successful-task
   performance. MTP and target-only comparisons remain necessary.
+
+## EXL3 first serving and vision
+
+- `dev8` EXL3 now serves successfully on GPU0 with target and MTP retaining
+  separate K4/K5 gate/up/down assignments. MTP layer48 reports K4 expert
+  counts 440/392/320 and K5 counts 72/120/192 for these projections.
+  Target plus MTP loading reports 71.99 GiB; host token offload is logged
+  twice at 1.184 GiB each. The PLE worker verifies its BF16 table and starts.
+- EXL3 reports 837333 KV tokens (3.19×262144), with 16 scheduler slots.
+  The development image, arguments, GPU selection, and relevant startup
+  evidence for both quants are in `recipe/benchmarks/dev8-runtime.json`.
+- The eager, unwarmed EXL3 seven-workload diagnostic passes code, greeting,
+  topic and JSON. Math again truncates at 128 tokens after correct
+  intermediate calculations; fable has 176 words; Chinese fails the
+  inherited literal phrase check. Original evidence is preserved in
+  `recipe/benchmarks/exl3-dev8-seven-diagnostic.jsonl`.
+- For subsequent runs, the math output budget is 256 tokens. The Chinese
+  proxy now accepts 寫入觸發複製 and 寫入時觸發複製 as well as 寫入時複製;
+  four bullets, fork and page checks remain. Positive variants and
+  missing-term counterexamples were checked. This is a wording check,
+  not comprehensive semantic grading. The fable criterion is unchanged.
+- EXL3 correctly reads the ordered numerals in 1, 4 and 16 images with native
+  nonthinking chat: `recipe/benchmarks/exl3-dev8-vision-diagnostic.json`.
+  No maximum-image rejection claim is made; no explicit limit was configured.
+- Added exact-depth C1 synthetic context/decode harness with retained SSE
+  token IDs and timings. Launch supports MTP_TOKENS=0 for target-only control
+  runs. Native batch-size speculative scheduling is available; confidence
+  adaptive verification is DSpec-only in this pinned source. Tuning remains
+  pending, and B12x currently reports heuristic MoE choices for Qwen geometry.
+- EXL3 eager context probes complete at 2048, 8192, 32768, 131072 and
+  261632 prompt tokens. The last point generates 128 further tokens and
+  measures 40.780 s TTFT / 57.109 decode tokens/s. These are single, unwarmed
+  synthetic probes, not retrieval quality or final performance measurements.
+  Raw receipts: `exl3-dev8-context-diagnostic.jsonl` and
+  `exl3-dev8-long-context-diagnostic.jsonl` under `recipe/benchmarks`.
+  Both GPUs report a 400 W power limit during these probes.

@@ -34,6 +34,7 @@ def request_once(
                 ),
             }
         ],
+        "chat_template_kwargs": {"enable_thinking": False},
         "n": concurrency,
         "max_tokens": output_tokens,
         "min_tokens": output_tokens,
@@ -95,6 +96,8 @@ def request_once(
     decode_tokens = sum(len(times) - 1 for times in token_times)
     return {
         "concurrency": concurrency,
+        "token_times_seconds": [[t - started for t in times] for times in token_times],
+        "timing_convention": "sum(N-1) over global first-to-last SSE token window",
         "output_tokens_per_sequence": output_tokens,
         "completion_tokens": completion_tokens,
         "decode_tokens": decode_tokens,
@@ -108,7 +111,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-url", default="http://127.0.0.1:8001/v1")
     parser.add_argument("--model", required=True)
-    parser.add_argument("--profile", required=True, choices=["nvfp4", "fp8"])
+    parser.add_argument("--profile", required=True, choices=["nvfp4", "exl3"])
     parser.add_argument("--mtp-tokens", type=int, required=True)
     parser.add_argument(
         "--mtp-policy",
@@ -172,14 +175,15 @@ def main() -> None:
         )
 
     report = {
-        "schema": "qwen38-decode-concurrency.v1",
+        "schema": "qwen38-decode-concurrency.v2",
         "method": (
             "one depth-0 prompt with n parallel continuations; aggregate decode "
             "timing spans first to last streamed token and excludes TTFT; the "
             "same sampling seed is repeated so MTP acceptance is comparable"
         ),
         "model": args.model,
-        "kv_cache_profile": args.profile,
+        "quant_profile": args.profile,
+        "kv_cache_dtype": "fp8",
         "mtp_tokens": args.mtp_tokens,
         "mtp_policy": args.mtp_policy,
         "output_tokens_per_sequence": args.output_tokens,

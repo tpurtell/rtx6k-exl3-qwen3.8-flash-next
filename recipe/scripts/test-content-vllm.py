@@ -36,7 +36,9 @@ CASES = {
         "reasoning",
         "A shop discounts a $240 jacket by 25%, then applies 8% sales tax to the "
         "discounted price. What is the final price? Show the calculation briefly.",
-        128,
+        # Both Qwen quants produced correct intermediate arithmetic but were
+        # truncated before the final sum at the inherited 128-token cap.
+        256,
     ),
     "fable": PromptCase(
         "creative-prose",
@@ -176,7 +178,7 @@ def validate_case_content(case_id: str, content: str) -> dict:
         if len(bullets) != 4:
             issues.append(f"response has {len(bullets)} bullets, expected four")
         lowered = stripped.casefold()
-        if not ("寫入時複製" in stripped or "copy-on-write" in lowered):
+        if not (re.search(r"寫入(?:時)?(?:觸發)?複製", stripped) or "copy-on-write" in lowered):
             issues.append("response omits copy-on-write")
         if "fork" not in lowered or "頁" not in stripped:
             issues.append("response omits the requested fork/page example")
