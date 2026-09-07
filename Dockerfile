@@ -56,3 +56,13 @@ ENV VLLM_EXL3_TRELLIS_MIN_M=1 \
     VLLM_PLE_OFFLOAD_READY_TIMEOUT=1800
 LABEL org.opencontainers.image.source="https://github.com/tpurtell/sm12x-exl3-qwen3.8-flash-next" \
       io.tpurtell.b12x.commit="${B12X_COMMIT}"
+
+# Narrow upstream structured-output corrections; numerical kernels are unchanged.
+COPY patches/port-xgrammar-termination.py patches/port-structured-output-reasoning.py /tmp/structured-output/
+RUN python3 /tmp/structured-output/port-xgrammar-termination.py /usr/local/lib/python3.12/dist-packages/vllm \
+ && python3 /tmp/structured-output/port-structured-output-reasoning.py /usr/local/lib/python3.12/dist-packages/vllm
+COPY scripts/test-xgrammar-termination.py scripts/test-structured-output-reasoning.py /opt/qwen38-tests/
+RUN python3 /opt/qwen38-tests/test-xgrammar-termination.py \
+ && python3 /opt/qwen38-tests/test-structured-output-reasoning.py
+LABEL io.tpurtell.structured-output.reasoning-fix="c6e19b3be243" \
+      io.tpurtell.structured-output.termination-fix="vllm-pr-52805"

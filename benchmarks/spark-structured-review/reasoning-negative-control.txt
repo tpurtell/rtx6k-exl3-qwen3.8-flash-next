@@ -1,0 +1,35 @@
+.F....F
+======================================================================
+FAIL: test_invalid_post_reasoning_draft_never_advances_or_logs (__main__.ReasoningTests.test_invalid_post_reasoning_draft_never_advances_or_logs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tests/test-structured-output-reasoning.py", line 92, in test_invalid_post_reasoning_draft_never_advances_or_logs
+    self.assertEqual(grammar.errors, [])
+AssertionError: Lists differ: [[99]] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+[99]
+
+- [[99]]
++ []
+
+======================================================================
+FAIL: test_valid_post_reasoning_drafts_advance_and_rollback (__main__.ReasoningTests.test_valid_post_reasoning_drafts_advance_and_rollback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tests/test-structured-output-reasoning.py", line 99, in test_valid_post_reasoning_drafts_advance_and_rollback
+    self.assertEqual(grammar.validations, [[1], [2]])
+AssertionError: Lists differ: [] != [[1], [2]]
+
+Second list contains 2 additional elements.
+First extra element 0:
+[1]
+
+- []
++ [[1], [2]]
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.014s
+
+FAILED (failures=2)

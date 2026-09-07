@@ -1,0 +1,29 @@
+F.F.F..
+======================================================================
+FAIL: test_batch_stops_at_first_eos (__main__.TerminationTests.test_batch_stops_at_first_eos)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tests/test-xgrammar-termination.py", line 59, in test_batch_stops_at_first_eos
+    self.assertTrue(item.accept_tokens('test', [1, 2, 3]))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_reset_clears_cached_termination (__main__.TerminationTests.test_reset_clears_cached_termination)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tests/test-xgrammar-termination.py", line 87, in test_reset_clears_cached_termination
+    self.assertFalse(item.is_terminated())
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_second_advance_is_noop (__main__.TerminationTests.test_second_advance_is_noop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tests/test-xgrammar-termination.py", line 67, in test_second_advance_is_noop
+    self.assertTrue(item.accept_tokens('test', [3]))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.009s
+
+FAILED (failures=3)
