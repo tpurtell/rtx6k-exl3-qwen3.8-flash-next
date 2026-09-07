@@ -162,3 +162,10 @@ page-cache histories or a fixed KV allocation across hosts.
 The completed final seven-workload C1 run measures 31.11 tokens/s weighted
 decode with 19/21 content contracts passing. API tool constraints pass 16/16
 and vision passes at 1, 4 and 16 images. Remaining suites are still running.
+
+The readahead2048 tuning probe's C16 batch reached 12 overlapping client
+stream intervals, compared with eight at C8. Queuing is part of the observed
+C16 throughput under the 0.7 cap. Final tables retain overlap counts rather
+than treating 16 submitted clients as proof of 16 simultaneous decoders.
+The compact README uses minimum observed overlap across the three final
+measurements; the detailed report retains its range.

@@ -141,9 +141,9 @@ for concurrency in (1, 2, 4, 8, 16):
         runs = point["runs"]
         assert len(runs) == 3
         overlap = [r["peak_overlapping_stream_intervals"] for r in runs]
-        row += [spread([r["decode_tokens_per_second"] for r in runs]), str(min(overlap)) if min(overlap) == max(overlap) else f"{min(overlap)}–{max(overlap)}"]
+        row += [spread([r["decode_tokens_per_second"] for r in runs]), str(min(overlap)) if args.omit_ranges or min(overlap) == max(overlap) else f"{min(overlap)}–{max(overlap)}"]
     client_rows.append(row)
-table(["Clients"] + [h for n in roots for h in (n+" aggregate tokens/s", "Overlap")], client_rows)
+table(["Clients"] + [h for n in roots for h in (n+" aggregate tokens/s", "Min overlap" if args.omit_ranges else "Overlap")], client_rows)
 lines += ["Raw: " + ", ".join(link(name, root, "clients.json") for name, root in roots.items()) + ".", ""]
 
 lines += ["## Prefill matrix: C1", "",
