@@ -22,6 +22,7 @@ COPY patches/port-qsa-fp8.py /tmp/port-qsa-fp8.py
 COPY patches/port-nvidia-mtp-fp8.py /tmp/port-nvidia-mtp-fp8.py
 COPY patches/qwen_host_embedding.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/qwen_host_embedding.py
 COPY patches/port-host-embedding.py /tmp/port-host-embedding.py
+COPY patches/port-exl3-ple-fp8.py /tmp/port-exl3-ple-fp8.py
 COPY patches/port-nvidia-ple-fp8.py /tmp/port-nvidia-ple-fp8.py
 COPY patches/port-qwen-tool-constraints.py /tmp/port-qwen-tool-constraints.py
 COPY patches/qwen_vocab_projection.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/qwen_vocab_projection.py
@@ -33,6 +34,7 @@ RUN python3 /tmp/port-exl3-qwen38.py /usr/local/lib/python3.12/dist-packages/vll
  && python3 /tmp/port-nvidia-mtp-fp8.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 /tmp/port-host-embedding.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 /tmp/port-nvidia-ple-fp8.py /usr/local/lib/python3.12/dist-packages/vllm \
+ && python3 /tmp/port-exl3-ple-fp8.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 /tmp/port-qwen-tool-constraints.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 /tmp/port-vocab-projection.py /usr/local/lib/python3.12/dist-packages/vllm \
  && python3 /tmp/port-nvfp4-moe.py /usr/local/lib/python3.12/dist-packages/vllm \

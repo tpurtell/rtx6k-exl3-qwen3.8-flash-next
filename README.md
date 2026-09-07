@@ -5,6 +5,8 @@ Recipe under development for:
 - `wrldsuksgo2mars/Qwen3.8-Flash-Next-EXL3-K4.25-v1`, retaining mixed K4/K5
   allocation separately for each expert projection, including MTP.
 - `nvidia/Qwen3.8-Flash-Next-NVFP4`.
+- `wrldsuksgo2mars/Qwen3.8-Flash-Next-EXL3-K4.25-PLE-FP8-v1`, alias
+  `exl3-ple8`, with FP8 host PLE storage; quality qualification pending.
 
 Target: TP=1, host-resident embeddings and n-gram tables, FP8 KV, vision, tuned
 MTP, 262144 context and concurrency 16 (minimum 8 subject to measured capacity).
@@ -43,13 +45,13 @@ MTP tuning, final benchmark matrices and release publication remain in progress.
 Build and run from this checkout (Docker with NVIDIA GPU access required):
 
 ```bash
-bash recipe/build.sh
-QUANT=exl3 bash recipe/download.sh
-QUANT=exl3 GPU=0 MTP_TOKENS=3 bash recipe/start.sh
+bash build.sh
+QUANT=exl3 bash download.sh
+QUANT=exl3 GPU=0 MTP_TOKENS=3 bash start.sh
 # Stop the first model before loading the other to release its host tables.
-bash recipe/stop.sh
-QUANT=nvfp4 bash recipe/download.sh
-QUANT=nvfp4 GPU=0 MTP_TOKENS=2 bash recipe/start.sh
+bash stop.sh
+QUANT=nvfp4 bash download.sh
+QUANT=nvfp4 GPU=0 MTP_TOKENS=2 bash start.sh
 ```
 
 The API listens on port 8001 with model aliases `qwen38-exl3` and
@@ -60,4 +62,4 @@ another 1.184 GiB of host memory. Checkpoint weights are downloaded separately.
 
 See the
 [qualification ledger](docs/qualification.md) and
-[checkpoint audit receipts](recipe/benchmarks).
+[checkpoint audit receipts](benchmarks).

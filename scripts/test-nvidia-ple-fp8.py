@@ -14,7 +14,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument("model", type=Path)
 args = parser.parse_args()
 config = json.loads((args.model / "config.json").read_text())["quantization_config"]
-quant = ModelOptMixedPrecisionConfig.from_config(config)
+if config.get("quant_method") == "exl3":
+    from vllm.model_executor.layers.quantization.exl3 import Exl3Config
+    quant = Exl3Config.from_config(config)
+    original = Exl3Config.from_config({k: v for k, v in config.items() if k != "meta"})
+    assert _get_ple_embedding_quant_method(original, "language_model.model.layers.1.ple.ple_embedding.ngram_embedding") is None
+    assert _get_ple_embedding_quant_method(quant, "language_model.model.layers.2.ple.ple_embedding.ngram_embedding") is None
+else:
+    quant = ModelOptMixedPrecisionConfig.from_config(config)
 prefix = "language_model.model.layers.1.ple.ple_embedding.ngram_embedding"
 method = _get_ple_embedding_quant_method(quant, prefix)
 assert isinstance(method, Qwen3_8FlashNextPLEFp8EmbeddingMethod)
@@ -37,4 +44,4 @@ output = torch.empty(4, 160, dtype=layer.weight.dtype)
 torch.index_select(layer.weight, 0, ids, out=output)
 assert torch.equal(output.view(torch.uint8), source.view(torch.uint8)[ids])
 assert layer.weight.numel() * layer.weight.element_size() == 64 * 160
-print("PASS: real NVIDIA PLE metadata, FP8 CPU allocation, scalar scale and byte-exact lookup")
+print("PASS: real checkpoint PLE metadata, FP8 CPU allocation, scalar scale and byte-exact lookup")

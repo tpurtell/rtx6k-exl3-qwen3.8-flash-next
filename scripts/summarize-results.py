@@ -13,7 +13,7 @@ parser.add_argument("--output", type=Path, required=True)
 args = parser.parse_args()
 roots = {"EXL3": args.exl3, "NVFP4": args.nvfp4}
 lines = ["# Final serving measurements", "",
-         "Generated from the linked raw receipts by `recipe/scripts/summarize-results.py`.", "",
+         "Generated from the linked raw receipts by `scripts/summarize-results.py`.", "",
          "Each quant runs on one RTX PRO 6000 Blackwell 96 GB at a 400 W power limit. "
          "C1 is the default-selection priority. Both use FP8 KV and host token embeddings "
          "and n-gram tables. All decode rates below exclude prefill.", ""]

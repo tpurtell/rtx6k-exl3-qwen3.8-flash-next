@@ -1,0 +1,5 @@
+.git
+.work
+benchmarks
+docs
+**/__pycache__

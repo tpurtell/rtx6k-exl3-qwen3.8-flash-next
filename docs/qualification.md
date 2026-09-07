@@ -37,7 +37,7 @@ Blackwell 96 GB (TP=1):
   Model implementation: `vllm/models/qwen3_8_flash_next/nvidia/`; PLE already
   has a `VLLM_PLE_CPU_OFFLOAD` process path. No EXL3 module is present in base.
 - Two idle RTX PRO 6000 GPUs, each 97887 MiB; 183 GiB total system RAM.
-- Checkpoint header audit receipts in `recipe/benchmarks/*-checkpoint-audit.json`.
+- Checkpoint header audit receipts in `benchmarks/*-checkpoint-audit.json`.
   These verify indexed tensors, projection metadata and packed shapes, not
   numerical inference correctness or weight digests.
 - EXL3 revision `73a050c27b8c488c65acd6d1c74e45ff02be5fab`:
@@ -63,7 +63,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
 
 - `qwen38-rtx:dev1` builds from the pinned Qwen base plus the released GLM
   adapter artifact, preserving its mixed projection preparation. Build/import
-  passed. `recipe/patches/port-exl3-qwen38.py` adds Qwen config types, MTP
+  passed. `patches/port-exl3-qwen38.py` adds Qwen config types, MTP
   metadata aliases, and distinguishes individual EXL3 trellis tensors from
   fused expert-bank tensors in the modern vLLM loader. Serving remains unproven.
 - NVIDIA baseline `qwen38-nvfp4-baseline` exited during construction with
@@ -128,13 +128,13 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   now selects the unsplit direct path with no partial tensors above 64 rows.
   Eight bridge GPU checks passed: BF16/FP8 × rows 1,64,65,2048, dense attention
   oracle plus graph replay after query mutation. Receipt:
-  `recipe/benchmarks/qsa-bridge-gpu.txt`; runner:
-  `recipe/scripts/test-qsa-bridge.py`. Physical NHD layout and non-unit FP8
+  `benchmarks/qsa-bridge-gpu.txt`; runner:
+  `scripts/test-qsa-bridge.py`. Physical NHD layout and non-unit FP8
   descales are covered. These checks do not qualify complete model outputs.
 - `dev5` probes were deliberately stopped after the bridge test identified
   the missing unsplit flag, before spending another startup on that known
   error. `dev6` incorporates the tested bridge fix and is building from
-  `recipe/build.sh` (local log `.work/build-dev6.log`).
+  `build.sh` (local log `.work/build-dev6.log`).
 - Added executable build/download/start/stop scripts and immutable model
   profiles. They expose tuning controls and pin TP1/FP8/MTP/PLE offload.
   They are development commands, not a qualified release. Token embedding
@@ -147,7 +147,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   memory. `qwen_host_embedding.py` applies it only to token embeddings, not
   the output head. A GPU test confirms `cudaPointerGetAttributes` reports
   host memory, exact lookups, and exact graph replay after token-ID mutation.
-  Receipt: `recipe/benchmarks/host-embedding-gpu.txt`.
+  Receipt: `benchmarks/host-embedding-gpu.txt`.
 - `dev6` target+MTP memory profiling completed for both quants. The processes
   then stalled in real warmup; a live py-spy stack found the driver waiting
   during QSA kernel loading. Source inspection shows PLE spawn/wait methods
@@ -169,7 +169,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   concurrent EXL3 startup exhausted host RAM. The new patch selects the
   existing scalar-scale FP8 PLE implementation for the actual NVIDIA layer
   metadata. A storage test verifies FP8 CPU allocation, scalar scale loading,
-  and byte-exact CPU lookup (`recipe/benchmarks/nvidia-ple-storage.txt`).
+  and byte-exact CPU lookup (`benchmarks/nvidia-ple-storage.txt`).
   This isolated test mocks tensor-parallel rank/world size; it does not test
   the complete serving lifecycle.
 - `dev8` NVIDIA successfully starts its PLE CPU worker, loads target and
@@ -178,7 +178,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   Reported KV capacity is 661722 tokens: 16 scheduler slots do **not** imply
   16 simultaneous 262144-token requests (capacity ratio is about 2.52).
 - The first seven-workload diagnostic is preserved in
-  `recipe/benchmarks/nvfp4-dev8-seven-diagnostic.jsonl`. It has no warmup,
+  `benchmarks/nvfp4-dev8-seven-diagnostic.jsonl`. It has no warmup,
   one repetition and eager execution; it is not a release performance result.
   Code, greeting, topic and JSON pass the inherited validators. Math runs
   out of its 128-token budget before the final answer; fable has 173 words
@@ -196,7 +196,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
 - The eager NVIDIA orchid diagnostic (one warmup, three measured runs) also
   fails exact-100 repetition quality: measured counts 101, 750, 750; the last
   two terminate at the 1500-token limit. Raw responses and timings are in
-  `recipe/benchmarks/nvfp4-dev8-orchid-diagnostic.jsonl`. The roughly 90–94
+  `benchmarks/nvfp4-dev8-orchid-diagnostic.jsonl`. The roughly 90–94
   measured decode tokens/s are diagnostic throughput, not successful-task
   performance. MTP and target-only comparisons remain necessary.
 
@@ -209,19 +209,19 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   twice at 1.184 GiB each. The PLE worker verifies its BF16 table and starts.
 - EXL3 reports 837333 KV tokens (3.19×262144), with 16 scheduler slots.
   The development image, arguments, GPU selection, and relevant startup
-  evidence for both quants are in `recipe/benchmarks/dev8-runtime.json`.
+  evidence for both quants are in `benchmarks/dev8-runtime.json`.
 - The eager, unwarmed EXL3 seven-workload diagnostic passes code, greeting,
   topic and JSON. Math again truncates at 128 tokens after correct
   intermediate calculations; fable has 176 words; Chinese fails the
   inherited literal phrase check. Original evidence is preserved in
-  `recipe/benchmarks/exl3-dev8-seven-diagnostic.jsonl`.
+  `benchmarks/exl3-dev8-seven-diagnostic.jsonl`.
 - For subsequent runs, the math output budget is 256 tokens. The Chinese
   proxy now accepts 寫入觸發複製 and 寫入時觸發複製 as well as 寫入時複製;
   four bullets, fork and page checks remain. Positive variants and
   missing-term counterexamples were checked. This is a wording check,
   not comprehensive semantic grading. The fable criterion is unchanged.
 - EXL3 correctly reads the ordered numerals in 1, 4 and 16 images with native
-  nonthinking chat: `recipe/benchmarks/exl3-dev8-vision-diagnostic.json`.
+  nonthinking chat: `benchmarks/exl3-dev8-vision-diagnostic.json`.
   No maximum-image rejection claim is made; no explicit limit was configured.
 - Added exact-depth C1 synthetic context/decode harness with retained SSE
   token IDs and timings. Launch supports MTP_TOKENS=0 for target-only control
@@ -233,18 +233,18 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   measures 40.780 s TTFT / 57.109 decode tokens/s. These are single, unwarmed
   synthetic probes, not retrieval quality or final performance measurements.
   Raw receipts: `exl3-dev8-context-diagnostic.jsonl` and
-  `exl3-dev8-long-context-diagnostic.jsonl` under `recipe/benchmarks`.
+  `exl3-dev8-long-context-diagnostic.jsonl` under `benchmarks`.
   Both GPUs report a 400 W power limit during these probes.
 - Eager short-context parallel continuations complete at C8 and C16 after
   one warmup per point, emitting 64 tokens per sequence. Single measured
   aggregate rates are 203.71 / 407.27 tokens/s using the global first-to-last
   SSE window and sum(N−1) numerator. This is a shared-prompt continuation
   load, not 16 independent long-prefill requests; timing arrays are retained
-  in `recipe/benchmarks/exl3-dev8-concurrency-diagnostic.json`.
+  in `benchmarks/exl3-dev8-concurrency-diagnostic.json`.
 - EXL3 orchid exact-count results are 100/750/100 across three measured
   runs (one prior warmup produced 101). The 750 case hits the 1500-token
   output limit. Raw diagnostic responses are retained in
-  `recipe/benchmarks/exl3-dev8-orchid-diagnostic.jsonl`; two successes do not
+  `benchmarks/exl3-dev8-orchid-diagnostic.jsonl`; two successes do not
   qualify the failing repetition workload. The next probe enables CUDA
   graphs with the same image, checkpoint and MTP3 settings.
 
@@ -257,7 +257,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   retains the tensors for graph replay. Per-stream isolation remains.
   Eight BF16/FP8 × 1/64/65/2048-row GPU checks pass against the dense oracle
   with a separate capture stream and mutated-query replay. Receipt:
-  `recipe/benchmarks/qsa-cross-stream-gpu.txt`. `dev9` contains this correction;
+  `benchmarks/qsa-cross-stream-gpu.txt`. `dev9` contains this correction;
   full-model graph qualification still needs a successful rerun.
 - Tool evaluation is prepared in an isolated checkout at the reference
   recipe's commit `cf54b4bfe705f12f71e8866f10730572497c8105`, version
@@ -269,7 +269,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
 - `qwen38-exl3-fp8-graph-dev9` starts successfully with piecewise and full
   CUDA graphs. Capture takes 7 seconds and 0.96 GiB; KV capacity reports
   850059 tokens (3.24×262144). Runtime evidence is in
-  `recipe/benchmarks/exl3-dev9-graph-runtime.json`. The torch profiler is
+  `benchmarks/exl3-dev9-graph-runtime.json`. The torch profiler is
   configured but was not activated during the content measurements.
 - The seven-workload run uses one warmup and three measured repetitions,
   native nonthinking chat, temperature0, MTP3 and 400 W. Weighted decode is
@@ -281,7 +281,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   1271 drafts: 56.05% acceptance and mean acceptance length2.681.
   The harness waits 11 seconds (outside request timing) before and after
   timed runs for vLLM's 10-second statistics interval. Raw snapshots and
-  all responses are in `recipe/benchmarks/exl3-dev9-graph-seven.jsonl`.
+  all responses are in `benchmarks/exl3-dev9-graph-seven.jsonl`.
   Counters are suite-level and require exclusive access to the endpoint.
 - A full 88-case tool run, with thinking enabled and evaluation parallelism8,
   is underway against this configuration. Its results, graph vision/context
@@ -293,12 +293,12 @@ mHC and DCP patches require architecture review, not mechanical reuse.
 - EXL3 dev9's 88-case run scores 145/176 points (82/100 rounded): 64 pass,
   17 partial, 7 fail. Hard Mode alone scores 29/38: 13 pass, 3 partial,
   3 fail. Full traces and summary are preserved as
-  `recipe/benchmarks/exl3-dev9-graph-tools.md` and `.json`; the benchmark
+  `benchmarks/exl3-dev9-graph-tools.md` and `.json`; the benchmark
   also persisted its SQLite run in the isolated tool-eval checkout.
 - All six graph retrieval checks pass: exact keys at 5%, 50%, 95% character
   positions in 8192-token and 240000-token filler archives. Actual long
   prompts are 240070–240072 tokens, including chat framing/instructions.
-  Receipt: `recipe/benchmarks/exl3-dev9-graph-retrieval.jsonl`. This is a
+  Receipt: `benchmarks/exl3-dev9-graph-retrieval.jsonl`. This is a
   single-key synthetic test, not comprehensive long-context task quality.
 - TC-45 exposed an API constraint bug, independently reproduced for required
   and named tool choice with thinking both on and off. The combined Qwen
@@ -306,12 +306,12 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   collapsed. The new patch keeps DelegatingParser for structural-tag tool
   adapters. A real-tokenizer CPU regression verifies required/named grammar,
   unconstrained auto/none behavior, and reasoning plus automatic call parsing.
-  Receipt: `recipe/benchmarks/tool-constraints-cpu.txt`. `dev10` builds with
+  Receipt: `benchmarks/tool-constraints-cpu.txt`. `dev10` builds with
   this correction; live enforcement still needs qualification and the old
   tool score remains a pre-fix result.
 - A short profiled EXL3 code completion identifies mixed MoE and BF16 matrix
   kernels as the main GPU time consumers. Raw trace and kernel-only totals:
-  `recipe/benchmarks/exl3-dev9-code-profile.trace.json.gz` and
+  `benchmarks/exl3-dev9-code-profile.trace.json.gz` and
   `exl3-dev9-profile-summary.json`. Profiled timings are not throughput results.
 - Prefill harness invocations now use a unique nonce so repeating a run on
   the same server cannot accidentally reuse the prior run's prompt cache.
@@ -322,24 +322,24 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   autotuning and CUDA graphs. Capture uses 1.00 GiB and takes 9 seconds;
   reported KV capacity is 621001 tokens (2.37×262144). Both token tables
   and the FP8 PLE remain host-resident. Runtime receipt:
-  `recipe/benchmarks/nvfp4-dev10-graph-runtime.json`.
+  `benchmarks/nvfp4-dev10-graph-runtime.json`.
 - All 16 live API tool-constraint checks pass: required/named/auto/none ×
   thinking on/off × streaming/nonstreaming. Raw requests and responses are
-  in `recipe/benchmarks/nvfp4-dev10-tool-constraints.jsonl`; runner:
-  `recipe/scripts/test-api-tool-constraints.py`.
+  in `benchmarks/nvfp4-dev10-tool-constraints.jsonl`; runner:
+  `scripts/test-api-tool-constraints.py`.
 - The seven-workload blend (one warmup, three measured runs, MTP3, 400 W)
   records 149.46 weighted decode tokens/s. Medians: code202.67, math214.94,
   fable115.08, greeting181.44, topic149.99, JSON174.13, Chinese119.90.
   18/21 content checks pass; all three failures are overlong fables.
   MTP counters: 2010 accepted / 3879 draft tokens over 1293 drafts,
   51.82% acceptance and mean acceptance length2.555. Raw evidence:
-  `recipe/benchmarks/nvfp4-dev10-graph-seven.jsonl`.
+  `benchmarks/nvfp4-dev10-graph-seven.jsonl`.
 - NVIDIA graph vision passes at 1/4/16 images. Its single-probe synthetic
   context sweep completes at 8192, 131072 and 261632 prompt tokens plus128
   output tokens. The last point measures 27.865 s TTFT and238.73 decode
   tokens/s. These are synthetic diagnostics, not final context-quality
   results. Receipts: `nvfp4-dev10-graph-vision.json` and
-  `nvfp4-dev10-graph-context-diagnostic.jsonl` under `recipe/benchmarks`.
+  `nvfp4-dev10-graph-context-diagnostic.jsonl` under `benchmarks`.
 - Independent-client C8/C16 probes complete with unique prompts and128
   forced output tokens each. Measured global-window rates are549.68/544.11
   tokens/s. C8 has8 overlapping first-to-last SSE intervals; C16 peaks at13,
@@ -351,7 +351,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
 - NVIDIA graph MTP3 orchid counts are102/102/750 in measured runs; all
   fail exact100, and the last hits the1500-token budget. Warmup also hits
   the budget. Raw responses and timed-suite MTP counters are preserved in
-  `recipe/benchmarks/nvfp4-dev10-graph-orchid.jsonl`. These repetition rates
+  `benchmarks/nvfp4-dev10-graph-orchid.jsonl`. These repetition rates
   must not be represented as successful-task throughput.
 
 ## NVIDIA MTP2 comparison and vocabulary-kernel candidate
@@ -368,19 +368,19 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   requested16-client capacity at short context with MTP2, unlike the MTP3
   probe's13 overlapping streams. The full88-case tool run is now underway
   with MTP2. Runtime and client receipts are named `nvfp4-dev10-mtp2-*`
-  under `recipe/benchmarks`.
+  under `benchmarks`.
 - A GPU0 microbenchmark tests B12x's existing planned BF16 vocabulary
   projection at Qwen's actual M1/K2560/N248320 geometry against native
   F.linear. Median CUDA time is772.04 versus823.78 microseconds (about6.3%
   lower), over7 interleaved graph measurements of20 calls each. Three
   mutated-input numerical checks pass; the full weights exceed L2. This
   kernel is not yet integrated into serving, and no end-to-end gain is
-  claimed. Runner: `recipe/scripts/benchmark-vocab.py`; receipt:
-  `recipe/benchmarks/bf16-vocab-k2560-n248320.txt`.
+  claimed. Runner: `scripts/benchmark-vocab.py`; receipt:
+  `benchmarks/bf16-vocab-k2560-n248320.txt`.
 - NVIDIA MTP2's full tool run scores153/176 points (87/100):69 pass,
   15 partial,4 fail. Hard Mode scores32/38:15 pass,2 partial,2 fail.
   TC-45 now passes with an enforced calculator call. Full traces and summary
-  are retained as `recipe/benchmarks/nvfp4-dev10-mtp2-tools.md` and `.json`.
+  are retained as `benchmarks/nvfp4-dev10-mtp2-tools.md` and `.json`.
 - All six NVIDIA MTP2 retrieval checks pass at early/middle/late positions
   in8192- and240000-token filler archives. Actual long prompts contain
   240071–240073 tokens. Receipt: `nvfp4-dev10-mtp2-retrieval.jsonl`.
@@ -389,7 +389,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   replaces single-row BF16, unbiased projections at the exact checkpoint
   geometry. Native multi-row, biased and explicit FP32-head paths remain.
   The actual logits-processor bridge passes mutated graph replay, dtype and
-  native-fallback checks (`recipe/benchmarks/vocab-bridge-gpu.txt`).
+  native-fallback checks (`benchmarks/vocab-bridge-gpu.txt`).
   A same-MTP2 serving comparison remains required before enabling it by default.
 
 ## Candidate defaults after serving comparisons
@@ -399,14 +399,14 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   versus182.82, but Chinese and the overall blend regress; accepted draft
   fraction also changes63.55% versus65.50%. Three repetitions do not
   establish an overall win, so the option stays disabled by default. Raw
-  evidence: `recipe/benchmarks/nvfp4-dev11-mtp2-vocab-seven.jsonl`.
+  evidence: `benchmarks/nvfp4-dev11-mtp2-vocab-seven.jsonl`.
 - The B12x HC combine+norm API rejects vLLM's strided injection view at M>1.
   A second comparison includes the necessary contiguous packing. Native is
   faster at M1/4/16/64; at M2048 B12x is only slightly faster (79.38 versus
   81.27 microseconds). Mutated graph outputs agree with native within the
   stated tolerance. Native remains the serving choice; no HC bridge is
-  installed. Runner: `recipe/scripts/benchmark-hc.py`; complete timings:
-  `recipe/benchmarks/hc-native-vs-b12x.txt`.
+  installed. Runner: `scripts/benchmark-hc.py`; complete timings:
+  `benchmarks/hc-native-vs-b12x.txt`.
 
 ## MTP1 and GDN comparisons
 
@@ -415,7 +415,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   mean acceptance length is only 1.766. Independent C8/C16 probes improve
   to 597.43/915.16 tokens/s. These are one measured run after one warmup;
   a batch-size-dependent draft schedule remains a candidate, not a default.
-  Receipts: `recipe/benchmarks/nvfp4-dev11-mtp1-*`.
+  Receipts: `benchmarks/nvfp4-dev11-mtp1-*`.
 - The public B12x GDN transaction was compared with native post-convolution
   GDN at QK16/V48, FP32 recurrent state, BF16 activations and sigmoid gating.
   Native was faster for B1 with 1/3/4 tokens and B8 with 3 tokens; for B8,
@@ -427,13 +427,13 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   state error of 0.06675. The runner stops without reporting B16 timing.
   No B12x GDN bridge is installed. Native remains the serving path based
   on both performance and correctness. The reproducible runner is
-  `recipe/scripts/benchmark-gdn.py`; full measurements and failure evidence
-  are in `recipe/benchmarks/gdn-native-vs-b12x.txt`.
+  `scripts/benchmark-gdn.py`; full measurements and failure evidence
+  are in `benchmarks/gdn-native-vs-b12x.txt`.
 - NVIDIA's no-MTP control measures 96.38 weighted tokens/s, with C8/C16
   independent clients at 500.96/855.50 tokens/s. Static MTP2 improves the
   blend by approximately 58%; MTP1 improves the C16 probe by approximately
   7%. Raw responses, client timings and runtime configuration are retained
-  in `recipe/benchmarks/nvfp4-dev11-mtp0-*`.
+  in `benchmarks/nvfp4-dev11-mtp0-*`.
 
 ## Adaptive draft schedule and precise NVFP4 MoE candidate
 
@@ -442,10 +442,10 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   independent C8/C16 probes measure 585.89/858.97 tokens/s. It does not
   establish an overall advantage, so static MTP2 remains the leading profile.
   Runtime, raw responses and all client timings are retained as
-  `recipe/benchmarks/nvfp4-dev11-adaptive21-*`.
+  `benchmarks/nvfp4-dev11-adaptive21-*`.
 - EXL3 MTP2 measures 149.16 weighted tokens/s, versus MTP3's 152.97.
   Code measures 179.04 versus 205.58. Independent C8/C16 probes measure
-  532.52/718.39 tokens/s. Receipts: `recipe/benchmarks/exl3-dev11-mtp2-*`.
+  532.52/718.39 tokens/s. Receipts: `benchmarks/exl3-dev11-mtp2-*`.
 - The pinned fork's checkpoint-backed NVFP4 MoE benchmark compares layer 0,
   TP1, H2560/I640/E512/top10, shared activation scales, synthetic routes,
   three timing repetitions and 256 MiB L2 eviction per launch. Fast math
@@ -457,7 +457,7 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   M1/3/4/16/48/64/2048 are 47.1/73.7/98.3/264.2/591.9/692.2/1283.1
   microseconds, versus FlashInfer 61.4/100.4/118.8/311.3/632.4/738.6/1371.6.
   Full command configuration, error metrics and timing ranges are in
-  `recipe/benchmarks/nvfp4-moe-fast-math.txt` and `nvfp4-moe-precise.txt`.
+  `benchmarks/nvfp4-moe-fast-math.txt` and `nvfp4-moe-precise.txt`.
   These are component measurements; serving integration is still under test.
 - The opt-in `B12X_NVFP4=1` bridge in dev13 passes all 21 mutated graph
   checks against the unchanged oracle, using the checkpoint's real weights
@@ -466,33 +466,33 @@ mHC and DCP patches require architecture review, not mechanical reuse.
   storage at M1/3/4/16/48/64/2048. Runtime scratch is shared serially across
   layers within each CUDA stream. Native routing and shared-expert handling
   remain in vLLM's modular pipeline. Full-model qualification is pending.
-  Receipt: `recipe/benchmarks/nvfp4-moe-bridge-gpu.txt`; runner:
-  `recipe/scripts/test-nvfp4-moe.py`.
+  Receipt: `benchmarks/nvfp4-moe-bridge-gpu.txt`; runner:
+  `scripts/test-nvfp4-moe.py`.
 - EXL3's no-MTP control measures 92.76 weighted tokens/s; MTP3 is about
   65% faster on the blend. C8/C16 target-only probes measure 465.99/762.88
   tokens/s. The C16 result exceeds static MTP2's 718.39, motivating a
-  shorter-draft batch comparison. Receipts: `recipe/benchmarks/exl3-dev12-mtp0-*`.
+  shorter-draft batch comparison. Receipts: `benchmarks/exl3-dev12-mtp0-*`.
 - EXL3 MTP1 measures 131.54 weighted tokens/s and 141.99 median code
   tokens/s. Its C8/C16 probes improve to 561.14/861.92 tokens/s; all 16
   client streams overlap. This supports testing a shorter draft at larger
   batch sizes, while retaining longer drafts for low concurrency.
-  Receipts: `recipe/benchmarks/exl3-dev13-mtp1-*`.
+  Receipts: `benchmarks/exl3-dev13-mtp1-*`.
 - EXL3 MTP4 improves C1 code/math medians to 217.18/236.29 tokens/s,
   versus MTP3's 205.58/214.97. Its weighted C1 blend is 150.63, slightly
   below MTP3's 152.97; fable and Chinese slow to 111.16/116.42. C8/C16
   probes measure 408.90/486.12, with only 14 overlapping C16 streams.
   The C1 workload tradeoff remains useful even though this is not the
   best measured mixed-workload default. Receipts:
-  `recipe/benchmarks/exl3-dev13-mtp4-*`.
+  `benchmarks/exl3-dev13-mtp4-*`.
 - EXL3's dynamic schedule `[[1,4,3],[5,16,1]]` measures 150.71 weighted
   C1 tokens/s and 202.67 median code tokens/s. C8/C16 probes measure
   516.51/792.07. It does not establish a C1 advantage over static MTP3,
   which is selected for final qualification. Receipts:
-  `recipe/benchmarks/exl3-dev13-adaptive31-*`.
+  `benchmarks/exl3-dev13-adaptive31-*`.
 
 ## Final EXL3 qualification
 
-The `recipe/benchmarks/exl3-final/` receipts use dev13, static MTP3, CUDA
+The `benchmarks/exl3-final/` receipts use dev13, static MTP3, CUDA
 graphs, FP8 KV, .94 GPU memory fraction and GPU1 at 400 W. The CPU is an
 AMD Ryzen Threadripper 9970X (32 cores/64 threads); host RAM is 183 GiB.
 
@@ -519,3 +519,24 @@ AMD Ryzen Threadripper 9970X (32 cores/64 threads); host RAM is 183 GiB.
 - Orchid measured counts are 750/750/101/100/102; only one of five meets the
   exact contract. The 750-word responses hit the 1500-token cap. Raw failures
   remain in `orchid.jsonl` and are not described as successful-task throughput.
+
+## NVIDIA precise expert candidate and release profile extension
+
+The dev13 precise B12x NVFP4 expert bridge passed its component oracle but
+lost end-to-end at static MTP2: seven-workload weighted C1 decode was 136.74
+versus 152.40 tokens/s with native FlashInfer. Draft acceptance was 64.10%
+versus 65.50%; the small acceptance difference does not establish the cause
+of the throughput loss. C8/C16 probes were 519.20/809.45 tokens/s. The optional
+bridge remains off. Raw candidate receipts are `benchmarks/nvfp4-dev13-b12x-mtp2-*`.
+
+The recipe now lives at the repository root. Historical raw receipts retain
+the original command paths as provenance; current commands and documentation
+use the root layout.
+
+The requested `exl3-ple8` release profile pins
+`wrldsuksgo2mars/Qwen3.8-Flash-Next-EXL3-K4.25-PLE-FP8-v1` at
+`888306bd3996d6317758c07df50622829259ad17`. It retains EXL3 mixed projections
+and substitutes NVIDIA's FP8 PLE table and shared scale. The loader honors
+its explicit `qflashrt.fp8-ple.v1` metadata, scoped to the annotated table.
+Qualification for this additional profile covers quality only; no separate
+performance matrix or claim of measured performance equivalence is planned.

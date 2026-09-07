@@ -10,6 +10,7 @@ if [[ ! -f "$HF_CACHE/hub/$MODEL_CACHE_NAME/snapshots/$MODEL_REVISION/config.jso
   echo "Missing checkpoint. Run QUANT=${QUANT:-exl3} $RECIPE_DIR/download.sh" >&2
   exit 1
 fi
+MTP_TOKENS="${MTP_TOKENS:-$( [[ ${QUANT:-exl3} == nvfp4 ]] && echo 2 || echo 3 )}"
 EXTRA_ARGS=()
 [[ "${ENFORCE_EAGER:-0}" == 1 ]] && EXTRA_ARGS+=(--enforce-eager)
 if [[ "${MTP_TOKENS:-3}" != 0 ]]; then
