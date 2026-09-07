@@ -125,3 +125,23 @@ shows little overall improvement over K64. The combined qualification
 candidate therefore uses MTP2, readahead2048, B12x vocabulary, and the
 existing expert tile policy. RTX retains MTP3 and native vocabulary defaults.
 Full qualification of that combined profile remains pending.
+
+## Combined qualification image
+
+The native arm64 qualification image is published under `qual-e3ae4a7` with
+manifest digest `sha256:0e17cebbff2a95de615f4c1f68ba4e16ad07710164e82c0bf90f044216e8cbd3`
+and image ID `sha256:8faa93589f6156c24d328dfcbf80f4e0a29ee0fcec07c74b39738687c0feebf9`.
+All four running qualification containers have that same image ID. This is
+a qualification tag; release promotion awaits the complete results. Anonymous
+registry access currently returns 401, so package visibility is still private.
+
+The final image passes all 218 mmap tests with NVIDIA device access. An initial
+CPU-only container invocation failed vLLM device inference (203 passed, eight
+failed, seven skipped); both receipts are retained. No implementation or test
+changes were needed for the passing run. The CPU-only invocation was a setup
+error for this GPU serving image.
+
+Suites are assigned to ostrich (core and coding), dodo (prefill and retrieval),
+emu (context and exact boundary), and kiwi (C8 tool evaluation). Each host
+starts the same default configuration; no measurement combines GPU capacity
+across hosts. Startup and all suites are still in progress.

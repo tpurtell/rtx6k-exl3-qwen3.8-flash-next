@@ -34,3 +34,25 @@ scale validation defects demonstrated by independent failing regressions.
 See `docs/mmap-review.md` for the exact scope, compatibility adaptations and
 real-checkpoint/CUDA replay evidence. The full follow-on benchmark applies
 only to `exl3-ple8` with mmap enabled; v0.1.0 results remain historical.
+
+## Native Spark build and qualification
+
+The `spark` branch uses the same pinned multiarch vLLM base for native
+linux/arm64 builds, selecting `sm_121a` for CuTe. The amd64 EXL3 source
+stage supplies only its Python adapter. The per-projection expert allocation
+and checkpoint revisions are unchanged. Spark defaults select MTP2 and
+B12x vocabulary after component and serving comparisons; native HC, native
+GDN and the existing mixed-expert tile policy are retained. The numerical
+failure from the optional GDN comparison remains in the raw receipts.
+
+Targeted mmap readahead defaults to a 2048-range limit on both platforms.
+This is a new launcher/build default, not a change to historical RTX
+measurements or to the environment baked into the old v0.2.0 image.
+`benchmarks/spark-review/TUNING.md` links every completed C1 tuning run.
+
+Full qualification is distributed by independent suite across four Sparks.
+Each measured request or concurrent batch uses one TP=1 GB10. The assembly
+script requires identical immutable image IDs, serving arguments and selected
+environment settings across hosts, and records each result's originating host
+and SHA-256. Full qualification remains in progress until that manifest and
+its complete raw results are committed.

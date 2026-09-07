@@ -38,6 +38,11 @@ for host in ('ostrich', 'dodo', 'emu', 'kiwi'):
     require(r['architecture'] in ('aarch64', 'arm64'), f'Non-arm64 runtime: {host}')
     require(float(argv[argv.index('--gpu-memory-utilization')+1]) == 0.7, f'Wrong GPU cap: {host}')
     require('qwen38-exl3' in argv, f'Wrong model alias: {host}')
+    require(any('73a050c27b8c488c65acd6d1c74e45ff02be5fab' in value for value in argv),
+            f'Wrong checkpoint revision: {host}')
+    for option, expected in [('--max-model-len','262144'), ('--max-num-seqs','16'),
+                             ('--max-num-batched-tokens','2048'), ('--kv-cache-dtype','fp8')]:
+        require(argv[argv.index(option)+1] == expected, f'Wrong {option}: {host}')
     require(json.loads(argv[argv.index('--speculative-config')+1]) == {'method':'mtp','num_speculative_tokens':2}, f'Wrong speculation: {host}')
     require({'VLLM_PLE_MMAP=1','VLLM_PLE_CPU_OFFLOAD=0','VLLM_PLE_MMAP_SERIAL=128',
              'VLLM_PLE_MMAP_READAHEAD=2048','QWEN38_B12X_VOCAB=1','CUTE_DSL_ARCH=sm_121a'} <= env,

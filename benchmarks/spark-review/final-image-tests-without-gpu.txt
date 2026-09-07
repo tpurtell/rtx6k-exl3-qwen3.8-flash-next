@@ -1,0 +1,371 @@
+..FFFFFFF............................................................... [ 33%]
+.......sss.............................s...........sss.................. [ 66%]
+...............F........................................................ [ 99%]
+..                                                                       [100%]
+=================================== FAILURES ===================================
+______ test_start_weight_update_preflights_base_model_before_engine_start ______
+
+    def test_start_weight_update_preflights_base_model_before_engine_start():
+        """A base model exposing `preflight_reload_weights` must be preflighted
+        before the engine starts; a rejection must never start the engine or
+        mark the session active, and must still run existing cleanup."""
+        engine = _RecordingEngine()
+>       worker = _make_worker(engine)
+                 ^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mmap_weight_transfer.py:149: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_mmap_weight_transfer.py:124: in _make_worker
+    worker.vllm_config = VllmConfig()
+                         ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = DeviceConfig(device='auto', device_type='')
+
+    def __post_init__(self):
+        if self.device == "auto":
+            # Automated device type detection
+            from vllm.platforms import current_platform
+    
+            self.device_type = current_platform.device_type
+            if not self.device_type:
+>               raise RuntimeError(
+                    "Failed to infer device type, please set "
+                    "the environment variable `VLLM_LOGGING_LEVEL=DEBUG` "
+                    "to turn on verbose logging to help debug the issue."
+                )
+E               RuntimeError: Failed to infer device type, please set the environment variable `VLLM_LOGGING_LEVEL=DEBUG` to turn on verbose logging to help debug the issue.
+
+/usr/local/lib/python3.12/dist-packages/vllm/config/device.py:56: RuntimeError
+----------------------------- Captured stdout call -----------------------------
+INFO 09-07 13:36:29 [scheduler.py:246] Chunked prefill is enabled with max_num_batched_tokens=2048.
+------------------------------ Captured log call -------------------------------
+INFO     vllm.config.scheduler:scheduler.py:246 Chunked prefill is enabled with max_num_batched_tokens=2048.
+___ test_start_draft_weight_update_preflights_draft_model_before_target_set ____
+
+    def test_start_draft_weight_update_preflights_draft_model_before_target_set():
+        """A draft model exposing `preflight_reload_weights` must be preflighted
+        before the draft target is set or the engine starts; a rejection must
+        never mutate the engine's target or mark the session active, and must
+        still run existing cleanup."""
+        engine = _RecordingEngine()
+        engine.supports_draft_weight_update = True
+>       worker = _make_worker(engine)
+                 ^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mmap_weight_transfer.py:169: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_mmap_weight_transfer.py:124: in _make_worker
+    worker.vllm_config = VllmConfig()
+                         ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = DeviceConfig(device='auto', device_type='')
+
+    def __post_init__(self):
+        if self.device == "auto":
+            # Automated device type detection
+            from vllm.platforms import current_platform
+    
+            self.device_type = current_platform.device_type
+            if not self.device_type:
+>               raise RuntimeError(
+                    "Failed to infer device type, please set "
+                    "the environment variable `VLLM_LOGGING_LEVEL=DEBUG` "
+                    "to turn on verbose logging to help debug the issue."
+                )
+E               RuntimeError: Failed to infer device type, please set the environment variable `VLLM_LOGGING_LEVEL=DEBUG` to turn on verbose logging to help debug the issue.
+
+/usr/local/lib/python3.12/dist-packages/vllm/config/device.py:56: RuntimeError
+______ test_finish_weight_update_clears_reload_approval_granted_at_start _______
+
+    def test_finish_weight_update_clears_reload_approval_granted_at_start():
+        """This weight-transfer path never calls `model.load_weights` -- the
+        engine copies parameters directly -- so `finish_weight_update` itself
+        must revoke any transaction-scoped reload approval `start_weight_
+        update`'s preflight granted, or it would outlive this session and be
+        validatable against by an unrelated later reload."""
+        engine = _RecordingEngine()
+>       worker = _make_worker(engine)
+                 ^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mmap_weight_transfer.py:200: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_mmap_weight_transfer.py:124: in _make_worker
+    worker.vllm_config = VllmConfig()
+                         ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = DeviceConfig(device='auto', device_type='')
+
+    def __post_init__(self):
+        if self.device == "auto":
+            # Automated device type detection
+            from vllm.platforms import current_platform
+    
+            self.device_type = current_platform.device_type
+            if not self.device_type:
+>               raise RuntimeError(
+                    "Failed to infer device type, please set "
+                    "the environment variable `VLLM_LOGGING_LEVEL=DEBUG` "
+                    "to turn on verbose logging to help debug the issue."
+                )
+E               RuntimeError: Failed to infer device type, please set the environment variable `VLLM_LOGGING_LEVEL=DEBUG` to turn on verbose logging to help debug the issue.
+
+/usr/local/lib/python3.12/dist-packages/vllm/config/device.py:56: RuntimeError
+______ test_finish_draft_weight_update_clears_draft_model_reload_approval ______
+
+    def test_finish_draft_weight_update_clears_draft_model_reload_approval():
+        """A draft-targeted session must clear the draft model's approval, not
+        the base model's."""
+        engine = _RecordingEngine()
+        engine.supports_draft_weight_update = True
+>       worker = _make_worker(engine)
+                 ^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mmap_weight_transfer.py:219: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_mmap_weight_transfer.py:124: in _make_worker
+    worker.vllm_config = VllmConfig()
+                         ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = DeviceConfig(device='auto', device_type='')
+
+    def __post_init__(self):
+        if self.device == "auto":
+            # Automated device type detection
+            from vllm.platforms import current_platform
+    
+            self.device_type = current_platform.device_type
+            if not self.device_type:
+>               raise RuntimeError(
+                    "Failed to infer device type, please set "
+                    "the environment variable `VLLM_LOGGING_LEVEL=DEBUG` "
+                    "to turn on verbose logging to help debug the issue."
+                )
+E               RuntimeError: Failed to infer device type, please set the environment variable `VLLM_LOGGING_LEVEL=DEBUG` to turn on verbose logging to help debug the issue.
+
+/usr/local/lib/python3.12/dist-packages/vllm/config/device.py:56: RuntimeError
+_______ test_finish_error_clears_reload_approval_and_deactivates_session _______
+
+    def test_finish_error_clears_reload_approval_and_deactivates_session():
+        engine = _RecordingEngine(raise_on_finish=True)
+>       worker = _make_worker(engine)
+                 ^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mmap_weight_transfer.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_mmap_weight_transfer.py:124: in _make_worker
+    worker.vllm_config = VllmConfig()
+                         ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = DeviceConfig(device='auto', device_type='')
+
+    def __post_init__(self):
+        if self.device == "auto":
+            # Automated device type detection
+            from vllm.platforms import current_platform
+    
+            self.device_type = current_platform.device_type
+            if not self.device_type:
+>               raise RuntimeError(
+                    "Failed to infer device type, please set "
+                    "the environment variable `VLLM_LOGGING_LEVEL=DEBUG` "
+                    "to turn on verbose logging to help debug the issue."
+                )
+E               RuntimeError: Failed to infer device type, please set the environment variable `VLLM_LOGGING_LEVEL=DEBUG` to turn on verbose logging to help debug the issue.
+
+/usr/local/lib/python3.12/dist-packages/vllm/config/device.py:56: RuntimeError
+___ test_start_weight_update_clears_reload_approval_when_engine_start_fails ____
+
+    def test_start_weight_update_clears_reload_approval_when_engine_start_fails():
+        """A preflight that grants an approval, followed by the engine's own
+        `start_weight_update` raising, must not leave that approval behind:
+        this session never reaches `finish_weight_update`, the only other place
+        that would otherwise clear it."""
+        engine = _RecordingEngine(raise_on_start=True)
+>       worker = _make_worker(engine)
+                 ^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mmap_weight_transfer.py:261: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_mmap_weight_transfer.py:124: in _make_worker
+    worker.vllm_config = VllmConfig()
+                         ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = DeviceConfig(device='auto', device_type='')
+
+    def __post_init__(self):
+        if self.device == "auto":
+            # Automated device type detection
+            from vllm.platforms import current_platform
+    
+            self.device_type = current_platform.device_type
+            if not self.device_type:
+>               raise RuntimeError(
+                    "Failed to infer device type, please set "
+                    "the environment variable `VLLM_LOGGING_LEVEL=DEBUG` "
+                    "to turn on verbose logging to help debug the issue."
+                )
+E               RuntimeError: Failed to infer device type, please set the environment variable `VLLM_LOGGING_LEVEL=DEBUG` to turn on verbose logging to help debug the issue.
+
+/usr/local/lib/python3.12/dist-packages/vllm/config/device.py:56: RuntimeError
+_______________ test_update_weights_error_clears_reload_approval _______________
+
+    def test_update_weights_error_clears_reload_approval():
+        """A session that dies mid-update (via `update_weights` raising) never
+        reaches `finish_weight_update` either, so its own error path must clear
+        the target's approval."""
+        engine = _RecordingEngine(raise_on_update=True)
+>       worker = _make_worker(engine)
+                 ^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mmap_weight_transfer.py:279: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_mmap_weight_transfer.py:124: in _make_worker
+    worker.vllm_config = VllmConfig()
+                         ^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = DeviceConfig(device='auto', device_type='')
+
+    def __post_init__(self):
+        if self.device == "auto":
+            # Automated device type detection
+            from vllm.platforms import current_platform
+    
+            self.device_type = current_platform.device_type
+            if not self.device_type:
+>               raise RuntimeError(
+                    "Failed to infer device type, please set "
+                    "the environment variable `VLLM_LOGGING_LEVEL=DEBUG` "
+                    "to turn on verbose logging to help debug the issue."
+                )
+E               RuntimeError: Failed to infer device type, please set the environment variable `VLLM_LOGGING_LEVEL=DEBUG` to turn on verbose logging to help debug the issue.
+
+/usr/local/lib/python3.12/dist-packages/vllm/config/device.py:56: RuntimeError
+__ test_ple_layer_registers_its_own_prefix_as_the_static_forward_context_key ___
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xf1af0d662f90>
+
+    def test_ple_layer_registers_its_own_prefix_as_the_static_forward_context_key(
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Qwen3_8FlashNextPLELayer.__init__ passes its OWN prefix as
+        layer_name — the exact key it registers into
+        compilation_config.static_forward_context — never
+        f"{prefix}.ple_embedding". Constructs a REAL Qwen3_8FlashNextPLELayer (not just
+        the embedding in isolation) using the suite's TP rank/size
+        monkeypatches, extended to vllm.model_executor.layers.linear for
+        ReplicatedLinear's construction.
+        """
+        monkeypatch.setenv("VLLM_PLE_MMAP", "1")
+        monkeypatch.setattr(linear_module, "get_tensor_model_parallel_rank", lambda: 0)
+        monkeypatch.setattr(
+            linear_module, "get_tensor_model_parallel_world_size", lambda: 1
+        )
+    
+        config = _make_text_config(
+            hidden_size=8,
+            hc_count=2,
+            ple_conv_kernel_size=3,
+            ple_embed_dim=8,
+            rms_norm_eps=1e-5,
+        )
+        cc = CompilationConfig(
+            mode=CompilationMode.VLLM_COMPILE, cudagraph_mode=CUDAGraphMode.PIECEWISE
+        )
+        vllm_config = SimpleNamespace(
+            model_config=SimpleNamespace(
+                dtype=torch.float32, model_weights="", model="ignored/repo", revision=None
+            ),
+            cache_config=SimpleNamespace(mamba_cache_dtype="auto"),
+            quant_config=None,
+            scheduler_config=SimpleNamespace(max_num_batched_tokens=16, max_num_seqs=4),
+            num_speculative_tokens=0,
+            compilation_config=cc,
+            kernel_config=SimpleNamespace(linear_backend="auto"),
+            use_v2_model_runner=True,
+        )
+    
+        with set_current_vllm_config(vllm_config):
+>           layer = Qwen3_8FlashNextPLELayer(
+                config,
+                vllm_config=vllm_config,
+                layer_idx=1,
+                ple_dense_layer_id=0,
+                prefix="model.layers.1.ple",
+            )
+
+tests/test_ple_mmap_upstream.py:4624: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.12/dist-packages/vllm/models/qwen3_8_flash_next/nvidia/ple_layer.py:851: in __init__
+    with torch.device(PleOffloadLayer.get_target_device()):
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/ple_offload_layer.py:213: in get_target_device
+    return torch.device("cuda", torch.accelerator.current_device_index())
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/dist-packages/torch/accelerator/__init__.py:140: in current_device_index
+    return torch._C._accelerator_getDeviceIndex()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _lazy_init():
+        global _initialized, _queued_calls
+        if is_initialized() or hasattr(_tls, "is_initializing"):
+            return
+        with _initialization_lock:
+            # We be double-checked locking, boys!  This is OK because
+            # the above test was GIL protected anyway.  The inner test
+            # is for when a thread blocked on some other thread which was
+            # doing the initialization; when they get the lock, they will
+            # find there is nothing left to do.
+            if is_initialized():
+                return
+            # It is important to prevent other threads from entering _lazy_init
+            # immediately, while we are still guaranteed to have the GIL, because some
+            # of the C calls we make below will release the GIL
+            if _is_in_bad_fork():
+                raise RuntimeError(
+                    "Cannot re-initialize CUDA in forked subprocess. To use CUDA with "
+                    "multiprocessing, you must use the 'spawn' start method"
+                )
+            if not hasattr(torch._C, "_cuda_getDeviceCount"):
+                raise AssertionError("Torch not compiled with CUDA enabled")
+            if _cudart is None:
+                raise AssertionError(
+                    "libcudart functions unavailable. It looks like you have a broken build?"
+                )
+            # This function throws if there's a driver initialization error, no GPUs
+            # are found or any other error occurs
+>           torch._C._cuda_init()
+E           RuntimeError: Found no NVIDIA driver on your system. Please check that you have an NVIDIA GPU and installed a driver from http://www.nvidia.com/Download/index.aspx
+
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:529: RuntimeError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:365: 14 warnings
+  /usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:469
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:469: PytestCacheWarning: could not create cache path /workspace/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/workspace/pytest-cache-files-julr4c9k'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:423
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:423: PytestCacheWarning: could not create cache path /workspace/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/workspace/pytest-cache-files-t9h4xiey'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_mmap_weight_transfer.py::test_start_weight_update_preflights_base_model_before_engine_start
+FAILED tests/test_mmap_weight_transfer.py::test_start_draft_weight_update_preflights_draft_model_before_target_set
+FAILED tests/test_mmap_weight_transfer.py::test_finish_weight_update_clears_reload_approval_granted_at_start
+FAILED tests/test_mmap_weight_transfer.py::test_finish_draft_weight_update_clears_draft_model_reload_approval
+FAILED tests/test_mmap_weight_transfer.py::test_finish_error_clears_reload_approval_and_deactivates_session
+FAILED tests/test_mmap_weight_transfer.py::test_start_weight_update_clears_reload_approval_when_engine_start_fails
+FAILED tests/test_mmap_weight_transfer.py::test_update_weights_error_clears_reload_approval
+FAILED tests/test_ple_mmap_upstream.py::test_ple_layer_registers_its_own_prefix_as_the_static_forward_context_key
+8 failed, 203 passed, 7 skipped, 16 warnings in 6.29s
