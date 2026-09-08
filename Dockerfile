@@ -66,3 +66,7 @@ RUN python3 /opt/qwen38-tests/test-xgrammar-termination.py \
  && python3 /opt/qwen38-tests/test-structured-output-reasoning.py
 LABEL io.tpurtell.structured-output.reasoning-fix="c6e19b3be243" \
       io.tpurtell.structured-output.termination-fix="vllm-pr-52805"
+
+# Resident GPU workers own metadata only; the CPU subprocess owns the table.
+COPY patches/port-ple-resident-loading.py /tmp/port-ple-resident-loading.py
+RUN python3 /tmp/port-ple-resident-loading.py /usr/local/lib/python3.12/dist-packages/vllm

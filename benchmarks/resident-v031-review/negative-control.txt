@@ -1,0 +1,120 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+___ test_resident_worker_without_embedding_loads_only_optional_scale[False] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7738f59c9520>
+quantized = False
+
+    @pytest.mark.parametrize('quantized', [False, True])
+    def test_resident_worker_without_embedding_loads_only_optional_scale(monkeypatch, quantized):
+        monkeypatch.setenv('VLLM_PLE_CPU_OFFLOAD', '1')
+        monkeypatch.setenv('VLLM_PLE_MMAP', '0')
+        monkeypatch.setattr(ple_layer, 'is_offload_process', lambda: False)
+        monkeypatch.setattr(torch.accelerator, 'current_accelerator', lambda: torch.device('cpu'))
+        module = ple_layer.Qwen3_8FlashNextNGramEmbedding.__new__(ple_layer.Qwen3_8FlashNextNGramEmbedding)
+        torch.nn.Module.__init__(module)
+        assert not hasattr(module, 'ngram_embedding')
+        scale = torch.tensor([0.25], dtype=torch.bfloat16)
+        weights = [('ngram_embedding.shard_0.weight', torch.zeros(4, 2)),
+                   ('layer_multipliers', torch.ones(3, dtype=torch.long))]
+        if quantized:
+            weights.append(('ngram_embedding.weight_scale', scale))
+>       loaded = module.load_weights(iter(weights))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_ple_resident_loading.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.12/dist-packages/vllm/models/qwen3_8_flash_next/nvidia/ple_layer.py:691: in load_weights
+    embedding = self.ngram_embedding
+                ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Qwen3_8FlashNextNGramEmbedding(), name = 'ngram_embedding'
+
+    def __getattr__(self, name: str) -> Union[Tensor, "Module"]:
+        if "_parameters" in self.__dict__:
+            _parameters = self.__dict__["_parameters"]
+            if name in _parameters:
+                return _parameters[name]
+        if "_buffers" in self.__dict__:
+            _buffers = self.__dict__["_buffers"]
+            if name in _buffers:
+                return _buffers[name]
+        if "_modules" in self.__dict__:
+            modules = self.__dict__["_modules"]
+            if name in modules:
+                return modules[name]
+>       raise AttributeError(
+            f"'{type(self).__name__}' object has no attribute '{name}'"
+        )
+E       AttributeError: 'Qwen3_8FlashNextNGramEmbedding' object has no attribute 'ngram_embedding'
+
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1967: AttributeError
+____ test_resident_worker_without_embedding_loads_only_optional_scale[True] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x773942368350>
+quantized = True
+
+    @pytest.mark.parametrize('quantized', [False, True])
+    def test_resident_worker_without_embedding_loads_only_optional_scale(monkeypatch, quantized):
+        monkeypatch.setenv('VLLM_PLE_CPU_OFFLOAD', '1')
+        monkeypatch.setenv('VLLM_PLE_MMAP', '0')
+        monkeypatch.setattr(ple_layer, 'is_offload_process', lambda: False)
+        monkeypatch.setattr(torch.accelerator, 'current_accelerator', lambda: torch.device('cpu'))
+        module = ple_layer.Qwen3_8FlashNextNGramEmbedding.__new__(ple_layer.Qwen3_8FlashNextNGramEmbedding)
+        torch.nn.Module.__init__(module)
+        assert not hasattr(module, 'ngram_embedding')
+        scale = torch.tensor([0.25], dtype=torch.bfloat16)
+        weights = [('ngram_embedding.shard_0.weight', torch.zeros(4, 2)),
+                   ('layer_multipliers', torch.ones(3, dtype=torch.long))]
+        if quantized:
+            weights.append(('ngram_embedding.weight_scale', scale))
+>       loaded = module.load_weights(iter(weights))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_ple_resident_loading.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.12/dist-packages/vllm/models/qwen3_8_flash_next/nvidia/ple_layer.py:691: in load_weights
+    embedding = self.ngram_embedding
+                ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Qwen3_8FlashNextNGramEmbedding(), name = 'ngram_embedding'
+
+    def __getattr__(self, name: str) -> Union[Tensor, "Module"]:
+        if "_parameters" in self.__dict__:
+            _parameters = self.__dict__["_parameters"]
+            if name in _parameters:
+                return _parameters[name]
+        if "_buffers" in self.__dict__:
+            _buffers = self.__dict__["_buffers"]
+            if name in _buffers:
+                return _buffers[name]
+        if "_modules" in self.__dict__:
+            modules = self.__dict__["_modules"]
+            if name in modules:
+                return modules[name]
+>       raise AttributeError(
+            f"'{type(self).__name__}' object has no attribute '{name}'"
+        )
+E       AttributeError: 'Qwen3_8FlashNextNGramEmbedding' object has no attribute 'ngram_embedding'
+
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1967: AttributeError
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:365: 14 warnings
+  /usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:469
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:469: PytestCacheWarning: could not create cache path /workspace/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/workspace/pytest-cache-files-el0pa95g'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:423
+  /usr/local/lib/python3.12/dist-packages/_pytest/cacheprovider.py:423: PytestCacheWarning: could not create cache path /workspace/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/workspace/pytest-cache-files-5r36vn12'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_ple_resident_loading.py::test_resident_worker_without_embedding_loads_only_optional_scale[False]
+FAILED tests/test_ple_resident_loading.py::test_resident_worker_without_embedding_loads_only_optional_scale[True]
+2 failed, 16 warnings in 9.60s

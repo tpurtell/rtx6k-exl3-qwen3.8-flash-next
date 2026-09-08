@@ -1,0 +1,122 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 5.04kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#2 DONE 1.2s
+
+#3 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/vllm/vllm-openai@sha256:fc120ece0a388cc0aa1caad4a9f1cd92113484ab7ec2fd0efadd62585be05bf8
+#4 ...
+
+#5 [auth] tpurtell/glm-5.3-flash-exl3-4bpw-2x-rtx:pull token for ghcr.io
+#5 DONE 0.0s
+
+#6 [internal] load metadata for ghcr.io/tpurtell/glm-5.3-flash-exl3-4bpw-2x-rtx@sha256:48e254d94f58137c8707e6044cde4528c6af3fdd9702726b9b362e9b0e0b4629
+#6 ...
+
+#4 [internal] load metadata for docker.io/vllm/vllm-openai@sha256:fc120ece0a388cc0aa1caad4a9f1cd92113484ab7ec2fd0efadd62585be05bf8
+#4 DONE 1.1s
+
+#6 [internal] load metadata for ghcr.io/tpurtell/glm-5.3-flash-exl3-4bpw-2x-rtx@sha256:48e254d94f58137c8707e6044cde4528c6af3fdd9702726b9b362e9b0e0b4629
+#6 DONE 2.5s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 82B done
+#7 DONE 0.0s
+
+#8 [stage-1  1/26] FROM docker.io/vllm/vllm-openai@sha256:fc120ece0a388cc0aa1caad4a9f1cd92113484ab7ec2fd0efadd62585be05bf8
+#8 DONE 0.0s
+
+#9 [exl3_source 1/1] FROM ghcr.io/tpurtell/glm-5.3-flash-exl3-4bpw-2x-rtx@sha256:48e254d94f58137c8707e6044cde4528c6af3fdd9702726b9b362e9b0e0b4629
+#9 DONE 0.0s
+
+#10 [internal] load build context
+#10 transferring context: 192.88kB done
+#10 DONE 0.0s
+
+#11 [stage-1 17/26] COPY patches/port-nvfp4-moe.py /tmp/port-nvfp4-moe.py
+#11 CACHED
+
+#12 [stage-1 10/26] COPY patches/port-host-embedding.py /tmp/port-host-embedding.py
+#12 CACHED
+
+#13 [stage-1 12/26] COPY patches/port-nvidia-ple-fp8.py /tmp/port-nvidia-ple-fp8.py
+#13 CACHED
+
+#14 [stage-1 20/26] RUN python3 /tmp/ple-mmap/port-ple-mmap.py /usr/local/lib/python3.12/dist-packages/vllm
+#14 CACHED
+
+#15 [stage-1 21/26] COPY patches/port-xgrammar-termination.py patches/port-structured-output-reasoning.py /tmp/structured-output/
+#15 CACHED
+
+#16 [stage-1 11/26] COPY patches/port-exl3-ple-fp8.py /tmp/port-exl3-ple-fp8.py
+#16 CACHED
+
+#17 [stage-1 19/26] COPY patches/port-ple-mmap.py patches/ple-mmap-pr54129.patch patches/ple-mmap-base-hashes.json /tmp/ple-mmap/
+#17 CACHED
+
+#18 [stage-1 23/26] COPY scripts/test-xgrammar-termination.py scripts/test-structured-output-reasoning.py /opt/qwen38-tests/
+#18 CACHED
+
+#19 [stage-1  5/26] COPY patches/port-exl3-qwen38.py /tmp/port-exl3-qwen38.py
+#19 CACHED
+
+#20 [stage-1 16/26] COPY patches/qwen_nvfp4_moe.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/qwen_nvfp4_moe.py
+#20 CACHED
+
+#21 [stage-1 22/26] RUN python3 /tmp/structured-output/port-xgrammar-termination.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/structured-output/port-structured-output-reasoning.py /usr/local/lib/python3.12/dist-packages/vllm
+#21 CACHED
+
+#22 [stage-1  4/26] COPY --from=exl3_source /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/quantization/exl3.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/quantization/exl3.py
+#22 CACHED
+
+#23 [stage-1 15/26] COPY patches/port-vocab-projection.py /tmp/port-vocab-projection.py
+#23 CACHED
+
+#24 [stage-1 13/26] COPY patches/port-qwen-tool-constraints.py /tmp/port-qwen-tool-constraints.py
+#24 CACHED
+
+#25 [stage-1  6/26] COPY patches/b12x_qsa_attention.py /usr/local/lib/python3.12/dist-packages/vllm/models/qwen3_8_flash_next/nvidia/b12x_qsa_attention.py
+#25 CACHED
+
+#26 [stage-1 18/26] RUN python3 /tmp/port-exl3-qwen38.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-qsa-fp8.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-nvidia-mtp-fp8.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-host-embedding.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-nvidia-ple-fp8.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-exl3-ple-fp8.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-qwen-tool-constraints.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-vocab-projection.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 /tmp/port-nvfp4-moe.py /usr/local/lib/python3.12/dist-packages/vllm  && python3 -c 'from vllm.model_executor.layers.quantization import get_quantization_config; assert get_quantization_config("exl3").__name__ == "Exl3Config"'
+#26 CACHED
+
+#27 [stage-1  9/26] COPY patches/qwen_host_embedding.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/qwen_host_embedding.py
+#27 CACHED
+
+#28 [stage-1  8/26] COPY patches/port-nvidia-mtp-fp8.py /tmp/port-nvidia-mtp-fp8.py
+#28 CACHED
+
+#29 [stage-1 14/26] COPY patches/qwen_vocab_projection.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/qwen_vocab_projection.py
+#29 CACHED
+
+#30 [stage-1  7/26] COPY patches/port-qsa-fp8.py /tmp/port-qsa-fp8.py
+#30 CACHED
+
+#31 [stage-1  2/26] RUN B12X_COMMIT=c76a40ee684cb3ef7d2c223d56a9b9cff25a3a1e python3 - <<'PY'
+#31 CACHED
+
+#32 [stage-1  3/26] RUN python3 -m pip install --no-deps -e /opt/b12x
+#32 CACHED
+
+#33 [stage-1 24/26] RUN python3 /opt/qwen38-tests/test-xgrammar-termination.py  && python3 /opt/qwen38-tests/test-structured-output-reasoning.py
+#33 CACHED
+
+#34 [stage-1 25/26] COPY patches/port-ple-resident-loading.py /tmp/port-ple-resident-loading.py
+#34 DONE 0.0s
+
+#35 [stage-1 26/26] RUN python3 /tmp/port-ple-resident-loading.py /usr/local/lib/python3.12/dist-packages/vllm
+#35 0.189 Restored resident PLE worker metadata loading before mmap embedding access
+#35 DONE 0.2s
+
+#36 exporting to image
+#36 exporting layers done
+#36 writing image sha256:8861f575ee968615d1864e472c65dfaaf59e7fc17bbcf9f9d59546c4e22069a9 done
+#36 naming to docker.io/library/spark-exl3-qwen3.8-flash-next:resident-fix done
+#36 DONE 0.0s
