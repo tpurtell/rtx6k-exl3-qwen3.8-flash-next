@@ -1,0 +1,164 @@
+The push refers to repository [ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next]
+c5582c742de7: Preparing
+c19a006df958: Preparing
+5f70bf18a086: Preparing
+79859c9250a9: Preparing
+8f2805203015: Preparing
+2793e5551a73: Preparing
+ba0cbdb94594: Preparing
+ac6dcd41616d: Preparing
+2016c78b3bd1: Preparing
+913169fc31d2: Preparing
+ce222a08338d: Preparing
+7d6822a69811: Preparing
+eaad179c575e: Preparing
+215af9a8d543: Preparing
+293ba3f1f772: Preparing
+1bd8c5da052b: Preparing
+8bc31f254790: Preparing
+1bd3322f8d6f: Preparing
+c8ae6d751a07: Preparing
+263fa022f876: Preparing
+b4c7db0470fb: Preparing
+1e1d40a94b43: Preparing
+348797b138e8: Preparing
+01f29e12109c: Preparing
+b6470ca8ef3a: Preparing
+9a08485ade40: Preparing
+d34c6a7cec6c: Preparing
+b39842a104e5: Preparing
+51e3ff8f39b9: Preparing
+7c4605880f1a: Preparing
+05b334d1fb3c: Preparing
+5f70bf18a086: Preparing
+3031c90b410d: Preparing
+addae8f5e23a: Preparing
+6905bd52d08c: Preparing
+6c38c64bee69: Preparing
+21757f190240: Preparing
+4782a17fca20: Preparing
+481eea8a2a4e: Preparing
+a9af4543c109: Preparing
+fd8f5810148e: Preparing
+a378195e3d54: Preparing
+5f70bf18a086: Preparing
+451c61de84e6: Preparing
+111e7c614ac0: Preparing
+da9b3df67b0f: Preparing
+a40fb41a564b: Preparing
+63b674f06d74: Preparing
+3862361f431f: Preparing
+dcede9dcd39b: Preparing
+50a33902f572: Preparing
+b2a48eb68225: Preparing
+495bbaf4cc5c: Preparing
+cc18467866bc: Preparing
+b60fd1af0a9d: Preparing
+a52c02546417: Preparing
+187d2314ef56: Preparing
+eaad179c575e: Waiting
+215af9a8d543: Waiting
+293ba3f1f772: Waiting
+1bd8c5da052b: Waiting
+8bc31f254790: Waiting
+1bd3322f8d6f: Waiting
+c8ae6d751a07: Waiting
+263fa022f876: Waiting
+b4c7db0470fb: Waiting
+1e1d40a94b43: Waiting
+348797b138e8: Waiting
+01f29e12109c: Waiting
+b6470ca8ef3a: Waiting
+9a08485ade40: Waiting
+d34c6a7cec6c: Waiting
+b39842a104e5: Waiting
+51e3ff8f39b9: Waiting
+7c4605880f1a: Waiting
+05b334d1fb3c: Waiting
+3031c90b410d: Waiting
+addae8f5e23a: Waiting
+6905bd52d08c: Waiting
+6c38c64bee69: Waiting
+21757f190240: Waiting
+4782a17fca20: Waiting
+481eea8a2a4e: Waiting
+a9af4543c109: Waiting
+fd8f5810148e: Waiting
+a378195e3d54: Waiting
+451c61de84e6: Waiting
+111e7c614ac0: Waiting
+ba0cbdb94594: Waiting
+da9b3df67b0f: Waiting
+ac6dcd41616d: Waiting
+a40fb41a564b: Waiting
+2016c78b3bd1: Waiting
+63b674f06d74: Waiting
+3862361f431f: Waiting
+dcede9dcd39b: Waiting
+50a33902f572: Waiting
+b2a48eb68225: Waiting
+495bbaf4cc5c: Waiting
+cc18467866bc: Waiting
+b60fd1af0a9d: Waiting
+a52c02546417: Waiting
+187d2314ef56: Waiting
+913169fc31d2: Waiting
+ce222a08338d: Waiting
+7d6822a69811: Waiting
+2793e5551a73: Waiting
+8f2805203015: Layer already exists
+79859c9250a9: Layer already exists
+5f70bf18a086: Layer already exists
+ac6dcd41616d: Layer already exists
+ba0cbdb94594: Layer already exists
+2793e5551a73: Layer already exists
+913169fc31d2: Layer already exists
+2016c78b3bd1: Layer already exists
+ce222a08338d: Layer already exists
+eaad179c575e: Layer already exists
+215af9a8d543: Layer already exists
+7d6822a69811: Layer already exists
+1bd8c5da052b: Layer already exists
+8bc31f254790: Layer already exists
+293ba3f1f772: Layer already exists
+1bd3322f8d6f: Layer already exists
+263fa022f876: Layer already exists
+c8ae6d751a07: Layer already exists
+c5582c742de7: Pushed
+b4c7db0470fb: Layer already exists
+1e1d40a94b43: Layer already exists
+348797b138e8: Layer already exists
+c19a006df958: Pushed
+01f29e12109c: Layer already exists
+9a08485ade40: Layer already exists
+b6470ca8ef3a: Layer already exists
+d34c6a7cec6c: Layer already exists
+b39842a104e5: Layer already exists
+51e3ff8f39b9: Layer already exists
+05b334d1fb3c: Layer already exists
+7c4605880f1a: Layer already exists
+3031c90b410d: Layer already exists
+addae8f5e23a: Layer already exists
+6905bd52d08c: Layer already exists
+21757f190240: Layer already exists
+6c38c64bee69: Layer already exists
+4782a17fca20: Layer already exists
+481eea8a2a4e: Layer already exists
+a9af4543c109: Layer already exists
+fd8f5810148e: Layer already exists
+a378195e3d54: Layer already exists
+451c61de84e6: Layer already exists
+111e7c614ac0: Layer already exists
+da9b3df67b0f: Layer already exists
+a40fb41a564b: Layer already exists
+63b674f06d74: Layer already exists
+3862361f431f: Layer already exists
+dcede9dcd39b: Layer already exists
+50a33902f572: Layer already exists
+495bbaf4cc5c: Layer already exists
+b2a48eb68225: Layer already exists
+cc18467866bc: Layer already exists
+b60fd1af0a9d: Layer already exists
+a52c02546417: Layer already exists
+187d2314ef56: Layer already exists
+qual-resident-2553d7a: digest: sha256:67f7b104711451878e5af188195c7ac675e79246aab65ff36bb9919bcdffeb33 size: 12227

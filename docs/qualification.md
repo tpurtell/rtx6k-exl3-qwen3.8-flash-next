@@ -652,3 +652,14 @@ The RTX shipping BF16 mmap/MTP3 profile passes API16/16 and 29/29 live JSON
 canaries, then completes C8 tools with 148/176 points and 29/38 Hard Mode points.
 There are zero evaluator request errors and no FSM/termination errors in its
 server log. This scoped requalification adds no RTX performance measurements.
+
+## v0.3.1 resident mode repair
+
+The v0.3.0 image was reproduced failing at `ple_layer.py:691` with
+`QUANT=exl3 PLE_MMAP=0` on GPU1. Moving the resident GPU worker's metadata-only
+load before mmap embedding access restores this path. The earlier inert
+launcher checks verified arguments, but did not catch this model-loading bug.
+The new regressions test actual loading without a GPU-owned embedding, and
+full-model checks exercise both resident and mmap with the same corrected image.
+See [v0.3.1 evidence](../benchmarks/resident-v031-review/README.md).
+Historical performance and quality tables retain their original image IDs.

@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "mode": "resident",
+  "scope": "Original EXL3 BF16 PLE, RTX GPU1, MTP3, CUDA graphs; API16, JSON/reasoning/EOS29, retrieval8K/240K, vision1/4/16, and seven content smoke prompts. Content contract results retained separately.",
+  "image_id": "sha256:0f3fdb9e1073446ca756db7541bbcfe943a7e5c43aa97e85cbcba982d82b7516",
+  "files": {
+    "api-tools.jsonl": "8a5694678d9c387a58cb4431b369d74b73fb5701838f133ff0af200b350f5cfc",
+    "content.jsonl": "9365666ec9989133572e3940ee2d76de556236d4f34a5c363804c375f5558031",
+    "json-reasoning.json": "74109cc5497c40f0ff5d5b9bf79f9b167974979d61372f5a8f5e02745c9aaf1e",
+    "retrieval.jsonl": "82b96e9b24f44e4463c0d233139862103a13d992fefed27d85594b02a4d470ff",
+    "runtime.json": "96007cdd9176cf94993e7da8323987f971fce0d2932847372c32e8591ccb1a3f",
+    "server-log.txt": "abc1c7c92e4a900463c0c58ac2aab83d49fc0588f7752160287abf380504792c",
+    "vision.json": "1ff885c9758288c348e982489dc269d572db00e73d236cb0ea68939167c02214"
+  }
+}

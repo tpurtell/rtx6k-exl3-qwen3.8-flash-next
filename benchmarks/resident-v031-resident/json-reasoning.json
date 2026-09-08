@@ -1,0 +1,1395 @@
+{
+  "schema_version": 2,
+  "started_at": "2026-09-08T21:26:37.086993+00:00",
+  "finished_at": "2026-09-08T21:26:52.274630+00:00",
+  "model": "qwen38-exl3",
+  "concurrency": 16,
+  "expected_cases": 29,
+  "completed_cases": 29,
+  "failed_cases": 0,
+  "results": [
+    {
+      "name": "upstream-2048-0",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.031
+    },
+    {
+      "name": "upstream-2048-1",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.027
+    },
+    {
+      "name": "upstream-2048-2",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.034
+    },
+    {
+      "name": "concurrent-thinking-0",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"build-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"NODE_ENV\": \"production\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 77,
+        "total_tokens": 128,
+        "completion_tokens": 51,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.777
+    },
+    {
+      "name": "concurrent-thinking-1",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": true
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 314,
+        "completion_tokens": 197,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 146
+        }
+      },
+      "reasoning_characters": 420,
+      "elapsed_seconds": 1.821
+    },
+    {
+      "name": "concurrent-thinking-2",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"build-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"NODE_ENV\": \"production\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 77,
+        "total_tokens": 128,
+        "completion_tokens": 51,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.879
+    },
+    {
+      "name": "concurrent-thinking-3",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": true
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.794
+    },
+    {
+      "name": "concurrent-thinking-4",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"build-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"NODE_ENV\": \"production\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 77,
+        "total_tokens": 128,
+        "completion_tokens": 51,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.878
+    },
+    {
+      "name": "concurrent-thinking-5",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": true
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.794
+    },
+    {
+      "name": "concurrent-thinking-6",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"build-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"NODE_ENV\": \"production\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 77,
+        "total_tokens": 128,
+        "completion_tokens": 51,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.878
+    },
+    {
+      "name": "concurrent-thinking-7",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": true
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.794
+    },
+    {
+      "name": "concurrent-thinking-8",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"build-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"NODE_ENV\": \"production\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 77,
+        "total_tokens": 128,
+        "completion_tokens": 51,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.877
+    },
+    {
+      "name": "concurrent-thinking-9",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": true
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.793
+    },
+    {
+      "name": "concurrent-thinking-10",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"build-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"NODE_ENV\": \"production\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 77,
+        "total_tokens": 128,
+        "completion_tokens": 51,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.876
+    },
+    {
+      "name": "concurrent-thinking-11",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": true
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.792
+    },
+    {
+      "name": "concurrent-thinking-12",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"build-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"NODE_ENV\": \"production\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 77,
+        "total_tokens": 128,
+        "completion_tokens": 51,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.876
+    },
+    {
+      "name": "concurrent-thinking-13",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": true
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.792
+    },
+    {
+      "name": "concurrent-thinking-14",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"build-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"NODE_ENV\": \"production\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 77,
+        "total_tokens": 128,
+        "completion_tokens": 51,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.876
+    },
+    {
+      "name": "concurrent-thinking-15",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 2048,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": true
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.791
+    },
+    {
+      "name": "strict-json-normal-eos-0",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Return exactly this JSON object: {\"ok\":true,\"count\":7}"
+          }
+        ],
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "name": "termination_probe",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "ok",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "max_tokens": 256,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\"ok\":true,\"count\":7}",
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 37,
+        "completion_tokens": 10,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.115
+    },
+    {
+      "name": "strict-json-normal-eos-1",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Return exactly this JSON object: {\"ok\":true,\"count\":7}"
+          }
+        ],
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "name": "termination_probe",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "ok",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "max_tokens": 256,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\"ok\":true,\"count\":7}",
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 37,
+        "completion_tokens": 10,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.112
+    },
+    {
+      "name": "strict-json-normal-eos-2",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Return exactly this JSON object: {\"ok\":true,\"count\":7}"
+          }
+        ],
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "name": "termination_probe",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "ok",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "max_tokens": 256,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\"ok\":true,\"count\":7}",
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 37,
+        "completion_tokens": 10,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "strict-json-normal-eos-3",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Return exactly this JSON object: {\"ok\":true,\"count\":7}"
+          }
+        ],
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "name": "termination_probe",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "ok",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "max_tokens": 256,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\"ok\":true,\"count\":7}",
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 37,
+        "completion_tokens": 10,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.113
+    },
+    {
+      "name": "strict-json-normal-eos-4",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Return exactly this JSON object: {\"ok\":true,\"count\":7}"
+          }
+        ],
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "name": "termination_probe",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "ok",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "max_tokens": 256,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\"ok\":true,\"count\":7}",
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 37,
+        "completion_tokens": 10,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.121
+    },
+    {
+      "name": "ignore-eos-explicit-stop-0",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Return exactly this JSON object: {\"ok\":true,\"count\":7}"
+          }
+        ],
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "name": "termination_probe",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "ok",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "max_tokens": 256,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "ignore_eos": true,
+        "stop": [
+          "}"
+        ],
+        "include_stop_str_in_output": true
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\"ok\":true,\"count\":7}",
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 36,
+        "completion_tokens": 9,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.098
+    },
+    {
+      "name": "ignore-eos-explicit-stop-1",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Return exactly this JSON object: {\"ok\":true,\"count\":7}"
+          }
+        ],
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "name": "termination_probe",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "ok",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "max_tokens": 256,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "ignore_eos": true,
+        "stop": [
+          "}"
+        ],
+        "include_stop_str_in_output": true
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\"ok\":true,\"count\":7}",
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 36,
+        "completion_tokens": 9,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.113
+    },
+    {
+      "name": "ignore-eos-explicit-stop-2",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Return exactly this JSON object: {\"ok\":true,\"count\":7}"
+          }
+        ],
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "name": "termination_probe",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "ok",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "max_tokens": 256,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "ignore_eos": true,
+        "stop": [
+          "}"
+        ],
+        "include_stop_str_in_output": true
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\"ok\":true,\"count\":7}",
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 36,
+        "completion_tokens": 9,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.113
+    },
+    {
+      "name": "ignore-eos-explicit-stop-3",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Return exactly this JSON object: {\"ok\":true,\"count\":7}"
+          }
+        ],
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "name": "termination_probe",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "ok",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "max_tokens": 256,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "ignore_eos": true,
+        "stop": [
+          "}"
+        ],
+        "include_stop_str_in_output": true
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\"ok\":true,\"count\":7}",
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 36,
+        "completion_tokens": 9,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.113
+    },
+    {
+      "name": "ignore-eos-explicit-stop-4",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Return exactly this JSON object: {\"ok\":true,\"count\":7}"
+          }
+        ],
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "name": "termination_probe",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "ok",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "max_tokens": 256,
+        "temperature": 0,
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "ignore_eos": true,
+        "stop": [
+          "}"
+        ],
+        "include_stop_str_in_output": true
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\"ok\":true,\"count\":7}",
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 36,
+        "completion_tokens": 9,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "reasoning_characters": 0,
+      "elapsed_seconds": 0.113
+    }
+  ],
+  "upstream_500_token_diagnostics": [
+    {
+      "name": "exact-upstream-0",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 500,
+        "temperature": 0,
+        "stream": false
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.057,
+      "budget_limited": false
+    },
+    {
+      "name": "exact-upstream-1",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 500,
+        "temperature": 0,
+        "stream": false
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.026,
+      "budget_limited": false
+    },
+    {
+      "name": "exact-upstream-2",
+      "request": {
+        "model": "qwen38-exl3",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output a JSON config object for a CI job with keys \"name\" (string), \"region\" (string, one of us-east-1 or eu-west-1), \"retries\" (integer 1-3), and \"env\" (object with a KEY=VALUE pair). No prose, JSON only."
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_tokens": 500,
+        "temperature": 0,
+        "stream": false
+      },
+      "ok": true,
+      "http_status": 200,
+      "finish_reason": "stop",
+      "content": "{\n  \"name\": \"ci-job\",\n  \"region\": \"us-east-1\",\n  \"retries\": 2,\n  \"env\": {\n    \"KEY\": \"VALUE\"\n  }\n}",
+      "usage": {
+        "prompt_tokens": 117,
+        "total_tokens": 309,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 141
+        }
+      },
+      "reasoning_characters": 397,
+      "elapsed_seconds": 1.039,
+      "budget_limited": false
+    }
+  ],
+  "diagnostic_budget_limited_cases": 0,
+  "speculation_metrics_before": {
+    "vllm:spec_decode_num_drafts_total": 765.0,
+    "vllm:spec_decode_num_draft_tokens_total": 2275.0,
+    "vllm:spec_decode_num_accepted_tokens_total": 1385.0
+  },
+  "speculation_metrics_after": {
+    "vllm:spec_decode_num_drafts_total": 1674.0,
+    "vllm:spec_decode_num_draft_tokens_total": 4964.0,
+    "vllm:spec_decode_num_accepted_tokens_total": 3699.0
+  },
+  "speculation_metrics_delta": {
+    "vllm:spec_decode_num_drafts_total": 909.0,
+    "vllm:spec_decode_num_draft_tokens_total": 2689.0,
+    "vllm:spec_decode_num_accepted_tokens_total": 2314.0
+  },
+  "speculation_active": true,
+  "scope": "29 complete JSON/schema/stop checks plus 3 separate verbatim 500-token diagnostics; ignore-EOS complete cases use explicit stop; server log audit is separate",
+  "status": "PASS"
+}

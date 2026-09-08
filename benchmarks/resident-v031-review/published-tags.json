@@ -1,0 +1,26 @@
+[
+  {
+    "platform": "rtx",
+    "tag": "v0.3.1",
+    "digest": "sha256:0f3fdb9e1073446ca756db7541bbcfe943a7e5c43aa97e85cbcba982d82b7516",
+    "verified": true
+  },
+  {
+    "platform": "rtx",
+    "tag": "latest",
+    "digest": "sha256:0f3fdb9e1073446ca756db7541bbcfe943a7e5c43aa97e85cbcba982d82b7516",
+    "verified": true
+  },
+  {
+    "platform": "spark",
+    "tag": "v0.3.1",
+    "digest": "sha256:67f7b104711451878e5af188195c7ac675e79246aab65ff36bb9919bcdffeb33",
+    "verified": true
+  },
+  {
+    "platform": "spark",
+    "tag": "latest",
+    "digest": "sha256:67f7b104711451878e5af188195c7ac675e79246aab65ff36bb9919bcdffeb33",
+    "verified": true
+  }
+]

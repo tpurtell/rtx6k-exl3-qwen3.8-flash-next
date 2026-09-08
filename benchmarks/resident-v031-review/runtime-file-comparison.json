@@ -1,0 +1,15 @@
+{
+  "images": {
+    "previous": "ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next:v0.3.0",
+    "corrected": "qwen38-rtx:resident-fix"
+  },
+  "files_compared": 5738,
+  "changes": [
+    {
+      "path": "/usr/local/lib/python3.12/dist-packages/vllm/models/qwen3_8_flash_next/nvidia/ple_layer.py",
+      "previous_sha256": "2069d62b8ff4e19fb984a749dfc89b04009dc07877fbf1277e3fd8b97231f6ee",
+      "corrected_sha256": "cfbb5d54918c6ca451ff3b495f45c5fc4328c7e2627acdbb82dd9d767382e7bb"
+    }
+  ],
+  "scope": "Installed vLLM and B12x files excluding bytecode and git metadata; defaults/labels are separately recorded in image metadata."
+}

@@ -1,0 +1,4 @@
+ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next@sha256:67f7b104711451878e5af188195c7ac675e79246aab65ff36bb9919bcdffeb33: Pulling from tpurtell/spark-exl3-qwen3.8-flash-next
+Digest: sha256:67f7b104711451878e5af188195c7ac675e79246aab65ff36bb9919bcdffeb33
+Status: Image is up to date for ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next@sha256:67f7b104711451878e5af188195c7ac675e79246aab65ff36bb9919bcdffeb33
+ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next@sha256:67f7b104711451878e5af188195c7ac675e79246aab65ff36bb9919bcdffeb33

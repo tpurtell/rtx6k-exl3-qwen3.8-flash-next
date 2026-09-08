@@ -68,10 +68,12 @@ Use `B12X_VOCAB=0` for the native vocabulary projection or
 
 Spark's original BF16 PLE default has completed the full qualification below.
 The RTX columns retain their existing measurements.
-[Release v0.3.0](https://github.com/tpurtell/sm12x-exl3-qwen3.8-flash-next/releases/tag/v0.3.0)
+[Release v0.3.1](https://github.com/tpurtell/sm12x-exl3-qwen3.8-flash-next/releases/tag/v0.3.1)
 provides native images for both platforms, including the reviewed speculative
-reasoning and xgrammar termination fixes. Both images pass 14 targeted
-regressions, 218 mmap tests, 16 API checks and 29 live JSON/reasoning/EOS canaries.
+reasoning and xgrammar termination fixes, plus the resident-mode loading repair.
+The v0.3.1 checks cover all 220 tests on RTX, the new resident regressions on
+both architectures, and full-model resident/mmap checks on RTX. The earlier
+v0.3.0 structured-output qualification remains linked below.
 The [RTX shipping-default structured-output qualification](benchmarks/rtx-structured-final/qualification.json)
 adds a C8 tool run without changing the historical RTX table columns.
 
@@ -94,8 +96,8 @@ used by `start.sh`. Immutable image digests are recorded in
 
 | Platform | Image package | Status |
 |---|---|---|
-| RTX, linux/amd64 | `ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next` | v0.3.0 |
-| Spark, linux/arm64 | `ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next` | v0.3.0 |
+| RTX, linux/amd64 | `ghcr.io/tpurtell/rtx6k-exl3-qwen3.8-flash-next` | v0.3.1 |
+| Spark, linux/arm64 | `ghcr.io/tpurtell/spark-exl3-qwen3.8-flash-next` | v0.3.1 |
 
 The new Spark package currently requires registry authentication while its
 visibility is private. The package owner can enable public pulls in GitHub
@@ -147,6 +149,11 @@ request mix. Use the context and concurrency tables below to distinguish those c
 `PLE_MMAP=1` is the shipping default and works with **all three profiles**.
 It reads the PLE table through read-only checkpoint mappings and replaces the
 resident PLE subprocess. Set `PLE_MMAP=0` to use the resident host table instead.
+Use **v0.3.1 or newer for resident mode**: v0.3.0 incorrectly accessed a
+CPU-owned embedding from the GPU worker during loading (`ple_layer.py:691`).
+The corrected image supports both modes; the historical resident benchmark
+rows keep their original image provenance. See the
+[reproduction, fix and mode checks](benchmarks/resident-v031-review/README.md).
 Token embeddings remain in host RAM in either mode.
 Mmap maps the selected checkpoint's actual table dtype, including BF16 for
 `exl3` and FP8 plus its scalar scale for `exl3-ple8` and `nvfp4`.

@@ -72,3 +72,18 @@ all 5738 installed vLLM/B12x files: only the two structured-output Python files
 differ from v0.2.0. Image defaults additionally enable readahead2048 and native
 architecture settings. Existing performance receipts retain their original
 image IDs and environments; these are not new RTX performance measurements.
+
+## Resident PLE repair in v0.3.1
+
+A full-model GPU1 reproduction with original EXL3 K4.25 BF16 PLE confirmed
+that v0.3.0 resident mode fails at `ple_layer.py:691`. The mmap backport had
+moved embedding access before the CPU-offload metadata-only worker branch.
+The GPU worker deliberately has no table in this mode. The strict-hash repair
+moves its metadata-only load ahead of embedding access, while preserving the
+mmap reload guard before iterator consumption. This is a local compatibility
+repair; numerical kernels, model revisions and defaults are unchanged.
+
+The new BF16/FP8 metadata regressions fail against the old image and pass on
+both native builds. All 220 tests pass on RTX. Full-model mode checks use the
+locally available BF16 model on GPU1, with MTP3 and CUDA graphs. See the
+[reproduction and qualification record](benchmarks/resident-v031-review/README.md).
